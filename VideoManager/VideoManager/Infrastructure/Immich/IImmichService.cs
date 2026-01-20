@@ -1,0 +1,10 @@
+namespace VideoManager.Infrastructure.Immich;
+
+public interface IImmichService
+{
+    Task<ImmichAsset?> GetAssetAsync(Guid assetId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ImmichAsset>> GetAssetsAsync(AssetType? type = null, int? limit = null, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ImmichAsset>> GetVideoAssetsAsync(int? limit = null, CancellationToken cancellationToken = default);
+    Task UpdateAssetMetadataAsync(Guid assetId, UpdateAssetMetadata metadata, CancellationToken cancellationToken = default);
+    Task UpdateAssetsMetadataAsync(IEnumerable<Guid> assetIds, UpdateAssetMetadata metadata, CancellationToken cancellationToken = default);
+}

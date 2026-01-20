@@ -5,12 +5,14 @@ using System.Text;
 using VideoManager.Common.Data;
 using VideoManager.Infrastructure.Authentication;
 using VideoManager.Infrastructure.Immich;
+using VideoManager.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add Database
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.AddNpgsqlDbContext<ApplicationDbContext>("videomanager");
 
 // Add JWT Authentication
 var jwtSecretKey = builder.Configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured");
@@ -46,6 +48,8 @@ builder.Services.AddImmichClient(options =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

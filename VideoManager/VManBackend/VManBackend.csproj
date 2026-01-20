@@ -6,15 +6,32 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>98410285-efbb-4fb3-9146-e4ad3e6b7cf7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <KiotaGeneratedPath>Infrastructure\Immich\Generated</KiotaGeneratedPath>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.2" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Kiota.Bundle" Version="1.21.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\VideoManager.ServiceDefaults\VideoManager.ServiceDefaults.csproj" />
   </ItemGroup>
+
+  <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="dotnet tool restore" WorkingDirectory="$(ProjectDir)..\" />
+    <Exec Command="dotnet tool run kiota generate -l CSharp -c ImmichClient -n VManBackend.Infrastructure.Immich.Generated -o VManBackend\Infrastructure\Immich\Generated -d https://raw.githubusercontent.com/immich-app/immich/master/open-api/immich-openapi-specs.json" WorkingDirectory="$(ProjectDir)..\" />
+  </Target>
 
 </Project>

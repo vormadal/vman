@@ -5,6 +5,8 @@ using System.Text;
 using VManBackend.Common.Data;
 using VManBackend.Infrastructure.Authentication;
 using VManBackend.Infrastructure.Immich;
+using VManBackend.Mediator;
+using VManBackend.Features.Assets;
 using VideoManager.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,8 +39,17 @@ builder.Services.AddAuthorization();
 // Add Services
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+// Add Mediator and Handlers
+builder.Services.AddMediator();
+builder.Services.AddRequestHandler<GetAssets.Handler, GetAssets.Request, GetAssets.Response>();
+builder.Services.AddRequestHandler<GetAssetById.Handler, GetAssetById.Request, GetAssetById.Response?>();
+builder.Services.AddRequestHandler<GetAssetStatistics.Handler, GetAssetStatistics.Request, GetAssetStatistics.Response>();
+
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+});
 
 // Add Immich client
 builder.Services.AddImmichClient(options =>
@@ -63,5 +74,54 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Asset Endpoints
+var assetsGroup = app.MapGroup("/api/assets")
+    .RequireAuthorization();
+
+assetsGroup.MapGet("/", async (
+    IMediator mediator,
+    int? assetType,
+    int page = 1,
+    int pageSize = 50,
+    string? sortBy = "CreatedAt",
+    bool descending = true) =>
+{
+    var request = new GetAssets.Request(
+        assetType.HasValue ? (VManBackend.Common.Models.AssetType)assetType.Value : null,
+        page,
+        pageSize,
+        sortBy,
+        descending
+    );
+
+    if (!GetAssets.Validator.Validate(request, out var error))
+    {
+        return Results.BadRequest(new { error });
+    }
+
+    var response = await mediator.Send(request);
+    return Results.Ok(response);
+})
+.WithName("GetAssets")
+.WithOpenApi();
+
+assetsGroup.MapGet("/{id:guid}", async (Guid id, IMediator mediator) =>
+{
+    var request = new GetAssetById.Request(id);
+    var response = await mediator.Send(request);
+    return response != null ? Results.Ok(response) : Results.NotFound();
+})
+.WithName("GetAssetById")
+.WithOpenApi();
+
+assetsGroup.MapGet("/statistics", async (IMediator mediator) =>
+{
+    var request = new GetAssetStatistics.Request();
+    var response = await mediator.Send(request);
+    return Results.Ok(response);
+})
+.WithName("GetAssetStatistics")
+.WithOpenApi();
 
 app.Run();

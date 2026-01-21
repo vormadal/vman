@@ -1,5 +1,11 @@
 # Video Management API - .NET 10 MVC Project Setup
 
+> **Note**: This document contains the original design specification. The actual implementation uses:
+> - **Project Name**: `VManBackend` (not `VideoManager.API`)
+> - **Orchestration**: .NET Aspire 13.1.0 for service management
+> - **OpenAPI**: Built-in .NET 10 OpenAPI support (not Swashbuckle)
+> - See `ASPIRE_README.md` for current running instructions
+
 ## Project Overview
 A Video Management API built with .NET 10 MVC using Vertical Slice Architecture, PostgreSQL database, and Bearer token authentication for managing videos from multiple providers (OneDrive, Immich) with thumbnail and GIF generation capabilities.
 
@@ -152,6 +158,13 @@ dotnet add package FFMpegCore --version 5.1.0
 # Utilities
 dotnet add package Swashbuckle.AspNetCore --version 6.8.1
 ```
+
+> **Current Implementation Note**: The actual backend (`VManBackend`) uses:
+> - Built-in .NET 10 OpenAPI with `.AddOpenApi()` and `.MapOpenApi()`
+> - .NET Aspire for PostgreSQL orchestration (no manual connection string needed)
+> - Custom CQRS implementation (not MediatR)
+> - Kiota-generated Immich client
+> - See `VManBackend/Program.cs` for actual configuration
 
 ### 3. Install FFmpeg
 FFmpeg is required for video processing. Install via:

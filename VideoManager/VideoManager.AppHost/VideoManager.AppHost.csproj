@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VideoManager\VideoManager.csproj" />
     <ProjectReference Include="..\VManBackend\VManBackend.csproj" />
   </ItemGroup>
 

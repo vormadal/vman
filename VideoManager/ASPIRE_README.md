@@ -10,9 +10,11 @@ VideoManager/
 │   └── Program.cs                 # Defines service composition
 ├── VideoManager.ServiceDefaults/  # Shared configuration library
 │   └── Extensions.cs              # OpenTelemetry, health checks, resilience
-└── VideoManager/                  # Main API project
+└── VManBackend/                   # Main API project
     └── Program.cs                 # Uses Aspire service defaults
 ```
+
+**Note**: The backend API project is named `VManBackend`, not `VideoManager`.
 
 ## Running the Application
 
@@ -76,20 +78,28 @@ The PostgreSQL database is automatically provisioned by Aspire with:
 ### Running Migrations
 
 ```powershell
-cd VideoManager
-dotnet dotnet-ef database update
+cd VManBackend
+dotnet ef database update
 ```
 
 ## Endpoints
 
 When running via Aspire AppHost:
-- **API**: https://localhost:7XXX (port assigned dynamically, check dashboard)
-- **Aspire Dashboard**: http://localhost:15XXX
-- **pgAdmin**: http://localhost:XXXX (check dashboard for exact port)
+- **API**: https://localhost:7213 (HTTPS), http://localhost:5244 (HTTP)
+- **OpenAPI Spec**: https://localhost:7213/openapi/v1.json
+- **Aspire Dashboard**: https://localhost:17037
+- **pgAdmin**: http://localhost:50493 (check dashboard for exact port)
+- **Frontend**: http://localhost:50494
 
 ### Health Checks
 - `/health` - Overall health status
 - `/alive` - Liveness probe
+
+### API Documentation
+The API uses .NET 10's built-in OpenAPI support (not Swagger):
+- OpenAPI specification available at `/openapi/v1.json`
+- Configured with `.AddOpenApi()` and `.MapOpenApi()` in Program.cs
+- Only available in Development environment
 
 ## Configuration
 

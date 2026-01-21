@@ -31,8 +31,10 @@ vman/
 │   ├── package.json
 │   └── README.md
 │
-├── VideoManager/                   # .NET 10 API (to be created)
-│   └── (Follow PROJECT_SETUP.md)
+├── VideoManager/                   # .NET 10 Solution
+│   ├── VideoManager.AppHost/       # Aspire orchestration
+│   ├── VideoManager.ServiceDefaults/ # Shared Aspire config
+│   └── VManBackend/                # Main API project
 │
 ├── .github/
 │   └── copilot-instructions.md    # Backend Copilot instructions
@@ -70,21 +72,26 @@ vman/
 
 ## Next Steps
 
-### 1. Backend Development (VideoManager API)
-Follow the instructions in `PROJECT_SETUP.md`:
+### 1. Backend Development (VManBackend API)
+The backend is already set up with .NET Aspire. To run:
 ```bash
-# Navigate to vman directory
-cd C:\workspaces\vormadal\vman
+# Navigate to AppHost project
+cd VideoManager\VideoManager.AppHost
 
-# Create .NET 10 API project
-dotnet new webapi -n VideoManager.API -f net10.0
-cd VideoManager.API
+# Run Aspire (starts all services including PostgreSQL)
+aspire run
 
-# Install required packages (see PROJECT_SETUP.md for full list)
-dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 9.0.0
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 9.0.0
-# ... (continue with other packages)
+# Or use dotnet directly
+dotnet run
 ```
+
+This will:
+- Start PostgreSQL in a container with pgAdmin
+- Start the VManBackend API
+- Start the Next.js frontend
+- Open the Aspire dashboard showing all services, logs, and metrics
+
+**OpenAPI Spec**: Available at `https://localhost:7213/openapi/v1.json`
 
 ### 2. Database Setup
 - Install PostgreSQL
@@ -103,32 +110,42 @@ npm run dev
 ```
 
 ### 4. Generate API Client with Kiota
-Once the backend is running with Swagger:
+Once the backend is running with OpenAPI:
 ```bash
 # Install Kiota globally
 npm install -g @microsoft/kiota
 
-# Generate TypeScript client
+# Generate TypeScript client from running API
 cd video-manager-frontend
 kiota generate -c kiota-config.json
+
+# Or specify the OpenAPI URL directly
+kiota generate -l typescript -d https://localhost:7213/openapi/v1.json -o src/lib/api/generated
 ```
+
+**Note**: The backend uses `.AddOpenApi()` and `.MapOpenApi()`, not Swagger. The OpenAPI spec is available at `/openapi/v1.json` (not `/swagger/v1/swagger.json`).
 
 ## Key Features to Implement
 
 ### Backend (.NET 10 API)
-- [ ] User authentication (JWT)
+- [x] Aspire orchestration setup
+- [x] PostgreSQL database integration
+- [x] OpenAPI documentation (v3.1.1)
+- [x] JWT Authentication infrastructure
+- [x] Immich client integration (Kiota-generated)
+- [ ] User authentication endpoints
 - [ ] Video management endpoints
 - [ ] OneDrive provider integration
-- [ ] Immich provider integration
 - [ ] FFmpeg thumbnail generation
 - [ ] FFmpeg GIF preview generation
-- [ ] Database migrations
-- [ ] OpenAPI/Swagger documentation
+- [ ] Database migrations (schema design complete)
 
 ### Frontend (Next.js)
 - [x] Authentication UI (Login/Register)
 - [x] Protected routes
 - [x] Basic video listing page
+- [x] **Smart API client generation** (auto-generates from OpenAPI spec)
+- [x] Watch mode for continuous client regeneration
 - [ ] Video detail page with player
 - [ ] Video import from providers
 - [ ] Thumbnail display
@@ -160,12 +177,24 @@ kiota generate -c kiota-config.json
 
 ## Running the Full Stack
 
-1. **Start PostgreSQL database**
+### Option 1: Run with Aspire (Recommended)
+```bash
+cd VideoManager\VideoManager.AppHost
+aspire run
+```
+This starts everything:
+- **Backend API**: https://localhost:7213
+- **Frontend**: http://localhost:50494
+- **PostgreSQL + pgAdmin**: Automatically provisioned
+- **Aspire Dashboard**: https://localhost:17037
+
+### Option 2: Run Separately
+1. **Start PostgreSQL database** (if not using Aspire)
 2. **Start Backend API**:
    ```bash
-   cd VideoManager.API
+   cd VideoManager\VManBackend
    dotnet run
-   # API runs on http://localhost:5000
+   # API runs on https://localhost:7213
    ```
 3. **Start Frontend**:
    ```bash
@@ -198,9 +227,48 @@ NEXT_PUBLIC_APP_NAME=Video Manager
 
 ## Development Workflow
 
-1. **Backend changes**: Make API changes, update Swagger, regenerate Kiota client
+### Quick Start
+```bash
+# Terminal 1: Start backend with Aspire
+cd VideoManager\VideoManager.AppHost
+aspire run
+
+# Terminal 2: Start frontend (auto-generates client)
+cd video-manager-frontend
+npm run dev
+```
+
+### With API Client Watch Mode
+For active backend development:
+```bash
+# Terminal 1: Backend
+cd VideoManager\VideoManager.AppHost
+aspire run
+
+# Terminal 2: Watch for API changes
+cd video-manager-frontend
+npm run generate:watch
+
+# Terminal 3: Frontend dev server
+cd video-manager-frontend
+npm run dev
+```
+
+The watch mode will automatically regenerate the TypeScript client whenever the backend's OpenAPI spec changes.
+
+### Manual Client Generation
+```bash
+cd video-manager-frontend
+npm run generate:client
+```
+
+See `video-manager-frontend/CLIENT_GENERATION.md` for detailed documentation.
+
+## Development Best Practices
+
+1. **Backend changes**: Make API changes, client auto-regenerates
 2. **Frontend changes**: Use generated types from Kiota client
-3. **Testing**: Test authentication flow first, then video features
+3. **Testing**: Test authentication flow first, then video features  
 4. **Git workflow**: Use conventional commits (feat, fix, refactor, etc.)
 
 ## Resources

@@ -42,52 +42,8 @@ vman/
 - Group related code within feature folder (no cross-feature dependencies)
 - Use `Common/` for shared models/data, `Infrastructure/` for cross-cutting concerns
 
-#### Code Organization Pattern
-```csharp
-// Features/{FeatureName}/{Action}.cs
-namespace VideoManager.Features.{FeatureName};
 
-public static class {Action}
-{
-    public record Request(/* parameters */);
-    public record Response(/* return data */);
-    
-    // Validation (NOT using FluentValidation currently)
-    public class Validator
-    {
-        public static bool Validate(Request request, out string? error)
-        {
-            // Manual validation logic
-        }
-    }
-    
-    // Business logic
-    public class Handler(ApplicationDbContext db, /* other dependencies */) 
-        : IRequestHandler<Request, Response>
-    {
-        public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
-        {
-            // Implementation
-        }
-    }
-}
-```
 
-**Controller Registration:**
-```csharp
-app.MapPost("/api/feature/action", async ([FromBody] Request req, IMediator mediator) =>
-{
-    var result = await mediator.Send(req);
-    return Results.Ok(result);
-});
-```
-
-### Custom Mediator Pattern
-- **Do NOT use MediatR library** - custom implementation exists
-- Location: `Infrastructure/Mediator/`
-- Request types: `IRequest<TResponse>` or `IRequest` (no response)
-- Handlers: `IRequestHandler<TRequest, TResponse>` or `IRequestHandler<TRequest>`
-- Registration: Handlers auto-registered as scoped services
 
 ### Data Access
 - **Avoid Repository Pattern** - DbContext already provides it
@@ -146,7 +102,7 @@ app/
 
 
 ### API Integration
-- Kiota-generated clients from backend OpenAPI specs
+- Kiota-generated clients from backend OpenAPI specs found in ` https://localhost:<port>/openapi/v1.json`
 - Custom wrappers in `lib/api/` for auth header injection
 - **Note**: Currently using stub/mock data - backend integration in progress
 
@@ -234,33 +190,6 @@ cd VideoManager\VideoManager
 dotnet tool restore
 dotnet kiota generate -d path/to/openapi.json -o Infrastructure/Immich/Generated
 ```
-
----
-
-## Current Development Status
-
-### ✅ Implemented
-- User authentication (Register/Login)
-- JWT token generation/validation
-- Database schema with EF Core
-- Aspire orchestration with observability
-- Frontend UI structure (with stub data)
-- OpenAPI documentation
-
-### 🚧 In Progress
-- Immich integration
-- OneDrive integration
-- Video CRUD operations
-- Backend-to-frontend integration
-
-### 📋 Planned
-- FFmpeg video processing (thumbnails, GIFs)
-- Video streaming
-- Tag management
-- Advanced search/filtering
-- Refresh token rotation
-
----
 
 ## Key Design Decisions
 

@@ -1,6 +1,29 @@
 @VManBackend_HostAddress = http://localhost:5244
+@token = your_jwt_token_here
 
-GET {{VManBackend_HostAddress}}/weatherforecast/
+### Get all assets (paginated)
+GET {{VManBackend_HostAddress}}/api/assets?page=1&pageSize=20
 Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get assets by type (Videos only)
+GET {{VManBackend_HostAddress}}/api/assets?assetType=1&page=1&pageSize=20
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get assets by type (Images only)
+GET {{VManBackend_HostAddress}}/api/assets?assetType=0&page=1&pageSize=20
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get asset by ID
+GET {{VManBackend_HostAddress}}/api/assets/00000000-0000-0000-0000-000000000000
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get asset statistics
+GET {{VManBackend_HostAddress}}/api/assets/statistics
+Accept: application/json
+Authorization: Bearer {{token}}
 
 ###

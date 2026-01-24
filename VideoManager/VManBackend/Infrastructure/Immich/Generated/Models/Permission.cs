@@ -204,6 +204,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         FaceDelete,
         #pragma warning restore CS1591
+        [EnumMember(Value = "folder.read")]
+        #pragma warning disable CS1591
+        FolderRead,
+        #pragma warning restore CS1591
         [EnumMember(Value = "job.create")]
         #pragma warning disable CS1591
         JobCreate,
@@ -243,6 +247,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         [EnumMember(Value = "maintenance")]
         #pragma warning disable CS1591
         Maintenance,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "map.read")]
+        #pragma warning disable CS1591
+        MapRead,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "map.search")]
+        #pragma warning disable CS1591
+        MapSearch,
         #pragma warning restore CS1591
         [EnumMember(Value = "memory.create")]
         #pragma warning disable CS1591

@@ -8,6 +8,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     public enum AssetMediaSize
     #pragma warning restore CS1591
     {
+        [EnumMember(Value = "original")]
+        #pragma warning disable CS1591
+        Original,
+        #pragma warning restore CS1591
         [EnumMember(Value = "fullsize")]
         #pragma warning disable CS1591
         Fullsize,

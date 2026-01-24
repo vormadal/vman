@@ -18,6 +18,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public bool? Enabled { get; set; }
         /// <summary>The format property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.ImageFormat? Format { get; set; }
+        /// <summary>The progressive property</summary>
+        public bool? Progressive { get; set; }
         /// <summary>The quality property</summary>
         public int? Quality { get; set; }
         /// <summary>
@@ -47,6 +49,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
                 { "format", n => { Format = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ImageFormat>(); } },
+                { "progressive", n => { Progressive = n.GetBoolValue(); } },
                 { "quality", n => { Quality = n.GetIntValue(); } },
             };
         }
@@ -59,6 +62,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("enabled", Enabled);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ImageFormat>("format", Format);
+            writer.WriteBoolValue("progressive", Progressive);
             writer.WriteIntValue("quality", Quality);
             writer.WriteAdditionalData(AdditionalData);
         }

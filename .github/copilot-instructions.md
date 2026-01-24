@@ -7,11 +7,12 @@
 - **Backend**: .NET 10, ASP.NET Core MVC, C# 13
 - **Frontend**: Next.js 15 (App Router), React 19, TypeScript 5
 - **Database**: PostgreSQL (via EF Core 10 with Npgsql)
-- **Orchestration**: .NET Aspire 13.1.0
+- **Orchestration**: .NET Aspire 13.1.0 using podman (instead of docker)
 - **Authentication**: JWT Bearer tokens with BCrypt password hashing
 - **Observability**: OpenTelemetry (traces, metrics, logs)
 - **UI**: Tailwind CSS 4, shadcn/ui, Radix UI
 - **State Management**: Zustand (client state) + React Query (server state)
+- **Testing**: Playwright (E2E)
 - **Video Processing**: FFmpeg (planned)
 
 ---
@@ -26,6 +27,9 @@ vman/
 │   ├── VideoManager/                 # Main API (.NET 10)
 │   └── VManBackend/                  # Alternative backend project
 ├── video-manager-frontend/           # Next.js 15 frontend
+│   ├── src/                          # Source code (app, components, lib)
+│   ├── tests/                        # Playwright E2E tests
+│   └── playwright.config.ts          # Test configuration
 ├── VideoSplitter/                    # Utility project
 └── vlc-extension/                    # VLC media player extension
 ```
@@ -137,8 +141,72 @@ public class Handler(ApplicationDbContext db, IJwtService jwt, ILogger<Handler> 
 - Use toast notifications (Sonner) for user feedback
 
 ### Testing
+
+#### Frontend E2E Testing (Playwright)
+- **Framework**: Playwright with TypeScript
+- **Location**: `video-manager-frontend/tests/`
+- **Browsers**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- **Configuration**: `playwright.config.ts`
+
+**Running Tests:**
+```bash
+cd video-manager-frontend
+
+# Run all tests
+npm run test:e2e
+
+# Interactive UI mode (recommended during development)
+npm run test:e2e:ui
+
+# Debug mode with browser DevTools
+npm run test:e2e:debug
+
+# View HTML report
+npm run test:e2e:report
+
+# Run specific test file
+npx playwright test auth.spec.ts
+
+# Run specific browser
+npx playwright test --project=chromium
+```
+
+**Test Structure:**
+- `auth.spec.ts` - Authentication flows (login, register)
+- `home.spec.ts` - Home page and redirects
+- `videos.spec.ts` - Video management (requires auth)
+- `auth.setup.ts` - Authentication setup for authenticated tests
+- `fixtures/authenticated.ts` - Reusable auth fixture
+
+**Writing Tests:**
+```typescript
+// Basic test
+import { test, expect } from '@playwright/test';
+
+test('should display login page', async ({ page }) => {
+  await page.goto('/login');
+  await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+});
+
+// Authenticated test
+import { test, expect } from './fixtures/authenticated';
+
+test('should access videos page', async ({ page }) => {
+  test.use({ storageState: 'playwright/.auth/user.json' });
+  await page.goto('/videos');
+  await expect(page).toHaveURL(/.*videos/);
+});
+```
+
+**Playwright in Aspire:**
+- **Do NOT** include Playwright tests in main AppHost
+- Tests are a separate validation step, not part of app orchestration
+- Run tests independently after starting the app
+- See `tests/README.md` for detailed documentation
+
+#### Backend Testing
 - **Not currently implemented** - focus on feature delivery first
-- Future: xUnit (backend), Vitest (frontend)
+- Future: xUnit, integration tests with WebApplicationFactory
 
 ### Database Schema Conventions
 - UUID primary keys (`Guid` in C#, `UUID` in PostgreSQL)
@@ -181,7 +249,18 @@ dotnet ef database update
 ### API Client Generation (Frontend)
 ```bash
 cd video-manager-frontend
-npm run generate:api  # Runs Kiota to generate TypeScript client
+npm run generate:client  # Runs Kiota to generate TypeScript client
+```
+
+### Running E2E Tests (Frontend)
+```bash
+cd video-manager-frontend
+
+# Run tests (starts dev server automatically)
+npm run test:e2e
+
+# Interactive mode for debugging
+npm run test:e2e:ui
 ```
 
 ### Code Generation (Backend - Immich Client)
@@ -234,6 +313,7 @@ dotnet kiota generate -d path/to/openapi.json -o Infrastructure/Immich/Generated
 - Direct fetch() calls (use generated API clients)
 - Inline Tailwind classes without `cn()` helper
 - Custom CSS files (use Tailwind utilities)
+- Adding Playwright tests to Aspire AppHost (keep tests separate)
 
 ---
 
@@ -249,6 +329,7 @@ dotnet kiota generate -d path/to/openapi.json -o Infrastructure/Immich/Generated
 - Pages: Route folder structure (e.g., `app/(dashboard)/videos/page.tsx`)
 - Hooks: `use{Name}.ts` (e.g., `useAuth.ts`)
 - Types: `{name}.types.ts` or co-located with component
+- Tests: `{name}.spec.ts` (e.g., `auth.spec.ts`, `videos.spec.ts`)
 
 ---
 
@@ -257,4 +338,10 @@ dotnet kiota generate -d path/to/openapi.json -o Infrastructure/Immich/Generated
 - **Aspire**: See `VideoManager/ASPIRE_README.md`
 - **Architecture**: See `SETUP_SUMMARY.md`
 - **Agents**: See `AGENTS.md` for AI assistant guidelines
+- **Testing**: See `video-manager-frontend/tests/README.md` for Playwright E2E test documentation
 
+
+
+- Always use Aspire for local development to ensure proper configuration and service orchestration.
+- always use DateTimeOffset (NOT DateTime) for timestamps in backend code.
+- always ensure contracts and domain models are immutable and are defined as records.

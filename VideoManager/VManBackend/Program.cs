@@ -7,6 +7,7 @@ using VManBackend.Infrastructure.Authentication;
 using VManBackend.Infrastructure.Immich;
 using VManBackend.Mediator;
 using VManBackend.Features.Assets;
+using VManBackend.Features.Authentication;
 using VideoManager.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,8 @@ builder.Services.AddMediator();
 builder.Services.AddRequestHandler<GetAssets.Handler, GetAssets.Request, GetAssets.Response>();
 builder.Services.AddRequestHandler<GetAssetById.Handler, GetAssetById.Request, GetAssetById.Response?>();
 builder.Services.AddRequestHandler<GetAssetStatistics.Handler, GetAssetStatistics.Request, GetAssetStatistics.Response>();
+builder.Services.AddRequestHandler<Register.Handler, Register.Request, Register.Response?>();
+builder.Services.AddRequestHandler<Login.Handler, Login.Request, Login.Response?>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi(options =>
@@ -74,6 +77,39 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Authentication Endpoints (no authorization required)
+var authGroup = app.MapGroup("/api/auth");
+
+authGroup.MapPost("/register", async (Register.Request request, IMediator mediator) =>
+{
+    if (!Register.Validator.Validate(request, out var error))
+    {
+        return Results.BadRequest(new { error });
+    }
+
+    var response = await mediator.Send(request);
+    return response != null 
+        ? Results.Ok(response) 
+        : Results.Conflict(new { error = "Email already in use" });
+})
+.WithName("Register")
+.WithOpenApi();
+
+authGroup.MapPost("/login", async (Login.Request request, IMediator mediator) =>
+{
+    if (!Login.Validator.Validate(request, out var error))
+    {
+        return Results.BadRequest(new { error });
+    }
+
+    var response = await mediator.Send(request);
+    return response != null 
+        ? Results.Ok(response) 
+        : Results.Unauthorized();
+})
+.WithName("Login")
+.WithOpenApi();
 
 // Asset Endpoints
 var assetsGroup = app.MapGroup("/api/assets")

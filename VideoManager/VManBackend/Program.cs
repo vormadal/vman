@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using VManBackend.Common.Data;
 using VManBackend.Infrastructure.Authentication;
 using VManBackend.Infrastructure.Immich;
@@ -48,7 +50,20 @@ builder.Services.AddRequestHandler<GetAssetStatistics.Handler, GetAssetStatistic
 builder.Services.AddRequestHandler<Register.Handler, Register.Request, Register.Response?>();
 builder.Services.AddRequestHandler<Login.Handler, Login.Request, Login.Response?>();
 
-builder.Services.AddControllers();
+// Configure JSON options for minimal APIs
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
+
+// Add Controllers with JSON options
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 builder.Services.AddOpenApi(options =>
 {
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
@@ -159,5 +174,15 @@ assetsGroup.MapGet("/statistics", async (IMediator mediator) =>
 })
 .WithName("GetAssetStatistics")
 .WithOpenApi();
+
+app.MapDefaultEndpoints();
+
+// Apply migrations on startup (development only)
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();

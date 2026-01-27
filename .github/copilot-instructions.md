@@ -1,7 +1,17 @@
+---
+applyTo: '**'
+name: 'GitHub Copilot Instructions for Video Manager'
+description: 'Instructions for GitHub Copilot to assist in development of the Video Manager project, covering both backend and frontend guidelines, architecture patterns, and best practices.'
+---
+
 # GitHub Copilot Instructions - Video Manager
 
+- Always create a plan before writing code.
+- Follow the established architecture patterns: Vertical Slice + Custom CQRS for backend, Next.js App Router for frontend.
+- Adhere to the coding conventions and best practices outlined in the project documentation.
+
 ## Project Overview
-**Video Manager** is an enterprise-grade, multi-platform video and media management application built with modern cloud-native technologies. It integrates with multiple video providers (Immich, OneDrive) to enable unified browsing, management, and processing of videos with automated thumbnail and GIF generation capabilities.
+**Video Manager** is a simple video and media management application built with modern cloud-native technologies. It integrates with multiple video providers (Immich, OneDrive) to enable unified browsing, management, and processing of videos with automated thumbnail and GIF generation capabilities.
 
 ### Technology Stack
 - **Backend**: .NET 10, ASP.NET Core MVC, C# 13
@@ -140,69 +150,6 @@ public class Handler(ApplicationDbContext db, IJwtService jwt, ILogger<Handler> 
 - **Frontend**: React Query handles loading/error states automatically
 - Use toast notifications (Sonner) for user feedback
 
-### Testing
-
-#### Frontend E2E Testing (Playwright)
-- **Framework**: Playwright with TypeScript
-- **Location**: `video-manager-frontend/tests/`
-- **Browsers**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
-- **Configuration**: `playwright.config.ts`
-
-**Running Tests:**
-```bash
-cd video-manager-frontend
-
-# Run all tests
-npm run test:e2e
-
-# Interactive UI mode (recommended during development)
-npm run test:e2e:ui
-
-# Debug mode with browser DevTools
-npm run test:e2e:debug
-
-# View HTML report
-npm run test:e2e:report
-
-# Run specific test file
-npx playwright test auth.spec.ts
-
-# Run specific browser
-npx playwright test --project=chromium
-```
-
-**Test Structure:**
-- `auth.spec.ts` - Authentication flows (login, register)
-- `home.spec.ts` - Home page and redirects
-- `videos.spec.ts` - Video management (requires auth)
-- `auth.setup.ts` - Authentication setup for authenticated tests
-- `fixtures/authenticated.ts` - Reusable auth fixture
-
-**Writing Tests:**
-```typescript
-// Basic test
-import { test, expect } from '@playwright/test';
-
-test('should display login page', async ({ page }) => {
-  await page.goto('/login');
-  await expect(page.getByRole('heading', { name: /sign in/i })).toBeVisible();
-});
-
-// Authenticated test
-import { test, expect } from './fixtures/authenticated';
-
-test('should access videos page', async ({ page }) => {
-  test.use({ storageState: 'playwright/.auth/user.json' });
-  await page.goto('/videos');
-  await expect(page).toHaveURL(/.*videos/);
-});
-```
-
-**Playwright in Aspire:**
-- **Do NOT** include Playwright tests in main AppHost
-- Tests are a separate validation step, not part of app orchestration
-- Run tests independently after starting the app
-- See `tests/README.md` for detailed documentation
 
 #### Backend Testing
 - **Not currently implemented** - focus on feature delivery first
@@ -217,6 +164,9 @@ test('should access videos page', async ({ page }) => {
 ---
 
 ## Development Workflow
+
+* NEVER run migration scripts manually against the database. Always use the EF Core tools to manage migrations.
+* 
 
 ### Running the Application
 
@@ -314,6 +264,7 @@ dotnet kiota generate -d path/to/openapi.json -o Infrastructure/Immich/Generated
 - Inline Tailwind classes without `cn()` helper
 - Custom CSS files (use Tailwind utilities)
 - Adding Playwright tests to Aspire AppHost (keep tests separate)
+- Writing selectors/interactions directly in test files (use Page Object Model)
 
 ---
 
@@ -330,6 +281,7 @@ dotnet kiota generate -d path/to/openapi.json -o Infrastructure/Immich/Generated
 - Hooks: `use{Name}.ts` (e.g., `useAuth.ts`)
 - Types: `{name}.types.ts` or co-located with component
 - Tests: `{name}.spec.ts` (e.g., `auth.spec.ts`, `videos.spec.ts`)
+- Page Objects: `{name}.page.ts` (e.g., `login.page.ts`, `videos.page.ts`)
 
 ---
 

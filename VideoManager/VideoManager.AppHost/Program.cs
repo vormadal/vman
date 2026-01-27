@@ -7,7 +7,7 @@ var postgres = builder.AddPostgres("postgres")
     .WithEndpoint(port: 5432, targetPort: 5432, name: "postgres")
     .AddDatabase("videomanager");
 
-var apiService = builder.AddProject<Projects.VManBackend>("apiservice")
+var apiService = builder.AddProject<Projects.VManBackend>("apiservice", launchProfileName: "https")
     .WithReference(postgres)
     .WaitFor(postgres);
 

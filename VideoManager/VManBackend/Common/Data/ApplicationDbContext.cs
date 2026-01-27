@@ -10,9 +10,8 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
-    public DbSet<ImmichAsset> ImmichAssets => Set<ImmichAsset>();
-    public DbSet<ImmichExifData> ImmichExifData => Set<ImmichExifData>();
-    public DbSet<SyncHistory> SyncHistories => Set<SyncHistory>();
+    public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<ItemTag> ItemTags => Set<ItemTag>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,57 +28,40 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
         });
 
-        modelBuilder.Entity<ImmichAsset>(entity =>
+        modelBuilder.Entity<Tag>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.OriginalFileName).HasMaxLength(500).IsRequired();
-            entity.Property(e => e.OriginalPath).HasMaxLength(1000).IsRequired();
-            entity.Property(e => e.AssetType).IsRequired();
-            entity.Property(e => e.CreatedAt).IsRequired();
-            entity.Property(e => e.LastSyncedAt).IsRequired();
-            entity.Property(e => e.Duration).HasMaxLength(50);
-            entity.Property(e => e.Description).HasMaxLength(2000);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("NOW()");
             
-            entity.HasIndex(e => e.AssetType);
-            entity.HasIndex(e => e.CreatedAt);
-            entity.HasIndex(e => e.LastSyncedAt);
-            
-            entity.HasOne(e => e.ExifData)
-                .WithOne(e => e.Asset)
-                .HasForeignKey<ImmichExifData>(e => e.AssetId)
+            entity.HasMany(e => e.ItemTags)
+                .WithOne(e => e.Tag)
+                .HasForeignKey(e => e.TagId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<ImmichExifData>(entity =>
+        modelBuilder.Entity<ItemTag>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.AssetId).IsRequired();
-            entity.Property(e => e.Make).HasMaxLength(100);
-            entity.Property(e => e.Model).HasMaxLength(100);
-            entity.Property(e => e.LensModel).HasMaxLength(100);
-            entity.Property(e => e.ExposureTime).HasMaxLength(50);
-            entity.Property(e => e.City).HasMaxLength(100);
-            entity.Property(e => e.State).HasMaxLength(100);
-            entity.Property(e => e.Country).HasMaxLength(100);
+            entity.Property(e => e.TagId).IsRequired();
+            entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ProviderItemId).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
             
-            entity.HasIndex(e => e.AssetId).IsUnique();
-        });
-
-        modelBuilder.Entity<SyncHistory>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.StartedAt).IsRequired();
-            entity.Property(e => e.Status).IsRequired();
-            entity.Property(e => e.ErrorMessage).HasMaxLength(2000);
-            entity.Property(e => e.AssetTypeFilter).HasMaxLength(50);
+            // Composite unique index to prevent duplicate tags on same item
+            entity.HasIndex(e => new { e.TagId, e.ProviderName, e.ProviderItemId })
+                .IsUnique()
+                .HasDatabaseName("IX_ItemTags_Unique");
             
-            entity.HasIndex(e => e.StartedAt);
-            entity.HasIndex(e => e.Status);
+            // Index for fast lookups by provider + item
+            entity.HasIndex(e => new { e.ProviderName, e.ProviderItemId })
+                .HasDatabaseName("IX_ItemTags_Provider_Item");
             
-            entity.HasOne(e => e.User)
-                .WithMany()
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.SetNull);
+            // Index for fast lookups by tag
+            entity.HasIndex(e => e.TagId)
+                .HasDatabaseName("IX_ItemTags_TagId");
         });
     }
 }

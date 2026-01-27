@@ -9,7 +9,7 @@ namespace VideoManager.Features.{FeatureName};
 
 public static class {Action}
 {
-    public record Request(/* parameters */);
+    public record Request : IRequest<Response>(/* parameters */);
     public record Response(/* return data */);
     
     // Validation (NOT using FluentValidation currently)

@@ -9,6 +9,7 @@ description: 'Instructions for GitHub Copilot to assist in development of the Vi
 - Always create a plan before writing code.
 - Follow the established architecture patterns: Vertical Slice + Custom CQRS for backend, Next.js App Router for frontend.
 - Adhere to the coding conventions and best practices outlined in the project documentation.
+- when making changes to `Program.cs` request for aspire to be restartet instead of doing it yourself.
 
 ## Project Overview
 **Video Manager** is a simple video and media management application built with modern cloud-native technologies. It integrates with multiple video providers (Immich, OneDrive) to enable unified browsing, management, and processing of videos with automated thumbnail and GIF generation capabilities.

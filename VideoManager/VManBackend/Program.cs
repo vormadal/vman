@@ -42,6 +42,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// Add CORS - Allow HTTP for development
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 // Add Services
 builder.Services.AddScoped<IJwtService, JwtService>();
 
@@ -109,7 +121,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Apply middleware
+app.UseCors();
+
+// For production, HTTPS redirection is handled by reverse proxy/hosting
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -2,11 +2,13 @@
   "profiles": {
     "http": {
       "commandName": "Project",
+      "hotReloadEnabled": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_WATCH": "1"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5244"
+      "applicationUrl": "http://localhost:5001"
     },
     "https": {
       "commandName": "Project",

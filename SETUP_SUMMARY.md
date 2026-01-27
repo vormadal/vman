@@ -183,8 +183,8 @@ cd VideoManager\VideoManager.AppHost
 aspire run
 ```
 This starts everything:
-- **Backend API**: https://localhost:7213
-- **Frontend**: http://localhost:50494
+- **Backend API**: https://localhost:5000
+- **Frontend**: http://localhost:3000
 - **PostgreSQL + pgAdmin**: Automatically provisioned
 - **Aspire Dashboard**: https://localhost:17037
 
@@ -194,7 +194,7 @@ This starts everything:
    ```bash
    cd VideoManager\VManBackend
    dotnet run
-   # API runs on https://localhost:7213
+   # API runs on http://localhost:5000
    ```
 3. **Start Frontend**:
    ```bash

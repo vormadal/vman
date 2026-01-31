@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "clients": {
+    "videoManagerApi": {
+      "descriptionLocation": "http://localhost:5001/openapi/v1.json",
+      "includePatterns": ["**"],
+      "excludePatterns": [],
+      "language": "typescript",
+      "outputPath": "./src/lib/api/generated",
+      "clientClassName": "VideoManagerApiClient",
+      "structuredMimeTypes": [
+        "application/json"
+      ]
+    }
+  }
+}

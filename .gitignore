@@ -1,6 +1,5 @@
 .vs/
 obj/
 bin/
-VideoSplitter/
 TestOutput/
 appsettings.Development.json

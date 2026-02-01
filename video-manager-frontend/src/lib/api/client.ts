@@ -53,8 +53,19 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: response.statusText }));
-      throw new Error(error.error || `HTTP ${response.status}: ${response.statusText}`);
+      // Try to parse ProblemDetails format first
+      const errorData = await response.json().catch(() => null);
+      
+      if (errorData?.detail) {
+        // RFC 7807 ProblemDetails format
+        throw new Error(errorData.detail);
+      } else if (errorData?.error) {
+        // Legacy format fallback
+        throw new Error(errorData.error);
+      } else {
+        // Fallback to status text
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
     }
 
     return response.json();

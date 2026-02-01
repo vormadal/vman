@@ -11,8 +11,10 @@ description: 'Guidelines for writing Playwright tests using the Page Object Mode
 - **Framework**: Playwright with TypeScript
 - **Location**: `video-manager-frontend/tests/`
 - **Pattern**: Page Object Model (POM) - **REQUIRED**
-- **Browsers**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- **Browsers**: Chromium, Firefox
 - **Configuration**: `playwright.config.ts`
+
+- Only write tests for critical user flows (login, video management, collections) and avoid excessive coverage and verbose tests.
 
 **Running Tests:**
 
@@ -143,4 +145,3 @@ test.describe('Authentication', () => {
 - **Do NOT** include Playwright tests in main AppHost
 - Tests are a separate validation step, not part of app orchestration
 - Run tests independently after starting the app
-- See `tests/README.md` for detailed documentation

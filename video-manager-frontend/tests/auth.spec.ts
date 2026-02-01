@@ -3,13 +3,19 @@ import { LoginPage } from './pages/login.page';
 import { RegisterPage } from './pages/register.page';
 
 test.describe('Authentication', () => {
-  // Generate unique test user email for each test run
-  const timestamp = Date.now();
+  // Test user from environment variables (seeded in backend)
   const testUser = {
-    firstName: 'Test',
+    email: process.env.TEST_USER_EMAIL || 'test.user@example.com',
+    password: process.env.TEST_USER_PASSWORD || 'TestPassword123!',
+  };
+  
+  // For registration tests, use unique email
+  const timestamp = Date.now();
+  const newUser = {
+    firstName: 'New',
     lastName: 'User',
-    email: `test.user.${timestamp}@example.com`,
-    password: 'TestPassword123!',
+    email: `new.user.${timestamp}@example.com`,
+    password: 'NewPassword123!',
   };
 
   test('should display login page', async ({ page }) => {
@@ -45,11 +51,11 @@ test.describe('Authentication', () => {
     await registerPage.goto();
     await registerPage.expectToBeVisible();
 
-    // Fill registration form
+    // Fill registration form with unique user
     await registerPage.register(
-      `${testUser.firstName} ${testUser.lastName}`,
-      testUser.email,
-      testUser.password
+      `${newUser.firstName} ${newUser.lastName}`,
+      newUser.email,
+      newUser.password
     );
 
     // Should auto-login and redirect to /videos
@@ -59,29 +65,14 @@ test.describe('Authentication', () => {
     await expect(page).toHaveURL(/.*\/videos/);
     
     // Optional: Check for user-specific elements (adjust based on your UI)
-    // await expect(page.getByText(testUser.firstName)).toBeVisible();
+    // await expect(page.getByText(newUser.firstName)).toBeVisible();
   });
 
   test('should login with registered credentials', async ({ page }) => {
-    // First register a user
-    const registerPage = new RegisterPage(page);
-    await registerPage.goto();
-    await registerPage.register(
-      `${testUser.firstName} ${testUser.lastName}`,
-      testUser.email,
-      testUser.password
-    );
-    
-    // Wait for auto-login redirect
-    await page.waitForURL(/.*\/videos/, { timeout: 10000 });
-
-    // Logout by clearing storage (simulating logout)
-    await page.context().clearCookies();
-    await page.evaluate(() => localStorage.clear());
-    
-    // Now test login
+    // Use the seeded test user for login test
     const loginPage = new LoginPage(page);
     await loginPage.goto();
+    await loginPage.login(testUser.email, testUser.password);
     await loginPage.login(testUser.email, testUser.password);
 
     // Should redirect to /videos
@@ -99,40 +90,27 @@ test.describe('Authentication', () => {
     // Should stay on login page and show error
     await expect(page).toHaveURL(/.*login/);
     
-    // Check for error message (adjust selector based on your error display)
-    const errorMessage = page.getByText(/invalid credentials|email or password/i);
+    // Check for error message in toast (using alert role for Sonner toast)
+    const errorMessage = page.getByRole('alert').filter({ hasText: /invalid email or password/i });
     await expect(errorMessage).toBeVisible({ timeout: 5000 });
   });
 
   test('should prevent duplicate email registration', async ({ page }) => {
     const registerPage = new RegisterPage(page);
     
-    // Register user first time
+    // Try to register with the already seeded test user email
     await registerPage.goto();
     await registerPage.register(
-      `${testUser.firstName} ${testUser.lastName}`,
-      testUser.email,
-      testUser.password
-    );
-    await page.waitForURL(/.*\/videos/, { timeout: 10000 });
-    
-    // Logout
-    await page.context().clearCookies();
-    await page.evaluate(() => localStorage.clear());
-    
-    // Try to register again with same email
-    await registerPage.goto();
-    await registerPage.register(
-      'Another User',
-      testUser.email, // Same email
+      'Duplicate User',
+      testUser.email, // Email already exists in DB from seeding
       'DifferentPassword123!'
     );
     
     // Should stay on register page and show error
     await expect(page).toHaveURL(/.*register/);
     
-    // Check for error message about duplicate email
-    const errorMessage = page.getByText(/email.*already.*exists|email.*taken/i);
+    // Check for error message in toast about duplicate email
+    const errorMessage = page.getByRole('alert').filter({ hasText: /email already in use/i });
     await expect(errorMessage).toBeVisible({ timeout: 5000 });
   });
 
@@ -142,7 +120,7 @@ test.describe('Authentication', () => {
     
     // Try to register with weak password
     await registerPage.register(
-      `${testUser.firstName} ${testUser.lastName}`,
+      `${newUser.firstName} ${newUser.lastName}`,
       `weak.${timestamp}@example.com`,
       '123' // Weak password
     );

@@ -8,6 +8,7 @@ using VManBackend.Common.Data;
 using VManBackend.Infrastructure.Authentication;
 using VManBackend.Infrastructure.Immich;
 using VManBackend.Infrastructure.Providers;
+using VManBackend.Infrastructure.Data;
 using VManBackend.Mediator;
 // using VManBackend.Features.Assets; // Temporarily disabled
 using VManBackend.Features.Authentication;
@@ -96,6 +97,10 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
+
+// Add ProblemDetails support
+builder.Services.AddProblemDetails();
+
 builder.Services.AddOpenApi(options =>
 {
     options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
@@ -124,6 +129,10 @@ if (app.Environment.IsDevelopment())
 // Apply middleware
 app.UseCors();
 
+// Add ProblemDetails middleware for exception handling
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+
 // For production, HTTPS redirection is handled by reverse proxy/hosting
 // app.UseHttpsRedirection();
 
@@ -139,13 +148,21 @@ authGroup.MapPost("/register", async (Register.Request request, IMediator mediat
 {
     if (!Register.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     var response = await mediator.Send(request);
     return response != null 
         ? Results.Ok(response) 
-        : Results.Conflict(new { error = "Email already in use" });
+        : Results.Problem(
+            detail: "Email already in use",
+            statusCode: StatusCodes.Status409Conflict,
+            title: "Registration Failed"
+        );
 })
 .WithName("Register")
 .WithOpenApi();
@@ -154,13 +171,21 @@ authGroup.MapPost("/login", async (Login.Request request, IMediator mediator) =>
 {
     if (!Login.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     var response = await mediator.Send(request);
     return response != null 
         ? Results.Ok(response) 
-        : Results.Unauthorized();
+        : Results.Problem(
+            detail: "Invalid email or password",
+            statusCode: StatusCodes.Status401Unauthorized,
+            title: "Authentication Failed"
+        );
 })
 .WithName("Login")
 .WithOpenApi();
@@ -173,7 +198,11 @@ tagsGroup.MapGet("/", async (IMediator mediator, string? search = null, int page
     var request = new GetTags.Request(search, page, pageSize);
     if (!GetTags.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     var response = await mediator.Send(request);
@@ -187,7 +216,11 @@ tagsGroup.MapGet("/{id:guid}", async (IMediator mediator, Guid id) =>
     var request = new GetTagById.Request(id);
     if (!GetTagById.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     try
@@ -197,7 +230,11 @@ tagsGroup.MapGet("/{id:guid}", async (IMediator mediator, Guid id) =>
     }
     catch (InvalidOperationException ex)
     {
-        return Results.NotFound(new { error = ex.Message });
+        return Results.Problem(
+            detail: ex.Message,
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Tag Not Found"
+        );
     }
 })
 .WithName("GetTagById")
@@ -207,7 +244,11 @@ tagsGroup.MapPost("/", async (IMediator mediator, CreateTag.Request request) =>
 {
     if (!CreateTag.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     try
@@ -217,7 +258,11 @@ tagsGroup.MapPost("/", async (IMediator mediator, CreateTag.Request request) =>
     }
     catch (InvalidOperationException ex)
     {
-        return Results.Conflict(new { error = ex.Message });
+        return Results.Problem(
+            detail: ex.Message,
+            statusCode: StatusCodes.Status409Conflict,
+            title: "Tag Already Exists"
+        );
     }
 })
 .WithName("CreateTag")
@@ -228,12 +273,20 @@ tagsGroup.MapPut("/{id:guid}", async (IMediator mediator, Guid id, RenameTag.Req
     // Ensure the ID in the route matches the request
     if (id != request.Id)
     {
-        return Results.BadRequest(new { error = "ID mismatch" });
+        return Results.Problem(
+            detail: "ID mismatch",
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     if (!RenameTag.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     try
@@ -243,7 +296,11 @@ tagsGroup.MapPut("/{id:guid}", async (IMediator mediator, Guid id, RenameTag.Req
     }
     catch (InvalidOperationException ex)
     {
-        return Results.NotFound(new { error = ex.Message });
+        return Results.Problem(
+            detail: ex.Message,
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Tag Not Found"
+        );
     }
 })
 .WithName("RenameTag")
@@ -254,7 +311,11 @@ tagsGroup.MapDelete("/{id:guid}", async (IMediator mediator, Guid id) =>
     var request = new DeleteTag.Request(id);
     if (!DeleteTag.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     try
@@ -264,7 +325,11 @@ tagsGroup.MapDelete("/{id:guid}", async (IMediator mediator, Guid id) =>
     }
     catch (InvalidOperationException ex)
     {
-        return Results.NotFound(new { error = ex.Message });
+        return Results.Problem(
+            detail: ex.Message,
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Tag Not Found"
+        );
     }
 })
 .WithName("DeleteTag")
@@ -285,7 +350,11 @@ itemsGroup.MapGet("/", async (IMediator mediator, string? provider = null, strin
     var request = new GetItems.Request(provider, mediaType, isFavorite, sortBy, sortDescending, page, pageSize);
     if (!GetItems.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     var response = await mediator.Send(request);
@@ -299,13 +368,21 @@ itemsGroup.MapGet("/{provider}/{id}", async (IMediator mediator, string provider
     var request = new GetItemById.Request(provider, id);
     if (!GetItemById.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     var response = await mediator.Send(request);
     return response != null 
         ? Results.Ok(response) 
-        : Results.NotFound(new { error = "Item not found" });
+        : Results.Problem(
+            detail: "Item not found",
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Item Not Found"
+        );
 })
 .WithName("GetItemById")
 .WithOpenApi();
@@ -317,7 +394,11 @@ itemsGroup.MapPost("/{provider}/{id}/tags", async (IMediator mediator, string pr
     
     if (!AddTagToItem.Validator.Validate(fullRequest, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     try
@@ -327,7 +408,11 @@ itemsGroup.MapPost("/{provider}/{id}/tags", async (IMediator mediator, string pr
     }
     catch (InvalidOperationException ex)
     {
-        return Results.NotFound(new { error = ex.Message });
+        return Results.Problem(
+            detail: ex.Message,
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Resource Not Found"
+        );
     }
 })
 .WithName("AddTagToItem")
@@ -339,7 +424,11 @@ itemsGroup.MapDelete("/{provider}/{id}/tags/{tagId:guid}", async (IMediator medi
     
     if (!RemoveTagFromItem.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     var response = await mediator.Send(request);
@@ -355,7 +444,11 @@ tagsGroup.MapGet("/{id:guid}/items", async (IMediator mediator, Guid id, int pag
     
     if (!GetItemsByTag.Validator.Validate(request, out var error))
     {
-        return Results.BadRequest(new { error });
+        return Results.Problem(
+            detail: error,
+            statusCode: StatusCodes.Status400BadRequest,
+            title: "Validation Error"
+        );
     }
 
     try
@@ -365,7 +458,11 @@ tagsGroup.MapGet("/{id:guid}/items", async (IMediator mediator, Guid id, int pag
     }
     catch (InvalidOperationException ex)
     {
-        return Results.NotFound(new { error = ex.Message });
+        return Results.Problem(
+            detail: ex.Message,
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Tag Not Found"
+        );
     }
 })
 .WithName("GetItemsByTag")
@@ -373,12 +470,15 @@ tagsGroup.MapGet("/{id:guid}/items", async (IMediator mediator, Guid id, int pag
 
 app.MapDefaultEndpoints();
 
-// Apply migrations on startup (development only)
+// Apply migrations and seed data on startup (development only)
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    
     db.Database.Migrate();
+    await DbSeeder.SeedTestUserAsync(db, config);
 }
 
 app.Run();

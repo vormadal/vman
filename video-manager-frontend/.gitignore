@@ -50,3 +50,4 @@ src/lib/api/generated/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+.env

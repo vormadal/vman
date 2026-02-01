@@ -11,6 +11,7 @@ public static class GetItems
         string? Provider = null,
         MediaType? Type = null,
         bool? IsFavorite = null,
+        bool? Untagged = null,  // Filter to show only untagged items
         string? SortBy = "createdAt",
         bool SortDescending = true,
         int Page = 1,
@@ -58,23 +59,25 @@ public static class GetItems
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            // Build filter for media provider
-            var filter = new MediaItemFilter
+            var providerName = request.Provider ?? "immich"; // Default to immich for now
+
+            // If filtering by untagged, we need to fetch more items from provider
+            // to account for items that will be filtered out
+            var fetchFilter = new MediaItemFilter
             {
                 Type = request.Type,
                 IsFavorite = request.IsFavorite,
                 SortBy = request.SortBy ?? "createdAt",
                 Descending = request.SortDescending,
-                Page = request.Page,
-                PageSize = request.PageSize
+                Page = request.Untagged == true ? 1 : request.Page,  // Fetch from page 1 when filtering by untagged
+                PageSize = request.Untagged == true ? 500 : request.PageSize  // Fetch more to compensate for filtering
             };
 
             // Fetch items from provider
-            var result = await mediaProvider.GetItemsAsync(filter, cancellationToken);
+            var result = await mediaProvider.GetItemsAsync(fetchFilter, cancellationToken);
 
             // Get all tags for these items (batch fetch for performance)
             var itemIds = result.Items.Select(i => i.Id).ToList();
-            var providerName = request.Provider ?? "immich"; // Default to immich for now
 
             var itemTagsDict = await db.ItemTags
                 .Include(it => it.Tag)
@@ -87,7 +90,7 @@ public static class GetItems
                 );
 
             // Merge provider data with tags
-            var items = result.Items.Select(item => new ItemDto(
+            var allItems = result.Items.Select(item => new ItemDto(
                 providerName,
                 item.Id,
                 item.OriginalFileName,
@@ -99,7 +102,22 @@ public static class GetItems
                 itemTagsDict.GetValueOrDefault(item.Id, new List<TagDto>())
             )).ToList();
 
-            return new Response(items, result.TotalCount, result.Page, result.PageSize);
+            // Apply untagged filter if requested
+            if (request.Untagged == true)
+            {
+                allItems = allItems.Where(item => item.Tags.Count == 0).ToList();
+            }
+
+            // Manual pagination when filtering by untagged
+            var totalCount = request.Untagged == true ? allItems.Count : result.TotalCount;
+            var items = request.Untagged == true
+                ? allItems
+                    .Skip((request.Page - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToList()
+                : allItems;
+
+            return new Response(items, totalCount, request.Page, request.PageSize);
         }
     }
 }

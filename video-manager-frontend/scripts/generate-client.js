@@ -10,6 +10,9 @@
  * 4. Generates Kiota client only if spec changed or client missing
  */
 
+// Load environment variables from .env file
+require('dotenv').config();
+
 const https = require('https');
 const http = require('http');
 const { execSync } = require('child_process');
@@ -167,11 +170,8 @@ function generateClient() {
   try {
     info('Running Kiota client generator...');
     
-    // Use direct CLI arguments instead of config file
-    const isHttps = CONFIG.openApiUrl.startsWith('https://');
+    // Use .NET Kiota tool directly (must be installed globally)
     const args = [
-      '--package=@microsoft/kiota',
-      'kiota',
       'generate',
       '--openapi', CONFIG.openApiUrl,
       '--language', 'TypeScript',
@@ -183,11 +183,12 @@ function generateClient() {
     ];
     
     // Only add SSL validation flag for HTTPS
+    const isHttps = CONFIG.openApiUrl.startsWith('https://');
     if (isHttps) {
       args.push('--disable-ssl-validation');
     }
     
-    execSync(`npx ${args.join(' ')}`, {
+    execSync(`kiota ${args.join(' ')}`, {
       stdio: 'inherit',
     });
     return true;
@@ -200,7 +201,7 @@ function generateClient() {
 // Check if Kiota is available
 function checkKiota() {
   try {
-    execSync('npx --package=@microsoft/kiota kiota --version', { stdio: 'pipe' });
+    execSync('kiota --version', { stdio: 'pipe' });
     return true;
   } catch (err) {
     return false;
@@ -248,13 +249,10 @@ async function main() {
 
   // Check Kiota availability
   if (!checkKiota()) {
-    warning('Kiota not found, installing @microsoft/kiota@1.29.0...');
-    try {
-      execSync('npm install --save-dev @microsoft/kiota@1.29.0', { stdio: 'inherit' });
-    } catch (err) {
-      error('Failed to install Kiota');
-      process.exit(1);
-    }
+    error('Kiota (.NET tool) not found!');
+    warning('Install it globally with:');
+    console.log('  dotnet tool install --global Microsoft.OpenApi.Kiota\n');
+    process.exit(1);
   }
 
   // Generate client

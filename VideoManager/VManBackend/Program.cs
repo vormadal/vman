@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -115,7 +116,14 @@ builder.Services.AddImmichClient(options =>
 });
 
 // Add Media Providers
-builder.Services.AddScoped<VManBackend.Infrastructure.Providers.IMediaProvider, VManBackend.Infrastructure.Providers.ImmichMediaProvider>();
+builder.Services.AddMemoryCache(); // For caching provider responses
+builder.Services.AddScoped<ImmichMediaProvider>(); // Register concrete provider
+builder.Services.AddScoped<IMediaProvider>(sp =>
+{
+    var immichProvider = sp.GetRequiredService<ImmichMediaProvider>();
+    var cache = sp.GetRequiredService<IMemoryCache>();
+    return new CachedMediaProvider(immichProvider, cache); // Wrap with caching
+});
 
 var app = builder.Build();
 
@@ -146,8 +154,6 @@ app.MapControllers();
 app.MapAuthEndpoints();
 app.MapTagEndpoints();
 app.MapItemEndpoints();
-
-app.MapDefaultEndpoints();
 
 // Apply migrations and seed data on startup (development only)
 if (app.Environment.IsDevelopment())

@@ -5,8 +5,8 @@ import { RegisterPage } from './pages/register.page';
 test.describe('Authentication', () => {
   // Test user from environment variables (seeded in backend)
   const testUser = {
-    email: process.env.TEST_USER_EMAIL || 'test.user@example.com',
-    password: process.env.TEST_USER_PASSWORD || 'TestPassword123!',
+    email: process.env.TEST_USER_EMAIL || 'not-set',
+    password: process.env.TEST_USER_PASSWORD || 'not-set',
   };
   
   // For registration tests, use unique email

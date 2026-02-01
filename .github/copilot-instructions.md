@@ -48,10 +48,8 @@ vman/
 
 **Option 1: Aspire (Recommended)**
 ```bash
-cd VideoManager\VideoManager.AppHost
-dotnet run
-# Access Aspire Dashboard at http://localhost:15XXX
-# API runs on dynamically assigned port
+aspire run
+# Access Aspire Dashboard at https://localhost:17037
 ```
 
 ### API Client Generation (Frontend)

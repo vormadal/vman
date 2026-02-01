@@ -12,8 +12,8 @@ public static class DbSeeder
     /// </summary>
     public static async Task SeedTestUserAsync(ApplicationDbContext db, IConfiguration config)
     {
-        var email = config["TestUser:Email"] ?? config["TEST_USER_EMAIL"];
-        var password = config["TestUser:Password"] ?? config["TEST_USER_PASSWORD"];
+        var email = config["TestUser:Email"];
+        var password = config["TestUser:Password"];
         var firstName = config["TestUser:FirstName"] ?? config["TEST_USER_FIRST_NAME"] ?? "Test";
         var lastName = config["TestUser:LastName"] ?? config["TEST_USER_LAST_NAME"] ?? "User";
 

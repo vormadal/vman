@@ -16,6 +16,9 @@ Video Manager is a full-stack application for managing media from providers like
 
 ## Running the Application
 
+**Always create a plan** before implementing and save it in the `plans` folder.
+**Always implement features** in small increments and get verification from the user.
+
 **Always use Aspire** for local development:
 ```bash
 cd VideoManager/VideoManager.AppHost

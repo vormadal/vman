@@ -128,12 +128,14 @@ class ApiClient {
     const searchParams = new URLSearchParams();
     if (params?.provider) searchParams.append('provider', params.provider);
     if (params?.type) searchParams.append('type', params.type);
+    if (params?.untagged !== undefined) searchParams.append('untagged', params.untagged.toString());
+    if (params?.tagId) searchParams.append('tagId', params.tagId);
     if (params?.isFavorite !== undefined) searchParams.append('isFavorite', params.isFavorite.toString());
     if (params?.sortBy) searchParams.append('sortBy', params.sortBy);
     if (params?.sortDescending !== undefined) searchParams.append('sortDescending', params.sortDescending.toString());
     searchParams.append('page', (params?.page || 1).toString());
     searchParams.append('pageSize', (params?.pageSize || 50).toString());
-    
+
     return this.request<ItemsResponse>(`/api/items?${searchParams}`);
   }
 

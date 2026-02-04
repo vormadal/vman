@@ -103,6 +103,8 @@ export interface ItemsResponse {
 export interface GetItemsParams {
   provider?: string;
   type?: MediaType;
+  untagged?: boolean;
+  tagId?: string;
   isFavorite?: boolean;
   sortBy?: string;
   sortDescending?: boolean;

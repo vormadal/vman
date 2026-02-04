@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag } from '@/lib/hooks/useApi';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,25 +12,64 @@ import { Label } from '@/components/ui/label';
 import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
   const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
   const [newTagName, setNewTagName] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, error } = useItems({
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteItems({
     type: selectedMediaType,
     tagId: selectedTagId,
-    page: currentPage,
-    pageSize: 50
   });
 
   const { data: tagsData } = useTags();
   const addTagMutation = useAddTagToItem();
   const removeTagMutation = useRemoveTagFromItem();
   const createTagMutation = useCreateTag();
+
+  const allItems = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data]
+  );
+
+  const totalCount = data?.pages[0]?.totalCount ?? 0;
+
+  const getColumnCount = useCallback(() => {
+    if (typeof window === 'undefined') return 4;
+    const width = window.innerWidth;
+    if (width >= 1280) return 4; // xl
+    if (width >= 1024) return 3; // lg
+    if (width >= 768) return 2;  // md
+    return 1;
+  }, []);
+
+  const [columnCount, setColumnCount] = useState(getColumnCount);
+
+  useEffect(() => {
+    const handleResize = () => setColumnCount(getColumnCount());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getColumnCount]);
+
+  const rowCount = Math.ceil(allItems.length / columnCount);
+
+  const rowVirtualizer = useWindowVirtualizer({
+    count: rowCount,
+    estimateSize: () => 420,
+    overscan: 3,
+  });
+
+  const virtualRows = rowVirtualizer.getVirtualItems();
 
   const handleAddTag = (provider: string, itemId: string, tagId: string) => {
     addTagMutation.mutate({ provider, itemId, tagId });
@@ -67,6 +106,30 @@ export default function ItemsPage() {
     }
   };
 
+  useEffect(() => {
+    const [lastItem] = [...virtualRows].reverse();
+
+    if (!lastItem) return;
+
+    if (
+      lastItem.index >= rowCount - 2 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    virtualRows,
+    rowCount,
+  ]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [selectedMediaType, selectedTagId]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -82,8 +145,6 @@ export default function ItemsPage() {
       </div>
     );
   }
-
-  const totalPages = data ? Math.ceil(data.totalCount / 50) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -105,20 +166,14 @@ export default function ItemsPage() {
             <Badge
               variant={selectedMediaType === undefined ? 'default' : 'outline'}
               className="cursor-pointer"
-              onClick={() => {
-                setSelectedMediaType(undefined);
-                setCurrentPage(1);
-              }}
+              onClick={() => setSelectedMediaType(undefined)}
             >
               All
             </Badge>
             <Badge
               variant={selectedMediaType === MediaType.Image ? 'default' : 'outline'}
               className="cursor-pointer"
-              onClick={() => {
-                setSelectedMediaType(selectedMediaType === MediaType.Image ? undefined : MediaType.Image);
-                setCurrentPage(1);
-              }}
+              onClick={() => setSelectedMediaType(selectedMediaType === MediaType.Image ? undefined : MediaType.Image)}
             >
               <ImageIcon className="h-3 w-3 mr-1" />
               Images
@@ -126,10 +181,7 @@ export default function ItemsPage() {
             <Badge
               variant={selectedMediaType === MediaType.Video ? 'default' : 'outline'}
               className="cursor-pointer"
-              onClick={() => {
-                setSelectedMediaType(selectedMediaType === MediaType.Video ? undefined : MediaType.Video);
-                setCurrentPage(1);
-              }}
+              onClick={() => setSelectedMediaType(selectedMediaType === MediaType.Video ? undefined : MediaType.Video)}
             >
               <VideoIcon className="h-3 w-3 mr-1" />
               Videos
@@ -137,10 +189,7 @@ export default function ItemsPage() {
             <Badge
               variant={selectedMediaType === MediaType.Audio ? 'default' : 'outline'}
               className="cursor-pointer"
-              onClick={() => {
-                setSelectedMediaType(selectedMediaType === MediaType.Audio ? undefined : MediaType.Audio);
-                setCurrentPage(1);
-              }}
+              onClick={() => setSelectedMediaType(selectedMediaType === MediaType.Audio ? undefined : MediaType.Audio)}
             >
               <MusicIcon className="h-3 w-3 mr-1" />
               Audio
@@ -168,10 +217,7 @@ export default function ItemsPage() {
             <Badge
               variant={selectedTagId === undefined ? 'default' : 'outline'}
               className="cursor-pointer"
-              onClick={() => {
-                setSelectedTagId(undefined);
-                setCurrentPage(1);
-              }}
+              onClick={() => setSelectedTagId(undefined)}
             >
               All
             </Badge>
@@ -180,10 +226,7 @@ export default function ItemsPage() {
                 key={tag.id}
                 variant={selectedTagId === tag.id ? 'default' : 'outline'}
                 className="cursor-pointer"
-                onClick={() => {
-                  setSelectedTagId(selectedTagId === tag.id ? undefined : tag.id);
-                  setCurrentPage(1);
-                }}
+                onClick={() => setSelectedTagId(selectedTagId === tag.id ? undefined : tag.id)}
               >
                 {tag.name} ({tag.itemCount})
               </Badge>
@@ -226,131 +269,147 @@ export default function ItemsPage() {
         </Dialog>
 
         {/* Items grid */}
-        {data?.items && data.items.length > 0 ? (
+        {allItems.length > 0 ? (
           <>
             <p className="text-sm text-muted-foreground mb-4">
-              {data.totalCount} {data.totalCount === 1 ? 'item' : 'items'} found
+              Showing {allItems.length} of {totalCount} {totalCount === 1 ? 'item' : 'items'}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {data.items.map((item) => (
-                <Card key={`${item.provider}-${item.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative aspect-video bg-muted">
-                    {item.thumbnailUrl ? (
-                      <AuthenticatedImage
-                        src={item.thumbnailUrl}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                        fallback={
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            {getMediaTypeIcon(item.type)}
-                          </div>
-                        }
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                        {getMediaTypeIcon(item.type)}
-                      </div>
-                    )}
-                    <Badge
-                      variant="secondary"
-                      className="absolute top-2 right-2"
-                    >
-                      {getMediaTypeIcon(item.type)}
-                      <span className="ml-1">{item.type}</span>
-                    </Badge>
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold mb-1 truncate" title={item.name}>
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mb-3">
-                      {new Date(item.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                      })}
-                    </p>
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: '100%',
+                position: 'relative',
+              }}
+            >
+              {virtualRows.map(virtualRow => {
+                const startIndex = virtualRow.index * columnCount;
+                const rowItems = allItems.slice(startIndex, startIndex + columnCount);
 
-                    {/* Item tags */}
-                    <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
-                      {item.tags.map((tag) => (
-                        <Badge
-                          key={tag.id}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {tag.name}
-                          <button
-                            onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
-                            className="ml-1 hover:text-destructive"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
+                return (
+                  <div
+                    key={virtualRow.key}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {rowItems.map(item => (
+                        <Card key={`${item.provider}-${item.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+                          <div className="relative aspect-video bg-muted">
+                            {item.thumbnailUrl ? (
+                              <AuthenticatedImage
+                                src={item.thumbnailUrl}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                                fallback={
+                                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                    {getMediaTypeIcon(item.type)}
+                                  </div>
+                                }
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                {getMediaTypeIcon(item.type)}
+                              </div>
+                            )}
+                            <Badge
+                              variant="secondary"
+                              className="absolute top-2 right-2"
+                            >
+                              {getMediaTypeIcon(item.type)}
+                              <span className="ml-1">{item.type}</span>
+                            </Badge>
+                          </div>
+                          <CardContent className="p-4">
+                            <h3 className="font-semibold mb-1 truncate" title={item.name}>
+                              {item.name}
+                            </h3>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              {new Date(item.createdAt).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              })}
+                            </p>
+
+                            {/* Item tags */}
+                            <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
+                              {item.tags.map((tag) => (
+                                <Badge
+                                  key={tag.id}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
+                                  {tag.name}
+                                  <button
+                                    onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
+                                    className="ml-1 hover:text-destructive"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </Badge>
+                              ))}
+                            </div>
+
+                            {/* Add tag dialog */}
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="w-full">
+                                  <Plus className="h-4 w-4 mr-1" />
+                                  Add Tag
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Add Tag to {item.name}</DialogTitle>
+                                  <DialogDescription>
+                                    Select a tag to add to this item.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
+                                  {tagsData?.tags
+                                    ?.filter((tag) => !item.tags.find((t) => t.id === tag.id))
+                                    .map((tag) => (
+                                      <Badge
+                                        key={tag.id}
+                                        variant="outline"
+                                        className="cursor-pointer hover:bg-accent"
+                                        onClick={() => handleAddTag(item.provider, item.id, tag.id)}
+                                      >
+                                        {tag.name}
+                                      </Badge>
+                                    ))}
+                                  {tagsData?.tags?.every((tag) => item.tags.find((t) => t.id === tag.id)) && (
+                                    <p className="text-sm text-muted-foreground">
+                                      All tags are already added to this item.
+                                    </p>
+                                  )}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </CardContent>
+                        </Card>
                       ))}
                     </div>
-
-                    {/* Add tag dialog */}
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="w-full">
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add Tag
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Add Tag to {item.name}</DialogTitle>
-                          <DialogDescription>
-                            Select a tag to add to this item.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
-                          {tagsData?.tags
-                            ?.filter((tag) => !item.tags.find((t) => t.id === tag.id))
-                            .map((tag) => (
-                              <Badge
-                                key={tag.id}
-                                variant="outline"
-                                className="cursor-pointer hover:bg-accent"
-                                onClick={() => handleAddTag(item.provider, item.id, tag.id)}
-                              >
-                                {tag.name}
-                              </Badge>
-                            ))}
-                          {tagsData?.tags?.every((tag) => item.tags.find((t) => t.id === tag.id)) && (
-                            <p className="text-sm text-muted-foreground">
-                              All tags are already added to this item.
-                            </p>
-                          )}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </CardContent>
-                </Card>
-              ))}
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </Button>
+            {/* Loading indicator */}
+            {isFetchingNextPage && (
+              <div className="mt-8 text-center">
+                <p className="text-sm text-muted-foreground">Loading more items...</p>
+              </div>
+            )}
+
+            {!hasNextPage && allItems.length > 0 && (
+              <div className="mt-8 text-center">
+                <p className="text-sm text-muted-foreground">All items loaded</p>
               </div>
             )}
           </>
@@ -365,7 +424,6 @@ export default function ItemsPage() {
                   onClick={() => {
                     setSelectedMediaType(undefined);
                     setSelectedTagId(undefined);
-                    setCurrentPage(1);
                   }}
                   variant="outline"
                 >

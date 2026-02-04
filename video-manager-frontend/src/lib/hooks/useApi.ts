@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { apiClient } from '../api/client';
 import type { CreateTagRequest, GetItemsParams } from '../api/types';
 
@@ -84,6 +84,20 @@ export function useItems(params?: GetItemsParams) {
   return useQuery({
     queryKey: itemKeys.list(params),
     queryFn: () => apiClient.getItems(params),
+  });
+}
+
+export function useInfiniteItems(params?: Omit<GetItemsParams, 'page'>) {
+  return useInfiniteQuery({
+    queryKey: [...itemKeys.lists(), params, 'infinite'],
+    queryFn: ({ pageParam = 1 }) =>
+      apiClient.getItems({ ...params, page: pageParam, pageSize: 50 }),
+    getNextPageParam: (lastPage) => {
+      const totalPages = Math.ceil(lastPage.totalCount / lastPage.pageSize);
+      const nextPage = lastPage.page + 1;
+      return nextPage <= totalPages ? nextPage : undefined;
+    },
+    initialPageParam: 1,
   });
 }
 

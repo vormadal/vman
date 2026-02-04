@@ -1,4 +1,5 @@
-﻿using Aspire.Hosting;
+﻿using System.Security.Cryptography.X509Certificates;
+using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -9,8 +10,10 @@ var testUserEmail = builder.Configuration["TestUser:Email"]
 var testUserPassword = builder.Configuration["TestUser:Password"] 
     ?? builder.Configuration["TEST_USER_PASSWORD"] 
     ?? string.Empty;
+var immichApiKey = builder.AddParameter("immich-api-key", secret: true);
 
 var postgres = builder.AddPostgres("postgres")
+    .WithDataVolume(isReadOnly: false)
     .WithPgAdmin()
     .WithEndpoint(port: 5432, targetPort: 5432, name: "postgres")
     .AddDatabase("videomanager");
@@ -19,6 +22,7 @@ var apiService = builder.AddProject<Projects.VManBackend>("apiservice", launchPr
     .WithReference(postgres)
     .WithEnvironment("TEST_USER_EMAIL", testUserEmail)
     .WithEnvironment("TEST_USER_PASSWORD", testUserPassword)
+    .WithEnvironment("IMMICH_API_KEY", immichApiKey)
     .WaitFor(postgres);
 
 // Add Next.js frontend

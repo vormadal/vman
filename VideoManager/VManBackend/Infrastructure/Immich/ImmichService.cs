@@ -139,4 +139,16 @@ public class ImmichService : IImmichService
             _ => AssetTypeEnum.OTHER
         };
     }
+
+    public async Task<Stream?> GetThumbnailAsync(Guid assetId, CancellationToken cancellationToken = default)
+    {
+        return await _client.Assets[assetId].Thumbnail.GetAsync(cancellationToken: cancellationToken);
+    }
+
+    public async Task<Stream?> GetPreviewAsync(Guid assetId, CancellationToken cancellationToken = default)
+    {
+        return await _client.Assets[assetId].Thumbnail.GetAsync(
+            config => config.QueryParameters.SizeAsAssetMediaSize = AssetMediaSize.Preview,
+            cancellationToken: cancellationToken);
+    }
 }

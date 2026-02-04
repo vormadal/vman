@@ -1,6 +1,6 @@
-import type { 
-  AuthResponse, 
-  LoginRequest, 
+import type {
+  AuthResponse,
+  LoginRequest,
   RegisterRequest,
   TagDto,
   TagsResponse,
@@ -11,7 +11,10 @@ import type {
   ItemDetailDto,
   ItemsResponse,
   GetItemsParams,
-  AddTagToItemRequest
+  AddTagToItemRequest,
+  TriggerSyncRequest,
+  TriggerSyncResponse,
+  SyncStatusResponse
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -154,8 +157,24 @@ class ApiClient {
     const params = new URLSearchParams();
     params.append('page', page.toString());
     params.append('pageSize', pageSize.toString());
-    
+
     return this.request<ItemsResponse>(`/api/tags/${tagId}/items?${params}`);
+  }
+
+  // Sync methods
+  async triggerSync(provider = 'immich'): Promise<TriggerSyncResponse> {
+    return this.request<TriggerSyncResponse>('/api/sync', {
+      method: 'POST',
+      body: JSON.stringify({ provider }),
+    });
+  }
+
+  async getSyncStatus(jobId?: string, provider = 'immich'): Promise<SyncStatusResponse> {
+    const params = new URLSearchParams();
+    if (jobId) params.append('jobId', jobId);
+    params.append('provider', provider);
+
+    return this.request<SyncStatusResponse>(`/api/sync/status?${params}`);
   }
 }
 

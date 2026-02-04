@@ -24,7 +24,7 @@ const crypto = require('crypto');
 const CONFIG = {
   openApiUrl: process.env.NEXT_PUBLIC_API_URL 
     ? `${process.env.NEXT_PUBLIC_API_URL}/openapi/v1.json` 
-    : 'http://localhost:5000/openapi/v1.json',
+    : 'http://localhost:5001/openapi/v1.json',
   outputDir: './src/lib/api/generated',
   cacheDir: './.kiota-cache',
   cacheFile: './.kiota-cache/openapi-spec.json',

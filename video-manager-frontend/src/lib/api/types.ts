@@ -114,3 +114,25 @@ export interface AddTagToItemRequest {
   tagId: string;
 }
 
+// Sync types
+export interface TriggerSyncRequest {
+  provider?: string;
+}
+
+export interface TriggerSyncResponse {
+  jobId: string;
+  status: string;
+  message: string;
+}
+
+export interface SyncStatusResponse {
+  jobId: string;
+  providerName: string;
+  status: 'Pending' | 'InProgress' | 'Completed' | 'Failed';
+  startedAt: string;
+  completedAt?: string;
+  totalItems: number;
+  processedItems: number;
+  errorMessage?: string;
+}
+

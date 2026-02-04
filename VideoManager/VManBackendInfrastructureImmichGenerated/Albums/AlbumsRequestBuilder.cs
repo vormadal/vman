@@ -169,7 +169,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums
             /// <summary>Filter albums containing this asset ID (ignores shared parameter)</summary>
             [QueryParameter("assetId")]
             public Guid? AssetId { get; set; }
-            /// <summary>Filter by shared status: true = only shared, false = only own, undefined = all</summary>
+            /// <summary>Filter by shared status: true = only shared, false = not shared, undefined = all owned albums</summary>
             [QueryParameter("shared")]
             public bool? Shared { get; set; }
         }

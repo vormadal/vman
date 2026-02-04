@@ -12,6 +12,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<ItemTag> ItemTags => Set<ItemTag>();
+    public DbSet<Item> Items => Set<Item>();
+    public DbSet<SyncJob> SyncJobs => Set<SyncJob>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,19 +51,56 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
             entity.Property(e => e.ProviderItemId).HasMaxLength(500).IsRequired();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
-            
+
             // Composite unique index to prevent duplicate tags on same item
             entity.HasIndex(e => new { e.TagId, e.ProviderName, e.ProviderItemId })
                 .IsUnique()
                 .HasDatabaseName("IX_ItemTags_Unique");
-            
+
             // Index for fast lookups by provider + item
             entity.HasIndex(e => new { e.ProviderName, e.ProviderItemId })
                 .HasDatabaseName("IX_ItemTags_Provider_Item");
-            
+
             // Index for fast lookups by tag
             entity.HasIndex(e => e.TagId)
                 .HasDatabaseName("IX_ItemTags_TagId");
+        });
+
+        modelBuilder.Entity<Item>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ProviderItemId).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.OriginalFileName).HasMaxLength(1000).IsRequired();
+            entity.Property(e => e.Type).IsRequired();
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.LastSyncedAt).IsRequired();
+
+            // Unique constraint on provider + item ID
+            entity.HasIndex(e => new { e.ProviderName, e.ProviderItemId })
+                .IsUnique()
+                .HasDatabaseName("IX_Items_Provider_ItemId");
+
+            // Index for filtering by provider
+            entity.HasIndex(e => e.ProviderName)
+                .HasDatabaseName("IX_Items_Provider");
+
+            // Index for sorting by created date
+            entity.HasIndex(e => e.CreatedAt)
+                .HasDatabaseName("IX_Items_CreatedAt");
+        });
+
+        modelBuilder.Entity<SyncJob>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.StartedAt).IsRequired();
+            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.ErrorMessage).HasMaxLength(2000);
+
+            // Index for finding latest sync job by provider
+            entity.HasIndex(e => new { e.ProviderName, e.StartedAt })
+                .HasDatabaseName("IX_SyncJobs_Provider_StartedAt");
         });
     }
 }

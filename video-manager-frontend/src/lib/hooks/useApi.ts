@@ -21,6 +21,12 @@ export const itemKeys = {
   byTag: (tagId: string) => [...itemKeys.all, 'byTag', tagId] as const,
 };
 
+// Sync query keys
+export const syncKeys = {
+  all: ['sync'] as const,
+  status: (jobId?: string, provider?: string) => [...syncKeys.all, 'status', { jobId, provider }] as const,
+};
+
 // Tag hooks
 export function useTags(search?: string) {
   return useQuery({
@@ -113,7 +119,7 @@ export function useAddTagToItem() {
 
 export function useRemoveTagFromItem() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ provider, itemId, tagId }: { provider: string; itemId: string; tagId: string }) =>
       apiClient.removeTagFromItem(provider, itemId, tagId),
@@ -121,6 +127,34 @@ export function useRemoveTagFromItem() {
       queryClient.invalidateQueries({ queryKey: itemKeys.detail(variables.provider, variables.itemId) });
       queryClient.invalidateQueries({ queryKey: itemKeys.lists() });
       queryClient.invalidateQueries({ queryKey: tagKeys.all });
+    },
+  });
+}
+
+// Sync hooks
+export function useSyncStatus(jobId?: string, provider = 'immich', enabled = true) {
+  return useQuery({
+    queryKey: syncKeys.status(jobId, provider),
+    queryFn: () => apiClient.getSyncStatus(jobId, provider),
+    enabled,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      // Poll every 2 seconds while sync is in progress
+      if (data?.status === 'Pending' || data?.status === 'InProgress') {
+        return 2000;
+      }
+      return false;
+    },
+  });
+}
+
+export function useTriggerSync() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (provider = 'immich') => apiClient.triggerSync(provider),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: syncKeys.all });
     },
   });
 }

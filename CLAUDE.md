@@ -115,11 +115,14 @@ State strategy:
 - Use shadcn/ui components
 - Wrap API calls in custom hooks with React Query
 - Use Zod for form validation with React Hook Form
+- use `npm run generate:client` to create the api client
 
 ### Frontend DON'T
 - Don't use Pages Router (use App Router)
 - Don't use direct `fetch()` calls (use generated API client)
 - Don't store server data in Zustand
+- Don't create or update the api client manually
+- **never** run `npm run build` to verify changes (changes are hot reloaded)
 
 ## API Endpoints
 

@@ -16,6 +16,8 @@ using VManBackend.Endpoints;
 using VManBackend.Features.Authentication;
 using VManBackend.Features.Tags;
 using VManBackend.Features.Items;
+using VManBackend.Features.Sync;
+using VManBackend.Infrastructure.Sync;
 using VideoManager.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -84,6 +86,15 @@ builder.Services.AddRequestHandler<RemoveTagFromItem.Handler, RemoveTagFromItem.
 builder.Services.AddRequestHandler<GetItemsByTag.Handler, GetItemsByTag.Request, GetItemsByTag.Response>();
 builder.Services.AddRequestHandler<GetItems.Handler, GetItems.Request, GetItems.Response>();
 builder.Services.AddRequestHandler<GetItemById.Handler, GetItemById.Request, GetItemById.Response?>();
+
+// Sync handlers
+builder.Services.AddRequestHandler<TriggerSync.Handler, TriggerSync.Request, TriggerSync.Response?>();
+builder.Services.AddRequestHandler<GetSyncStatus.Handler, GetSyncStatus.Request, GetSyncStatus.Response?>();
+
+// Background sync infrastructure
+builder.Services.AddSingleton<SyncChannel>();
+builder.Services.AddHostedService<SyncBackgroundService>();
+builder.Services.AddScoped<ImmichSyncProcessor>();
 
 // Configure JSON options for minimal APIs
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -154,6 +165,8 @@ app.MapControllers();
 app.MapAuthEndpoints();
 app.MapTagEndpoints();
 app.MapItemEndpoints();
+app.MapSyncEndpoints();
+app.MapProviderEndpoints();
 
 // Apply migrations and seed data on startup (development only)
 if (app.Environment.IsDevelopment())

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from '@/components/ui/label';
 import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
@@ -235,10 +236,15 @@ export default function ItemsPage() {
                 <Card key={`${item.provider}-${item.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative aspect-video bg-muted">
                     {item.thumbnailUrl ? (
-                      <img
+                      <AuthenticatedImage
                         src={item.thumbnailUrl}
                         alt={item.name}
                         className="w-full h-full object-cover"
+                        fallback={
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                            {getMediaTypeIcon(item.type)}
+                          </div>
+                        }
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground">

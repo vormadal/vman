@@ -118,13 +118,14 @@ State strategy:
 - use `npm run generate:client` to create the api client
 - format dates as `dd-MM-yyyy` and time as 24H like `HH:mm`
 - use the following import for toast `import { useToast } from '@/hooks/use-toast';`
+- **Always** use generated API client to fetch data
 
 ### Frontend DON'T
 - Don't use Pages Router (use App Router)
-- Don't use direct `fetch()` calls (use generated API client)
 - Don't store server data in Zustand
 - Don't create or update the api client manually
 - **never** run `npm run build` to verify changes (changes are hot reloaded)
+- **never** make manual changes in the `video-manager-frontend/src/lib/api/client.ts` file.
 
 ## API Endpoints
 

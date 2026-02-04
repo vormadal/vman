@@ -37,7 +37,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
@@ -59,7 +59,7 @@ class ApiClient {
     if (!response.ok) {
       // Try to parse ProblemDetails format first
       const errorData = await response.json().catch(() => null);
-      
+
       if (errorData?.detail) {
         // RFC 7807 ProblemDetails format
         throw new Error(errorData.detail);
@@ -73,6 +73,36 @@ class ApiClient {
     }
 
     return response.json();
+  }
+
+  private async requestBinary(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<Blob> {
+    const url = `${this.baseUrl}${endpoint}`;
+
+    const headers: Record<string, string> = {
+      ...(options.headers as Record<string, string>),
+    };
+
+    // Add auth token if available
+    if (this.getAuthToken) {
+      const token = this.getAuthToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    return response.blob();
   }
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
@@ -162,6 +192,14 @@ class ApiClient {
     params.append('pageSize', pageSize.toString());
 
     return this.request<ItemsResponse>(`/api/tags/${tagId}/items?${params}`);
+  }
+
+  async getThumbnail(provider: string, itemId: string): Promise<Blob> {
+    return this.requestBinary(`/api/providers/${provider}/items/${itemId}/thumbnail`);
+  }
+
+  async getPreview(provider: string, itemId: string): Promise<Blob> {
+    return this.requestBinary(`/api/providers/${provider}/items/${itemId}/preview`);
   }
 
   // Sync methods

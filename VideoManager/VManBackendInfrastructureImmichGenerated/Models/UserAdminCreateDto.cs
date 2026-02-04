@@ -44,6 +44,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Password { get; set; }
 #endif
+        /// <summary>PIN code</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? PinCode { get; set; }
+#nullable restore
+#else
+        public string PinCode { get; set; }
+#endif
         /// <summary>Storage quota in bytes</summary>
         public long? QuotaSizeInBytes { get; set; }
         /// <summary>Require password change on next login</summary>
@@ -87,6 +95,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "notify", n => { Notify = n.GetBoolValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
+                { "pinCode", n => { PinCode = n.GetStringValue(); } },
                 { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetLongValue(); } },
                 { "shouldChangePassword", n => { ShouldChangePassword = n.GetBoolValue(); } },
                 { "storageLabel", n => { StorageLabel = n.GetStringValue(); } },
@@ -105,6 +114,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("name", Name);
             writer.WriteBoolValue("notify", Notify);
             writer.WriteStringValue("password", Password);
+            writer.WriteStringValue("pinCode", PinCode);
             writer.WriteLongValue("quotaSizeInBytes", QuotaSizeInBytes);
             writer.WriteBoolValue("shouldChangePassword", ShouldChangePassword);
             writer.WriteStringValue("storageLabel", StorageLabel);

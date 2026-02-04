@@ -14,7 +14,8 @@ import type {
   AddTagToItemRequest,
   TriggerSyncRequest,
   TriggerSyncResponse,
-  SyncStatusResponse
+  SyncStatusResponse,
+  CancelSyncResponse
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -175,6 +176,12 @@ class ApiClient {
     params.append('provider', provider);
 
     return this.request<SyncStatusResponse>(`/api/sync/status?${params}`);
+  }
+
+  async cancelSync(jobId: string): Promise<CancelSyncResponse> {
+    return this.request<CancelSyncResponse>(`/api/sync/${jobId}/cancel`, {
+      method: 'POST',
+    });
   }
 }
 

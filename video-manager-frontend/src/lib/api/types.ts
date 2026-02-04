@@ -128,11 +128,17 @@ export interface TriggerSyncResponse {
 export interface SyncStatusResponse {
   jobId: string;
   providerName: string;
-  status: 'Pending' | 'InProgress' | 'Completed' | 'Failed';
+  status: 'Pending' | 'InProgress' | 'Completed' | 'Failed' | 'Cancelled';
   startedAt: string;
   completedAt?: string;
   totalItems: number;
   processedItems: number;
   errorMessage?: string;
+}
+
+export interface CancelSyncResponse {
+  jobId: string;
+  status: string;
+  message: string;
 }
 

@@ -158,3 +158,14 @@ export function useTriggerSync() {
     },
   });
 }
+
+export function useCancelSync() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (jobId: string) => apiClient.cancelSync(jobId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: syncKeys.all });
+    },
+  });
+}

@@ -44,3 +44,4 @@ public static class {Action}
 - Use `DateTimeOffset` for all timestamps (not DateTime)
 - Return nullable Response to indicate failure (null = error case)
 - Use `ApplicationDbContext` directly in handlers
+- register handlers in `Program.cs`

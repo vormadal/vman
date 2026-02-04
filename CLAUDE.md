@@ -116,6 +116,8 @@ State strategy:
 - Wrap API calls in custom hooks with React Query
 - Use Zod for form validation with React Hook Form
 - use `npm run generate:client` to create the api client
+- format dates as `dd-MM-yyyy` and time as 24H like `HH:mm`
+- use the following import for toast `import { useToast } from '@/hooks/use-toast';`
 
 ### Frontend DON'T
 - Don't use Pages Router (use App Router)

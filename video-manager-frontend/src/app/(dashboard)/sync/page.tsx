@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, CheckCircle2, XCircle, Clock, Loader2, Database } from 'lucide-react';
-import { useSyncStatus, useTriggerSync, itemKeys } from '@/lib/hooks/useApi';
+import { RefreshCw, CheckCircle2, XCircle, Clock, Loader2, Database, X } from 'lucide-react';
+import { useSyncStatus, useTriggerSync, useCancelSync, itemKeys } from '@/lib/hooks/useApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -39,6 +39,8 @@ function StatusIcon({ status }: { status: string }) {
       return <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />;
     case 'Pending':
       return <Clock className="w-5 h-5 text-yellow-500" />;
+    case 'Cancelled':
+      return <X className="w-5 h-5 text-orange-500" />;
     default:
       return <Clock className="w-5 h-5 text-muted-foreground" />;
   }
@@ -50,6 +52,7 @@ function StatusBadge({ status }: { status: string }) {
     Failed: 'destructive' as const,
     InProgress: 'secondary' as const,
     Pending: 'outline' as const,
+    Cancelled: 'outline' as const,
   }[status] || 'outline' as const;
 
   return <Badge variant={variant}>{status}</Badge>;
@@ -67,6 +70,7 @@ export default function SyncPage() {
   );
 
   const triggerSync = useTriggerSync();
+  const cancelSync = useCancelSync();
 
   // Update activeJobId when a new sync is triggered
   useEffect(() => {
@@ -96,6 +100,21 @@ export default function SyncPage() {
     }
   };
 
+  const handleCancelSync = async () => {
+    if (!activeJobId) return;
+
+    try {
+      const response = await cancelSync.mutateAsync(activeJobId);
+      toast('Sync cancelled', {
+        description: response.message,
+      });
+    } catch (error) {
+      toast('Error', {
+        description: error instanceof Error ? error.message : 'Failed to cancel sync',
+      });
+    }
+  };
+
   const isInProgress = syncStatus?.status === 'Pending' || syncStatus?.status === 'InProgress';
   const progressPercentage = syncStatus?.totalItems
     ? Math.round((syncStatus.processedItems / syncStatus.totalItems) * 100)
@@ -108,27 +127,48 @@ export default function SyncPage() {
           <h1 className="text-3xl font-bold">Sync</h1>
           <p className="text-muted-foreground">Sync media items from external providers</p>
         </div>
-        <Button
-          onClick={handleTriggerSync}
-          disabled={isInProgress || triggerSync.isPending}
-        >
-          {triggerSync.isPending ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Starting...
-            </>
-          ) : isInProgress ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Syncing...
-            </>
-          ) : (
-            <>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Sync Now
-            </>
+        <div className="flex gap-2">
+          {isInProgress && (
+            <Button
+              variant="outline"
+              onClick={handleCancelSync}
+              disabled={cancelSync.isPending}
+            >
+              {cancelSync.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Cancelling...
+                </>
+              ) : (
+                <>
+                  <X className="w-4 h-4 mr-2" />
+                  Cancel
+                </>
+              )}
+            </Button>
           )}
-        </Button>
+          <Button
+            onClick={handleTriggerSync}
+            disabled={isInProgress || triggerSync.isPending}
+          >
+            {triggerSync.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Starting...
+              </>
+            ) : isInProgress ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Syncing...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Sync Now
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6">
@@ -219,6 +259,16 @@ export default function SyncPage() {
                     <p className="text-sm font-medium text-green-600">Sync completed successfully</p>
                     <p className="text-sm text-green-600/80 mt-1">
                       {syncStatus.processedItems.toLocaleString()} items have been synced from Immich.
+                    </p>
+                  </div>
+                )}
+
+                {/* Cancelled message */}
+                {syncStatus.status === 'Cancelled' && (
+                  <div className="mt-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                    <p className="text-sm font-medium text-orange-600">Sync cancelled</p>
+                    <p className="text-sm text-orange-600/80 mt-1">
+                      The sync was cancelled. {syncStatus.processedItems.toLocaleString()} of {syncStatus.totalItems.toLocaleString()} items were processed before cancellation.
                     </p>
                   </div>
                 )}

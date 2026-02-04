@@ -11,7 +11,8 @@ public class ImmichService : IImmichService
 
     public ImmichService(string baseUrl, string apiKey)
     {
-        var authProvider = new ApiKeyAuthenticationProvider("x-api-key", apiKey, ApiKeyAuthenticationProvider.KeyLocation.Header);
+        // var authProvider = new ApiKeyAuthenticationProvider("x-api-key", apiKey, ApiKeyAuthenticationProvider.KeyLocation.QueryParameter);
+        var authProvider = new ApiKeyAuthenticationProvider("apiKey", apiKey, ApiKeyAuthenticationProvider.KeyLocation.QueryParameter);
         var adapter = new HttpClientRequestAdapter(authProvider)
         {
             BaseUrl = baseUrl

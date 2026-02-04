@@ -90,6 +90,7 @@ builder.Services.AddRequestHandler<GetItemById.Handler, GetItemById.Request, Get
 // Sync handlers
 builder.Services.AddRequestHandler<TriggerSync.Handler, TriggerSync.Request, TriggerSync.Response?>();
 builder.Services.AddRequestHandler<GetSyncStatus.Handler, GetSyncStatus.Request, GetSyncStatus.Response?>();
+builder.Services.AddRequestHandler<CancelSync.Handler, CancelSync.Request, CancelSync.Response?>();
 
 // Background sync infrastructure
 builder.Services.AddSingleton<SyncChannel>();
@@ -122,7 +123,7 @@ builder.Services.AddOpenApi(options =>
 // Add Immich client
 builder.Services.AddImmichClient(options =>
 {
-    options.BaseUrl = builder.Configuration["Immich:BaseUrl"] ?? "http://localhost:2283/api";
+    options.BaseUrl = builder.Configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl is not configured");
     options.ApiKey = Environment.GetEnvironmentVariable("IMMICH_API_KEY") ?? throw new InvalidOperationException("IMMICH_API_KEY environment variable is required");
 });
 

@@ -15,17 +15,23 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IImmichService>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<ImmichOptions>>().Value;
-            
-            var authProvider = new ApiKeyAuthenticationProvider(
-                "x-api-key", 
-                options.ApiKey, 
-                ApiKeyAuthenticationProvider.KeyLocation.Header);
-            
-            var adapter = new HttpClientRequestAdapter(authProvider)
+
+            // Use AnonymousAuthenticationProvider to bypass HTTPS requirement
+            // API key is added via custom DelegatingHandler
+            var authProvider = new AnonymousAuthenticationProvider();
+
+            // Create HttpClient with custom handler that adds API key header
+            var handler = new ImmichApiKeyHandler(options.ApiKey)
+            {
+                InnerHandler = new HttpClientHandler()
+            };
+            var httpClient = new HttpClient(handler);
+
+            var adapter = new HttpClientRequestAdapter(authProvider, httpClient: httpClient)
             {
                 BaseUrl = options.BaseUrl
             };
-            
+
             var client = new ImmichClient(adapter);
             return new ImmichService(client);
         });

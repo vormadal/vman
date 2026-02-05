@@ -25,11 +25,7 @@ export default function CollectionsPage() {
 
   const handleCreateCollection = async () => {
     if (!newCollectionName.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Collection name is required',
-        variant: 'destructive',
-      });
+      toast.error('Collection name is required');
       return;
     }
 
@@ -39,20 +35,13 @@ export default function CollectionsPage() {
         description: newCollectionDescription.trim() || undefined,
       });
       
-      toast({
-        title: 'Success',
-        description: 'Collection created successfully',
-      });
+      toast.success('Collection created successfully');
       
       setNewCollectionName('');
       setNewCollectionDescription('');
       setIsCreateDialogOpen(false);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create collection',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to create collection');
     }
   };
 
@@ -63,16 +52,9 @@ export default function CollectionsPage() {
 
     try {
       await deleteMutation.mutateAsync(id);
-      toast({
-        title: 'Success',
-        description: 'Collection deleted successfully',
-      });
+      toast.success('Collection deleted successfully');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to delete collection',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to delete collection');
     }
   };
 

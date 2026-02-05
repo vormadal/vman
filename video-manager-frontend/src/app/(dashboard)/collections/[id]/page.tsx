@@ -25,16 +25,9 @@ export default function CollectionDetailPage() {
   const handleRemoveItem = async (itemId: string) => {
     try {
       await removeMutation.mutateAsync({ collectionId, itemId });
-      toast({
-        title: 'Success',
-        description: 'Item removed from collection',
-      });
+      toast.success('Item removed from collection');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to remove item',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to remove item');
     }
   };
 
@@ -64,11 +57,7 @@ export default function CollectionDetailPage() {
       await reorderMutation.mutateAsync({ collectionId, items: reorderedItems });
       setDraggedIndex(null);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to reorder items',
-        variant: 'destructive',
-      });
+      toast.error('Failed to reorder items');
     }
   };
 
@@ -84,16 +73,9 @@ export default function CollectionDetailPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
-      toast({
-        title: 'Success',
-        description: 'Collection exported to Shotcut MLT format',
-      });
+      toast.success('Collection exported to Shotcut MLT format');
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to export collection',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to export collection');
     }
   };
 

@@ -175,7 +175,7 @@ export function useTriggerSync() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (provider = 'immich') => apiClient.triggerSync(provider),
+    mutationFn: (provider?: string) => apiClient.triggerSync(provider || 'immich'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: syncKeys.all });
     },

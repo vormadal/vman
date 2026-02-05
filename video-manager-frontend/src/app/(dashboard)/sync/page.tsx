@@ -88,15 +88,11 @@ export default function SyncPage() {
 
   const handleTriggerSync = async () => {
     try {
-      const response = await triggerSync.mutateAsync('immich');
+      const response = await triggerSync.mutateAsync(undefined);
       setActiveJobId(response.jobId);
-      toast('Sync started', {
-        description: response.message,
-      });
+      toast.success(response.message || 'Sync started');
     } catch (error) {
-      toast('Error', {
-        description: error instanceof Error ? error.message : 'Failed to start sync',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to start sync');
     }
   };
 
@@ -105,13 +101,9 @@ export default function SyncPage() {
 
     try {
       const response = await cancelSync.mutateAsync(activeJobId);
-      toast('Sync cancelled', {
-        description: response.message,
-      });
+      toast.success(response.message || 'Sync cancelled');
     } catch (error) {
-      toast('Error', {
-        description: error instanceof Error ? error.message : 'Failed to cancel sync',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to cancel sync');
     }
   };
 

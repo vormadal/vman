@@ -27,6 +27,15 @@ export const syncKeys = {
   status: (jobId?: string, provider?: string) => [...syncKeys.all, 'status', { jobId, provider }] as const,
 };
 
+// Collection query keys
+export const collectionKeys = {
+  all: ['collections'] as const,
+  lists: () => [...collectionKeys.all, 'list'] as const,
+  list: (page?: number) => [...collectionKeys.lists(), { page }] as const,
+  details: () => [...collectionKeys.all, 'detail'] as const,
+  detail: (id: string) => [...collectionKeys.details(), id] as const,
+};
+
 // Tag hooks
 export function useTags(search?: string) {
   return useQuery({
@@ -181,5 +190,93 @@ export function useCancelSync() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: syncKeys.all });
     },
+  });
+}
+
+// Collection hooks
+export function useCollections(page = 1) {
+  return useQuery({
+    queryKey: collectionKeys.list(page),
+    queryFn: () => apiClient.getCollections(page),
+  });
+}
+
+export function useCollection(id: string) {
+  return useQuery({
+    queryKey: collectionKeys.detail(id),
+    queryFn: () => apiClient.getCollectionById(id),
+    enabled: !!id,
+  });
+}
+
+export function useCreateCollection() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data: { name: string; description?: string }) => 
+      apiClient.createCollection(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.lists() });
+    },
+  });
+}
+
+export function useDeleteCollection() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id: string) => apiClient.deleteCollection(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.all });
+    },
+  });
+}
+
+export function useAddItemToCollection() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ collectionId, providerName, providerItemId }: { 
+      collectionId: string; 
+      providerName: string; 
+      providerItemId: string 
+    }) => apiClient.addItemToCollection(collectionId, providerName, providerItemId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
+      queryClient.invalidateQueries({ queryKey: collectionKeys.lists() });
+    },
+  });
+}
+
+export function useRemoveItemFromCollection() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ collectionId, itemId }: { collectionId: string; itemId: string }) =>
+      apiClient.removeItemFromCollection(collectionId, itemId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
+      queryClient.invalidateQueries({ queryKey: collectionKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateCollectionItemOrder() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ collectionId, items }: { 
+      collectionId: string; 
+      items: Array<{ itemId: string; newOrder: number }> 
+    }) => apiClient.updateCollectionItemOrder(collectionId, items),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
+    },
+  });
+}
+
+export function useExportCollectionToShotcut() {
+  return useMutation({
+    mutationFn: (collectionId: string) => apiClient.exportCollectionToShotcut(collectionId),
   });
 }

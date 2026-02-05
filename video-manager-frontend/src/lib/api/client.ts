@@ -15,7 +15,15 @@ import type {
   TriggerSyncRequest,
   TriggerSyncResponse,
   SyncStatusResponse,
-  CancelSyncResponse
+  CancelSyncResponse,
+  CollectionDto,
+  CollectionsResponse,
+  CreateCollectionRequest,
+  CreateCollectionResponse,
+  CollectionDetailDto,
+  AddItemToCollectionRequest,
+  AddItemToCollectionResponse,
+  UpdateCollectionItemOrderRequest
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -222,6 +230,72 @@ class ApiClient {
     return this.request<CancelSyncResponse>(`/api/sync/${jobId}/cancel`, {
       method: 'POST',
     });
+  }
+
+  // Collection methods
+  async getCollections(page = 1, pageSize = 50): Promise<CollectionsResponse> {
+    const params = new URLSearchParams();
+    params.append('page', page.toString());
+    params.append('pageSize', pageSize.toString());
+    
+    return this.request<CollectionsResponse>(`/api/collections?${params}`);
+  }
+
+  async getCollectionById(id: string): Promise<CollectionDetailDto> {
+    return this.request<CollectionDetailDto>(`/api/collections/${id}`);
+  }
+
+  async createCollection(data: CreateCollectionRequest): Promise<CreateCollectionResponse> {
+    return this.request<CreateCollectionResponse>('/api/collections', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteCollection(id: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(`/api/collections/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async addItemToCollection(
+    collectionId: string,
+    providerName: string,
+    providerItemId: string
+  ): Promise<AddItemToCollectionResponse> {
+    return this.request<AddItemToCollectionResponse>(
+      `/api/collections/${collectionId}/items`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ collectionId, providerName, providerItemId }),
+      }
+    );
+  }
+
+  async removeItemFromCollection(collectionId: string, itemId: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(
+      `/api/collections/${collectionId}/items/${itemId}`,
+      {
+        method: 'DELETE',
+      }
+    );
+  }
+
+  async updateCollectionItemOrder(
+    collectionId: string,
+    items: Array<{ itemId: string; newOrder: number }>
+  ): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(
+      `/api/collections/${collectionId}/items/reorder`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ collectionId, items }),
+      }
+    );
+  }
+
+  async exportCollectionToShotcut(collectionId: string): Promise<Blob> {
+    return this.requestBinary(`/api/collections/${collectionId}/export/shotcut`);
   }
 }
 

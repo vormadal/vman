@@ -17,6 +17,7 @@ using VManBackend.Features.Authentication;
 using VManBackend.Features.Tags;
 using VManBackend.Features.Items;
 using VManBackend.Features.Sync;
+using VManBackend.Features.Collections;
 using VManBackend.Infrastructure.Sync;
 using VideoManager.ServiceDefaults;
 
@@ -91,6 +92,16 @@ builder.Services.AddRequestHandler<GetItemById.Handler, GetItemById.Request, Get
 builder.Services.AddRequestHandler<TriggerSync.Handler, TriggerSync.Request, TriggerSync.Response?>();
 builder.Services.AddRequestHandler<GetSyncStatus.Handler, GetSyncStatus.Request, GetSyncStatus.Response?>();
 builder.Services.AddRequestHandler<CancelSync.Handler, CancelSync.Request, CancelSync.Response?>();
+
+// Collection handlers
+builder.Services.AddRequestHandler<CreateCollection.Handler, CreateCollection.Request, CreateCollection.Response>();
+builder.Services.AddRequestHandler<GetCollections.Handler, GetCollections.Request, GetCollections.Response>();
+builder.Services.AddRequestHandler<GetCollectionById.Handler, GetCollectionById.Request, GetCollectionById.Response>();
+builder.Services.AddRequestHandler<AddItemToCollection.Handler, AddItemToCollection.Request, AddItemToCollection.Response>();
+builder.Services.AddRequestHandler<RemoveItemFromCollection.Handler, RemoveItemFromCollection.Request, RemoveItemFromCollection.Response>();
+builder.Services.AddRequestHandler<UpdateCollectionItemOrder.Handler, UpdateCollectionItemOrder.Request, UpdateCollectionItemOrder.Response>();
+builder.Services.AddRequestHandler<DeleteCollection.Handler, DeleteCollection.Request, DeleteCollection.Response>();
+builder.Services.AddRequestHandler<ExportCollectionToShotcut.Handler, ExportCollectionToShotcut.Request, ExportCollectionToShotcut.Response>();
 
 // Background sync infrastructure
 builder.Services.AddSingleton<SyncChannel>();
@@ -168,6 +179,7 @@ app.MapTagEndpoints();
 app.MapItemEndpoints();
 app.MapSyncEndpoints();
 app.MapProviderEndpoints();
+app.MapCollectionEndpoints();
 
 // Apply migrations and seed data on startup (development only)
 if (app.Environment.IsDevelopment())

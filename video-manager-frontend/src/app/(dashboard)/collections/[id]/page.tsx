@@ -65,13 +65,18 @@ export default function CollectionDetailPage() {
     try {
       const blob = await exportMutation.mutateAsync(collectionId);
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${collection?.name || 'collection'}_${new Date().toISOString().split('T')[0]}.mlt`;
-      document.body.appendChild(a);
-      a.click();
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Create filename from collection name
+      const safeCollectionName = collection?.name.replace(/[^a-z0-9]/gi, '_') || 'collection';
+      const dateStr = new Date().toISOString().slice(0, 10);
+      link.download = `${safeCollectionName}_${dateStr}.mlt`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
       
       toast.success('Collection exported to Shotcut MLT format');
     } catch (error) {

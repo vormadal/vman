@@ -26,7 +26,7 @@ export default function TaggingModePage() {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteItems({
-    untagged: showOnlyUntagged || undefined,
+    untagged: showOnlyUntagged ? true : undefined,
     sortBy: showOnlyUntagged ? undefined : 'tagCount',
     sortDescending: false,
   });
@@ -168,10 +168,10 @@ export default function TaggingModePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handlePrevious, handleNext]);
 
-  // Reset to first item when data changes (e.g., filter toggled)
+  // Reset to first item when filter changes
   useEffect(() => {
     setCurrentIndex(0);
-  }, [data]);
+  }, [showOnlyUntagged]);
 
   if (isLoading) {
     return (

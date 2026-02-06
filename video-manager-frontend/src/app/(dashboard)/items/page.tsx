@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag } from '@/lib/hooks/useApi';
+import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag, useCollections, useAddItemToCollection } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,16 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon } from 'lucide-react';
+import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, ToggleRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
+import { CollectionOverlay } from '@/components/collection-overlay';
 
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
   const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
   const [newTagName, setNewTagName] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
+  const [collectionModeActive, setCollectionModeActive] = useState(false);
+  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
+  const [openDialogItemId, setOpenDialogItemId] = useState<string | null>(null);
 
   const {
     data,
@@ -36,6 +42,9 @@ export default function ItemsPage() {
   const addTagMutation = useAddTagToItem();
   const removeTagMutation = useRemoveTagFromItem();
   const createTagMutation = useCreateTag();
+  const { data: collectionsData } = useCollections();
+  const addToCollectionMutation = useAddItemToCollection();
+  const { toast } = useToast();
 
   const allItems = useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
@@ -77,6 +86,21 @@ export default function ItemsPage() {
 
   const handleRemoveTag = (provider: string, itemId: string, tagId: string) => {
     removeTagMutation.mutate({ provider, itemId, tagId });
+  };
+
+  const handleAddToCollection = async (collectionId: string, providerName: string, providerItemId: string) => {
+    try {
+      await addToCollectionMutation.mutateAsync({ collectionId, providerName, providerItemId });
+      toast.success('Item added to collection');
+      setOpenDialogItemId(null); // Close the dialog after successful addition
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add item to collection');
+    }
+  };
+
+  const handleQuickAddToActiveCollection = async (providerName: string, providerItemId: string) => {
+    if (!activeCollectionId) return;
+    await handleAddToCollection(activeCollectionId, providerName, providerItemId);
   };
 
   const handleCreateTag = () => {
@@ -148,9 +172,37 @@ export default function ItemsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {collectionModeActive && (
+        <CollectionOverlay
+          activeCollectionId={activeCollectionId}
+          onClose={() => {
+            setCollectionModeActive(false);
+            setActiveCollectionId(null);
+          }}
+          onSelectCollection={setActiveCollectionId}
+        />
+      )}
+      
       <header className="border-b">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold">Media Items</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Media Items</h1>
+            <div className="flex gap-2">
+              <Button
+                variant={collectionModeActive ? "default" : "outline"}
+                onClick={() => setCollectionModeActive(!collectionModeActive)}
+              >
+                <ToggleRight className="h-4 w-4 mr-2" />
+                Collection Mode
+              </Button>
+              <Link href="/collections">
+                <Button variant="outline">
+                  <FolderPlus className="h-4 w-4 mr-2" />
+                  Collections
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -336,50 +388,69 @@ export default function ItemsPage() {
                               })}
                             </p>
 
-                            {/* Item tags */}
-                            <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
-                              {item.tags.map((tag) => (
-                                <Badge
-                                  key={tag.id}
-                                  variant="secondary"
-                                  className="text-xs"
-                                >
-                                  {tag.name}
-                                  <button
-                                    onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
-                                    className="ml-1 hover:text-destructive"
+                            {/* Item tags - only show if not in collection mode or hide is not active */}
+                            {!collectionModeActive && (
+                              <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
+                                {item.tags.map((tag) => (
+                                  <Badge
+                                    key={tag.id}
+                                    variant="secondary"
+                                    className="text-xs"
                                   >
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </Badge>
-                              ))}
-                            </div>
+                                    {tag.name}
+                                    <button
+                                      onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
+                                      className="ml-1 hover:text-destructive"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
 
-                            {/* Add tag dialog */}
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-full">
+                            {/* Action buttons */}
+                            <div className="flex gap-2">
+                              {/* Quick add to active collection when in collection mode */}
+                              {collectionModeActive && activeCollectionId ? (
+                                <Button
+                                  variant="default"
+                                  size="sm"
+                                  className="flex-1"
+                                  onClick={() => handleQuickAddToActiveCollection(item.provider, item.id)}
+                                  disabled={addToCollectionMutation.isPending}
+                                >
                                   <Plus className="h-4 w-4 mr-1" />
-                                  Add Tag
+                                  Add to Collection
                                 </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Add Tag to {item.name}</DialogTitle>
-                                  <DialogDescription>
-                                    Select a tag to add to this item.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
-                                  {tagsData?.tags
-                                    ?.filter((tag) => !item.tags.find((t) => t.id === tag.id))
-                                    .map((tag) => (
-                                      <Badge
-                                        key={tag.id}
-                                        variant="outline"
-                                        className="cursor-pointer hover:bg-accent"
-                                        onClick={() => handleAddTag(item.provider, item.id, tag.id)}
-                                      >
+                              ) : (
+                                <>
+                                  {/* Add tag dialog - hidden in collection mode */}
+                                  {!collectionModeActive && (
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="flex-1">
+                                          <Plus className="h-4 w-4 mr-1" />
+                                          Add Tag
+                                        </Button>
+                                      </DialogTrigger>
+                                      <DialogContent>
+                                        <DialogHeader>
+                                          <DialogTitle>Add Tag to {item.name}</DialogTitle>
+                                          <DialogDescription>
+                                            Select a tag to add to this item.
+                                          </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
+                                          {tagsData?.tags
+                                            ?.filter((tag) => !item.tags.find((t) => t.id === tag.id))
+                                            .map((tag) => (
+                                              <Badge
+                                          key={tag.id}
+                                          variant="outline"
+                                          className="cursor-pointer hover:bg-accent"
+                                          onClick={() => handleAddTag(item.provider, item.id, tag.id)}
+                                        >
                                         {tag.name}
                                       </Badge>
                                     ))}
@@ -391,7 +462,61 @@ export default function ItemsPage() {
                                 </div>
                               </DialogContent>
                             </Dialog>
-                          </CardContent>
+                          )}
+
+                            {/* Add to collection dialog - available in all modes */}
+                            <Dialog
+                              open={openDialogItemId === `${item.provider}-${item.id}`}
+                              onOpenChange={(open) => setOpenDialogItemId(open ? `${item.provider}-${item.id}` : null)}
+                            >
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="flex-1">
+                                  <FolderPlus className="h-4 w-4 mr-1" />
+                                  {collectionModeActive ? 'Other Collection' : 'Add to Collection'}
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add to Collection</DialogTitle>
+                                    <DialogDescription>
+                                      Select a collection to add {item.name} to.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                                    {collectionsData?.collections && collectionsData.collections.length > 0 ? (
+                                      collectionsData.collections.map((collection) => (
+                                        <Button
+                                          key={collection.id}
+                                          variant="outline"
+                                          className="w-full justify-start"
+                                          onClick={() => handleAddToCollection(collection.id, item.provider, item.id)}
+                                        >
+                                          <FolderPlus className="h-4 w-4 mr-2" />
+                                          {collection.name}
+                                          <span className="ml-auto text-xs text-muted-foreground">
+                                            {collection.itemCount} items
+                                          </span>
+                                        </Button>
+                                      ))
+                                    ) : (
+                                      <div className="text-center py-4">
+                                        <p className="text-sm text-muted-foreground mb-3">
+                                          No collections yet. Create one first.
+                                        </p>
+                                        <Link href="/collections">
+                                          <Button variant="outline" size="sm">
+                                            Go to Collections
+                                          </Button>
+                                        </Link>
+                                      </div>
+                                    )}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </>
+                        )}
+                      </div>
+                    </CardContent>
                         </Card>
                       ))}
                     </div>

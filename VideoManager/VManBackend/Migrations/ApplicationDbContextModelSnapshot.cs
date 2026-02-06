@@ -22,6 +22,75 @@ namespace VManBackend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("VManBackend.Common.Models.Collection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Collections");
+                });
+
+            modelBuilder.Entity("VManBackend.Common.Models.CollectionItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CollectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProviderItemId")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectionId", "Order")
+                        .HasDatabaseName("IX_CollectionItems_Collection_Order");
+
+                    b.HasIndex("CollectionId", "ProviderName", "ProviderItemId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CollectionItems_Unique");
+
+                    b.ToTable("CollectionItems");
+                });
+
             modelBuilder.Entity("VManBackend.Common.Models.Item", b =>
                 {
                     b.Property<Guid>("Id")
@@ -219,6 +288,17 @@ namespace VManBackend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("VManBackend.Common.Models.CollectionItem", b =>
+                {
+                    b.HasOne("VManBackend.Common.Models.Collection", "Collection")
+                        .WithMany("CollectionItems")
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Collection");
+                });
+
             modelBuilder.Entity("VManBackend.Common.Models.ItemTag", b =>
                 {
                     b.HasOne("VManBackend.Common.Models.Item", null)
@@ -232,6 +312,11 @@ namespace VManBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("VManBackend.Common.Models.Collection", b =>
+                {
+                    b.Navigation("CollectionItems");
                 });
 
             modelBuilder.Entity("VManBackend.Common.Models.Item", b =>

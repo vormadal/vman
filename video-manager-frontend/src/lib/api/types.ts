@@ -144,3 +144,69 @@ export interface CancelSyncResponse {
   message: string;
 }
 
+// Collection types
+export interface CollectionDto {
+  id: string;
+  name: string;
+  description?: string;
+  itemCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CollectionItemDto {
+  id: string;
+  providerName: string;
+  providerItemId: string;
+  order: number;
+  createdAt: string;
+}
+
+export interface CollectionDetailDto {
+  id: string;
+  name: string;
+  description?: string;
+  items: CollectionItemDto[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CollectionsResponse {
+  collections: CollectionDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface CreateCollectionRequest {
+  name: string;
+  description?: string;
+}
+
+export interface CreateCollectionResponse {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+}
+
+export interface AddItemToCollectionRequest {
+  collectionId: string;
+  providerName: string;
+  providerItemId: string;
+}
+
+export interface AddItemToCollectionResponse {
+  id: string;
+  collectionId: string;
+  providerName: string;
+  providerItemId: string;
+  order: number;
+  createdAt: string;
+}
+
+export interface UpdateCollectionItemOrderRequest {
+  collectionId: string;
+  items: Array<{ itemId: string; newOrder: number }>;
+}
+

@@ -14,6 +14,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ItemTag> ItemTags => Set<ItemTag>();
     public DbSet<Item> Items => Set<Item>();
     public DbSet<SyncJob> SyncJobs => Set<SyncJob>();
+    public DbSet<Collection> Collections => Set<Collection>();
+    public DbSet<CollectionItem> CollectionItems => Set<CollectionItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -101,6 +103,45 @@ public class ApplicationDbContext : DbContext
             // Index for finding latest sync job by provider
             entity.HasIndex(e => new { e.ProviderName, e.StartedAt })
                 .HasDatabaseName("IX_SyncJobs_Provider_StartedAt");
+        });
+
+        modelBuilder.Entity<Collection>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("NOW()");
+            
+            entity.HasMany(e => e.CollectionItems)
+                .WithOne(e => e.Collection)
+                .HasForeignKey(e => e.CollectionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CollectionItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CollectionId).IsRequired();
+            entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ProviderItemId).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.Order).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+
+            // NOTE: CollectionItems reference Items table by ProviderName and ProviderItemId strings
+            // without a foreign key constraint. This is intentional to support cross-provider items.
+            // However, this means collection items can become orphaned if items are deleted from
+            // the Items table (e.g., during sync cleanup). Application logic should handle cleanup
+            // of orphaned collection items or validate item existence before export operations.
+
+            // Composite unique index to prevent duplicate items in same collection
+            entity.HasIndex(e => new { e.CollectionId, e.ProviderName, e.ProviderItemId })
+                .IsUnique()
+                .HasDatabaseName("IX_CollectionItems_Unique");
+
+            // Index for ordering items within a collection
+            entity.HasIndex(e => new { e.CollectionId, e.Order })
+                .HasDatabaseName("IX_CollectionItems_Collection_Order");
         });
     }
 }

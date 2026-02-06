@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Tag as TagIcon, X, Plus, ArrowLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Tag as TagIcon, X, Plus, ArrowLeft, Filter } from 'lucide-react';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -17,6 +17,7 @@ export default function TaggingModePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newTagName, setNewTagName] = useState('');
   const [tagSearch, setTagSearch] = useState('');
+  const [showOnlyUntagged, setShowOnlyUntagged] = useState(true);
 
   const {
     data,
@@ -24,7 +25,11 @@ export default function TaggingModePage() {
     error,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteItems({});
+  } = useInfiniteItems({
+    untagged: showOnlyUntagged || undefined,
+    sortBy: showOnlyUntagged ? undefined : 'tagCount',
+    sortDescending: false,
+  });
 
   const { data: tagsData } = useTags();
   const addTagMutation = useAddTagToItem();
@@ -163,6 +168,11 @@ export default function TaggingModePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handlePrevious, handleNext]);
 
+  // Reset to first item when data changes (e.g., filter toggled)
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [data]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -213,8 +223,18 @@ export default function TaggingModePage() {
               </Link>
               <h1 className="text-2xl font-bold">Tagging Mode</h1>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {currentIndex + 1} of {totalCount}
+            <div className="flex items-center gap-4">
+              <Button
+                variant={showOnlyUntagged ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowOnlyUntagged(!showOnlyUntagged)}
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                {showOnlyUntagged ? 'Untagged Only' : 'All Items'}
+              </Button>
+              <div className="text-sm text-muted-foreground">
+                {currentIndex + 1} of {totalCount}
+              </div>
             </div>
           </div>
         </div>

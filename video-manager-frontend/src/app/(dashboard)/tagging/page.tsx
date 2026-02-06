@@ -2,13 +2,11 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag } from '@/lib/hooks/useApi';
-import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ChevronLeft, ChevronRight, Tag as TagIcon, X, Plus, ArrowLeft } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -17,7 +15,6 @@ export default function TaggingModePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newTagName, setNewTagName] = useState('');
   const [tagSearch, setTagSearch] = useState('');
-  const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
 
   const {
     data,
@@ -25,9 +22,7 @@ export default function TaggingModePage() {
     error,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteItems({
-    type: selectedMediaType,
-  });
+  } = useInfiniteItems({});
 
   const { data: tagsData } = useTags();
   const addTagMutation = useAddTagToItem();
@@ -49,7 +44,7 @@ export default function TaggingModePage() {
     return [...tagsData.tags].sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-  }, [tagsData?.tags]);
+  }, [tagsData]);
 
   // Filter tags based on search
   const filteredTags = useMemo(() => {
@@ -320,7 +315,7 @@ export default function TaggingModePage() {
                     disabled={createTagMutation.isPending}
                   >
                     <Plus className="h-3 w-3 mr-1" />
-                    Create & Add "{newTagName}"
+                    Create &amp; Add &quot;{newTagName}&quot;
                   </Button>
                 )}
               </div>

@@ -188,6 +188,12 @@ export default function ItemsPage() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Media Items</h1>
             <div className="flex gap-2">
+              <Link href="/tagging">
+                <Button variant="outline">
+                  <TagIcon className="h-4 w-4 mr-2" />
+                  Tagging Mode
+                </Button>
+              </Link>
               <Button
                 variant={collectionModeActive ? "default" : "outline"}
                 onClick={() => setCollectionModeActive(!collectionModeActive)}

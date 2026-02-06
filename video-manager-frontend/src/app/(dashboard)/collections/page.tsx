@@ -8,6 +8,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Plus, Trash2, Film, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -17,6 +27,7 @@ export default function CollectionsPage() {
   const [newCollectionName, setNewCollectionName] = useState('');
   const [newCollectionDescription, setNewCollectionDescription] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<string | null>(null);
 
   const { data: collectionsData, isLoading, error } = useCollections(page);
   const createMutation = useCreateCollection();
@@ -46,13 +57,10 @@ export default function CollectionsPage() {
   };
 
   const handleDeleteCollection = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this collection?')) {
-      return;
-    }
-
     try {
       await deleteMutation.mutateAsync(id);
       toast.success('Collection deleted successfully');
+      setCollectionToDelete(null);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to delete collection');
     }
@@ -172,7 +180,7 @@ export default function CollectionsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleDeleteCollection(collection.id)}
+                    onClick={() => setCollectionToDelete(collection.id)}
                     disabled={deleteMutation.isPending}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
@@ -219,6 +227,27 @@ export default function CollectionsPage() {
           </Button>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={collectionToDelete !== null} onOpenChange={(open: boolean) => !open && setCollectionToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Collection?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the collection and all its items.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => collectionToDelete && handleDeleteCollection(collectionToDelete)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

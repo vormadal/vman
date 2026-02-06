@@ -44,14 +44,18 @@ public static class GetCollections
 
             // Apply pagination and sort by updated date (most recent first)
             var collections = await query
-                .OrderByDescending(c => c.UpdatedAt)
+                .GroupJoin(
+                    db.CollectionItems,
+                    c => c.Id,
+                    ci => ci.CollectionId,
+                    (c, items) => new
+                    {
+                        Collection = c,
+                        ItemCount = items.Count()
+                    })
+                .OrderByDescending(c => c.Collection.UpdatedAt)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(c => new
-                {
-                    Collection = c,
-                    ItemCount = db.CollectionItems.Count(ci => ci.CollectionId == c.Id)
-                })
                 .ToListAsync(cancellationToken);
 
             var collectionDtos = collections.Select(c => new CollectionDto(

@@ -128,6 +128,12 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Order).IsRequired();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
 
+            // NOTE: CollectionItems reference Items table by ProviderName and ProviderItemId strings
+            // without a foreign key constraint. This is intentional to support cross-provider items.
+            // However, this means collection items can become orphaned if items are deleted from
+            // the Items table (e.g., during sync cleanup). Application logic should handle cleanup
+            // of orphaned collection items or validate item existence before export operations.
+
             // Composite unique index to prevent duplicate items in same collection
             entity.HasIndex(e => new { e.CollectionId, e.ProviderName, e.ProviderItemId })
                 .IsUnique()

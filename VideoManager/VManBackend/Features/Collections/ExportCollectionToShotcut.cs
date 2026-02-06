@@ -52,21 +52,22 @@ public static class ExportCollectionToShotcut
             }
 
             // Fetch item details from the database
-            var itemDetails = new List<(string ProviderName, string ProviderItemId, MediaType Type, string FileName)>();
-            
-            foreach (var collectionItem in orderedItems)
+            var itemTasks = orderedItems.Select(async collectionItem =>
             {
                 var item = await db.Items
-                    .FirstOrDefaultAsync(i => 
-                        i.ProviderName == collectionItem.ProviderName && 
-                        i.ProviderItemId == collectionItem.ProviderItemId, 
-                        cancellationToken);
-
-                if (item != null)
-                {
-                    itemDetails.Add((item.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName));
-                }
-            }
+                    .Where(i => i.ProviderName == collectionItem.ProviderName && 
+                                i.ProviderItemId == collectionItem.ProviderItemId)
+                    .Select(i => new { i.ProviderName, i.ProviderItemId, i.Type, i.OriginalFileName })
+                    .FirstOrDefaultAsync(cancellationToken);
+                    
+                return item;
+            });
+            
+            var items = await Task.WhenAll(itemTasks);
+            var itemDetails = items
+                .Where(item => item != null)
+                .Select(item => (item!.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName))
+                .ToList();
 
             // Get Immich base URL from configuration
             var immichBaseUrl = configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl not configured");
@@ -113,10 +114,15 @@ public static class ExportCollectionToShotcut
             // Add each item as a producer and playlist entry
             foreach (var item in items)
             {
+                // TODO: Retrieve actual video duration from provider metadata
+                // For now, using a placeholder duration of 10 seconds (300 frames at 30fps)
+                // Images use 5 seconds (150 frames)
+                var outFrame = item.Type == MediaType.Image ? "149" : "299";
+                
                 var producer = new XElement("producer",
                     new XAttribute("id", $"producer{producerId}"),
                     new XAttribute("in", "0"),
-                    new XAttribute("out", item.Type == MediaType.Image ? "149" : "0") // 5 seconds for images (30fps * 5 = 150 frames)
+                    new XAttribute("out", outFrame)
                 );
 
                 // Add resource property with the file path or URL
@@ -126,9 +132,18 @@ public static class ExportCollectionToShotcut
                     resourceUrl
                 ));
 
+                // Choose appropriate MLT service based on media type
+                string mltService = item.Type switch
+                {
+                    MediaType.Image => "pixbuf",
+                    MediaType.Video => "avformat",
+                    MediaType.Audio => "avformat",
+                    _ => "avformat" // Default to avformat for Other and unknown types
+                };
+                
                 producer.Add(new XElement("property",
                     new XAttribute("name", "mlt_service"),
-                    item.Type == MediaType.Video ? "avformat" : "pixbuf"
+                    mltService
                 ));
 
                 producers.Add(producer);
@@ -137,7 +152,7 @@ public static class ExportCollectionToShotcut
                 playlist.Add(new XElement("entry",
                     new XAttribute("producer", $"producer{producerId}"),
                     new XAttribute("in", "0"),
-                    new XAttribute("out", item.Type == MediaType.Image ? "149" : "0")
+                    new XAttribute("out", outFrame)
                 ));
 
                 producerId++;
@@ -170,12 +185,27 @@ public static class ExportCollectionToShotcut
 
         private static string GetResourceUrl(string providerName, string providerItemId, string immichBaseUrl)
         {
-            // For now, we'll use a placeholder path
-            // In a real implementation, you would:
-            // 1. Download the file from the provider
-            // 2. Store it in a temporary location
-            // 3. Return the local file path
-            // OR return the provider URL directly (Shotcut can handle URLs)
+            // IMPORTANT: Resource URL considerations for Shotcut MLT files
+            //
+            // Current implementation returns Immich API URLs directly. This approach has limitations:
+            //
+            // 1. AUTHENTICATION: Immich asset URLs require API key authentication. Shotcut cannot
+            //    automatically provide auth headers when loading these URLs. Users must either:
+            //    - Configure Immich to allow unauthenticated access to specific assets (NOT recommended)
+            //    - Use a proxy that adds authentication headers
+            //    - Download files locally before using them in Shotcut (RECOMMENDED for production)
+            //
+            // 2. NETWORK RELIABILITY: Remote URLs can introduce latency and availability issues
+            //    during video editing. Local file paths provide better editing performance.
+            //
+            // RECOMMENDED PRODUCTION APPROACH:
+            // - Download all collection items to a local directory
+            // - Store files with consistent naming (e.g., {collectionName}/{index}_{originalFileName})
+            // - Return local file paths in the MLT instead of remote URLs
+            // - Include downloaded files alongside the .mlt file when distributing the project
+            //
+            // The current URL-based approach works for testing but should be replaced with
+            // file download logic for production use.
             
             if (providerName.ToLower() == "immich")
             {

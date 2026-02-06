@@ -36,6 +36,7 @@ public class ImmichService : IImmichService
         var allAssets = new List<ImmichAsset>();
         string? nextPage = null;
         var remaining = limit;
+        var pageNumber = 1.0;
 
         do
         {
@@ -43,7 +44,7 @@ public class ImmichService : IImmichService
             {
                 Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
                 Size = remaining,
-                Page = string.IsNullOrEmpty(nextPage) ? null : double.Parse(nextPage)
+                Page = pageNumber
             };
 
             var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
@@ -66,8 +67,20 @@ public class ImmichService : IImmichService
                     break;
             }
 
-            // Get the next page cursor
+            // Get the next page - try parsing as number, fallback to incrementing page number
             nextPage = searchResponse.Assets.NextPage;
+            if (!string.IsNullOrEmpty(nextPage))
+            {
+                if (double.TryParse(nextPage, out var parsedPage))
+                {
+                    pageNumber = parsedPage;
+                }
+                else
+                {
+                    // If nextPage is not a number, increment page number
+                    pageNumber++;
+                }
+            }
         }
         while (!string.IsNullOrEmpty(nextPage));
 

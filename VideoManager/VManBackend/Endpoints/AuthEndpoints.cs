@@ -37,7 +37,7 @@ public static class AuthEndpoints
             return response != null 
                 ? Results.Ok(response) 
                 : Results.Problem(
-                    detail: "Invalid or expired invite token",
+                    detail: "Failed to accept invite. The invite may be invalid, expired, or the email is already in use.",
                     statusCode: StatusCodes.Status400BadRequest,
                     title: "Invite Acceptance Failed"
                 );

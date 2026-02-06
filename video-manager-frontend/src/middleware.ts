@@ -40,7 +40,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Redirect to profile completion if authenticated but profile incomplete
-  if (isAuthenticated && !isProfileComplete && !isPublicRoute && !isProfileExempt && pathname !== '/complete-profile') {
+  if (isAuthenticated && !isProfileComplete && !isProfileExempt) {
     return NextResponse.redirect(new URL('/complete-profile', request.url));
   }
 

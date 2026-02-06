@@ -52,6 +52,12 @@ namespace VManBackend.Migrations
                 nullable: false,
                 defaultValue: 0);
 
+            // Backfill existing users: set IsProfileComplete = true for users with names
+            migrationBuilder.Sql(
+                @"UPDATE ""Users"" 
+                  SET ""IsProfileComplete"" = true 
+                  WHERE ""FirstName"" IS NOT NULL AND ""LastName"" IS NOT NULL;");
+
             migrationBuilder.CreateTable(
                 name: "UserInvites",
                 columns: table => new

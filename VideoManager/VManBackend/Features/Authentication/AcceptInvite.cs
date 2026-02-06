@@ -108,7 +108,15 @@ public static class AcceptInvite
             // Mark invite as used
             invite.UsedAt = DateTime.UtcNow;
 
-            await db.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException)
+            {
+                // Concurrent request may have already created the user or used the invite
+                return null;
+            }
 
             // Generate JWT token
             var token = jwtService.GenerateToken(user);

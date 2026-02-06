@@ -46,7 +46,19 @@ public static class DbSeeder
         }
 
         // Create admin user
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, workFactor: 4);
+        // Determine BCrypt work factor based on environment
+        var workFactorStr = Environment.GetEnvironmentVariable("BCRYPT_WORK_FACTOR") 
+                         ?? config["Security:BcryptWorkFactor"];
+        var workFactor = 10; // Production default
+        
+        if (!string.IsNullOrWhiteSpace(workFactorStr) 
+            && int.TryParse(workFactorStr, out var parsed) 
+            && parsed >= 10 && parsed <= 16)
+        {
+            workFactor = parsed;
+        }
+        
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, workFactor: workFactor);
 
         var adminUser = new User
         {

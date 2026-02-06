@@ -112,9 +112,8 @@ public static class CreateInvite
             db.UserInvites.Add(invite);
             await db.SaveChangesAsync(cancellationToken);
 
-            // Generate invite URL (you'll need to configure the base URL)
-            var baseUrl = httpContext.Request.Scheme + "://" + httpContext.Request.Host;
-            var inviteUrl = $"{baseUrl}/accept-invite?token={token}";
+            // Return relative invite path - frontend will build full URL
+            var inviteUrl = $"/accept-invite?token={token}";
 
             return new Response(
                 invite.Id,

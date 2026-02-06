@@ -198,15 +198,31 @@ app.MapSyncEndpoints();
 app.MapProviderEndpoints();
 app.MapCollectionEndpoints();
 
-// Apply migrations and seed data on startup (development only)
+// Apply migrations on startup (development only)
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    db.Database.Migrate();
+}
+
+// Seed admin user (runs in all environments)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    
+    await DbSeeder.SeedAdminUserAsync(db, config);
+}
+
+// Seed test user (development only)
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     
-    db.Database.Migrate();
-    await DbSeeder.SeedAdminUserAsync(db, config);
     await DbSeeder.SeedTestUserAsync(db, config);
 }
 

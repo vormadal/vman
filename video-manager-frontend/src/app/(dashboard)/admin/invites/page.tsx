@@ -107,8 +107,9 @@ export default function AdminInvitesPage() {
         description: `Invite link copied to clipboard`,
       });
 
-      // Copy invite URL to clipboard
-      await navigator.clipboard.writeText(result.inviteUrl);
+      // Build invite URL from frontend origin
+      const inviteLink = `${window.location.origin}${result.inviteUrl}`;
+      await navigator.clipboard.writeText(inviteLink);
 
       setEmail('');
       setDialogOpen(false);

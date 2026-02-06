@@ -1,5 +1,6 @@
 using VManBackend.Features.Authentication;
 using VManBackend.Mediator;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VManBackend.Endpoints;
 
@@ -10,9 +11,20 @@ public static class AuthEndpoints
         var group = routes.MapGroup("/api/auth")
             .WithTags("Authentication");
 
-        group.MapPost("/register", async (Register.Request request, IMediator mediator) =>
+        // Disable public registration - keep endpoint but return 403
+        group.MapPost("/register", () =>
         {
-            if (!Register.Validator.Validate(request, out var error))
+            return Results.Problem(
+                detail: "Public registration is disabled. Please use an invite link from an administrator.",
+                statusCode: StatusCodes.Status403Forbidden,
+                title: "Registration Disabled"
+            );
+        })
+        .WithName("Register");
+
+        group.MapPost("/accept-invite", async (AcceptInvite.Request request, IMediator mediator) =>
+        {
+            if (!AcceptInvite.Validator.Validate(request, out var error))
             {
                 return Results.Problem(
                     detail: error,
@@ -25,12 +37,35 @@ public static class AuthEndpoints
             return response != null 
                 ? Results.Ok(response) 
                 : Results.Problem(
-                    detail: "Email already in use",
-                    statusCode: StatusCodes.Status409Conflict,
-                    title: "Registration Failed"
+                    detail: "Failed to accept invite. The invite may be invalid, expired, or the email is already in use.",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Invite Acceptance Failed"
                 );
         })
-        .WithName("Register");
+        .WithName("AcceptInvite");
+
+        group.MapPost("/complete-profile", async (CompleteProfile.Request request, IMediator mediator) =>
+        {
+            if (!CompleteProfile.Validator.Validate(request, out var error))
+            {
+                return Results.Problem(
+                    detail: error,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Validation Error"
+                );
+            }
+
+            var response = await mediator.Send(request);
+            return response != null 
+                ? Results.Ok(response) 
+                : Results.Problem(
+                    detail: "Failed to complete profile",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Profile Completion Failed"
+                );
+        })
+        .RequireAuthorization()
+        .WithName("CompleteProfile");
 
         group.MapPost("/login", async (Login.Request request, IMediator mediator) =>
         {

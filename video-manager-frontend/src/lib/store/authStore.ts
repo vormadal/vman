@@ -1,16 +1,27 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { apiClient } from '@/lib/api/client';
-import type { UserDto } from '@/lib/api/types';
+
+export type UserRole = 'User' | 'Admin';
+
+export interface UserDto {
+  id: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  role: UserRole;
+}
 
 interface AuthState {
   user: UserDto | null;
   accessToken: string | null;
   refreshToken: string | null;
+  isProfileComplete: boolean;
   _hasHydrated: boolean;
-  setAuth: (user: UserDto, accessToken: string, refreshToken: string) => void;
+  setAuth: (user: UserDto, accessToken: string, refreshToken: string, isProfileComplete?: boolean) => void;
   clearAuth: () => void;
   isAuthenticated: () => boolean;
+  isAdmin: () => boolean;
   setHasHydrated: (state: boolean) => void;
 }
 
@@ -49,18 +60,20 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       accessToken: null,
       refreshToken: null,
+      isProfileComplete: true,
       _hasHydrated: false,
-      setAuth: (user, accessToken, refreshToken) => {
-        set({ user, accessToken, refreshToken });
+      setAuth: (user, accessToken, refreshToken, isProfileComplete = true) => {
+        set({ user, accessToken, refreshToken, isProfileComplete });
         // Update API client immediately when auth changes
         apiClient.setAuthTokenGetter(() => useAuthStore.getState().accessToken);
       },
       clearAuth: () => {
-        set({ user: null, accessToken: null, refreshToken: null });
+        set({ user: null, accessToken: null, refreshToken: null, isProfileComplete: true });
         // Update API client immediately when auth is cleared
         apiClient.setAuthTokenGetter(() => null);
       },
       isAuthenticated: () => !!get().accessToken,
+      isAdmin: () => get().user?.role === 'Admin',
       setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {

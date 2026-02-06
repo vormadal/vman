@@ -10,6 +10,7 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserInvite> UserInvites => Set<UserInvite>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<ItemTag> ItemTags => Set<ItemTag>();
     public DbSet<Item> Items => Set<Item>();
@@ -27,9 +28,29 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => e.Email).IsUnique();
             entity.Property(e => e.Email).HasMaxLength(255).IsRequired();
             entity.Property(e => e.PasswordHash).IsRequired();
-            entity.Property(e => e.FirstName).HasMaxLength(100).IsRequired();
-            entity.Property(e => e.LastName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.Role).IsRequired().HasDefaultValue(UserRole.User);
+            entity.Property(e => e.IsBlocked).IsRequired().HasDefaultValue(false);
+            entity.Property(e => e.IsProfileComplete).IsRequired().HasDefaultValue(false);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+        });
+
+        modelBuilder.Entity<UserInvite>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasIndex(e => e.Email);
+            entity.Property(e => e.Email).HasMaxLength(255).IsRequired();
+            entity.Property(e => e.Token).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.CreatedById).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+            entity.Property(e => e.ExpiresAt).IsRequired();
+            
+            entity.HasOne(e => e.CreatedBy)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Tag>(entity =>

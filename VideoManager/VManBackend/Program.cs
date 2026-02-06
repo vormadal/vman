@@ -14,6 +14,7 @@ using VManBackend.Mediator;
 using VManBackend.Endpoints;
 // using VManBackend.Features.Assets; // Temporarily disabled
 using VManBackend.Features.Authentication;
+using VManBackend.Features.Admin;
 using VManBackend.Features.Tags;
 using VManBackend.Features.Items;
 using VManBackend.Features.Sync;
@@ -46,7 +47,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("Admin"));
+});
 
 // Add CORS - Allow HTTP for development
 builder.Services.AddCors(options =>
@@ -62,6 +67,7 @@ builder.Services.AddCors(options =>
 
 // Add Services
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddHttpContextAccessor(); // Required for getting current user in handlers
 
 // Add Mediator and Handlers
 builder.Services.AddMediator();
@@ -73,6 +79,16 @@ builder.Services.AddMediator();
 // Authentication handlers
 builder.Services.AddRequestHandler<Register.Handler, Register.Request, Register.Response?>();
 builder.Services.AddRequestHandler<Login.Handler, Login.Request, Login.Response?>();
+builder.Services.AddRequestHandler<AcceptInvite.Handler, AcceptInvite.Request, AcceptInvite.Response?>();
+builder.Services.AddRequestHandler<CompleteProfile.Handler, CompleteProfile.Request, CompleteProfile.Response?>();
+
+// Admin handlers
+builder.Services.AddRequestHandler<CreateInvite.Handler, CreateInvite.Request, CreateInvite.Response?>();
+builder.Services.AddRequestHandler<GetInvites.Handler, GetInvites.Request, GetInvites.Response?>();
+builder.Services.AddRequestHandler<GetUsers.Handler, GetUsers.Request, GetUsers.Response?>();
+builder.Services.AddRequestHandler<BlockUser.Handler, BlockUser.Request, BlockUser.Response?>();
+builder.Services.AddRequestHandler<UnblockUser.Handler, UnblockUser.Request, UnblockUser.Response?>();
+builder.Services.AddRequestHandler<ChangeUserRole.Handler, ChangeUserRole.Request, ChangeUserRole.Response?>();
 
 // Tag handlers
 builder.Services.AddRequestHandler<CreateTag.Handler, CreateTag.Request, CreateTag.Response>();
@@ -175,20 +191,38 @@ app.MapControllers();
 
 // Map API Endpoints
 app.MapAuthEndpoints();
+app.MapAdminEndpoints();
 app.MapTagEndpoints();
 app.MapItemEndpoints();
 app.MapSyncEndpoints();
 app.MapProviderEndpoints();
 app.MapCollectionEndpoints();
 
-// Apply migrations and seed data on startup (development only)
+// Apply migrations on startup (development only)
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    db.Database.Migrate();
+}
+
+// Seed admin user (runs in all environments)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    
+    await DbSeeder.SeedAdminUserAsync(db, config);
+}
+
+// Seed test user (development only)
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
     
-    db.Database.Migrate();
     await DbSeeder.SeedTestUserAsync(db, config);
 }
 

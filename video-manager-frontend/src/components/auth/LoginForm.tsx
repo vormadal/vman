@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLogin } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginInput } from '@/lib/validations/auth';
-import Link from 'next/link';
 import { toast } from 'sonner';
 
 export function LoginForm() {
@@ -55,10 +54,7 @@ export function LoginForm() {
           </Button>
 
           <p className="text-sm text-center text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-primary hover:underline">
-              Register
-            </Link>
+            Need an account? Contact an administrator for an invite.
           </p>
         </form>
       </CardContent>

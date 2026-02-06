@@ -14,7 +14,14 @@ export function useLogin() {
       return apiClient.login(credentials);
     },
     onSuccess: (data) => {
-      setAuth(data.user, data.accessToken, data.refreshToken);
+      const isProfileComplete = data.isProfileComplete ?? true;
+      setAuth(data.user, data.accessToken, data.refreshToken, isProfileComplete);
+      
+      // If profile is incomplete, redirect to complete-profile
+      if (!isProfileComplete) {
+        router.push('/complete-profile');
+        return;
+      }
       
       // Redirect to the original page or default to /videos
       const redirectTo = searchParams?.get('redirect') || '/videos';

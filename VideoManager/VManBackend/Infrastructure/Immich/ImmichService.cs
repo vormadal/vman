@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using VManBackend.Infrastructure.Immich.Generated;
@@ -31,28 +32,79 @@ public class ImmichService : IImmichService
         return asset == null ? null : MapToImmichAsset(asset);
     }
 
-    public async Task<IEnumerable<ImmichAsset>> GetAssetsAsync(AssetType? type = null, int? limit = null, CancellationToken cancellationToken = default)
+    public async Task<int> GetAssetsTotalCountAsync(AssetType? type = null, CancellationToken cancellationToken = default)
     {
         var searchDto = new MetadataSearchDto
         {
             Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
-            Size = limit
+            Size = 1 // We only need the total count, not the items
         };
 
         var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
         
-        if (searchResponse?.Assets?.Items == null)
-            return Enumerable.Empty<ImmichAsset>();
+        return searchResponse?.Assets?.Total ?? 0;
+    }
 
-        return searchResponse.Assets.Items
-            .Where(a => a != null)
-            .Select(MapToImmichAsset)
-            .ToList();
+    public async IAsyncEnumerable<ImmichAsset> GetAssetsAsync(AssetType? type = null, int? limit = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var remaining = limit;
+        double? pageNumber = 1.0;
+
+        while (pageNumber.HasValue)
+        {
+            var searchDto = new MetadataSearchDto
+            {
+                Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
+                Size = remaining,
+                Page = pageNumber
+            };
+
+            var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
+            
+            if (searchResponse?.Assets?.Items == null || searchResponse.Assets.Items.Count == 0)
+                yield break;
+
+            foreach (var asset in searchResponse.Assets.Items.Where(a => a != null))
+            {
+                yield return MapToImmichAsset(asset);
+                
+                // Update remaining count if limit is specified
+                if (remaining.HasValue)
+                {
+                    remaining--;
+                    if (remaining <= 0)
+                        yield break;
+                }
+            }
+
+            // Check if there's a next page
+            if (string.IsNullOrEmpty(searchResponse.Assets.NextPage))
+            {
+                // No more pages
+                pageNumber = null;
+            }
+            else if (double.TryParse(searchResponse.Assets.NextPage, out var parsedPage))
+            {
+                // NextPage is a numeric value, use it directly
+                pageNumber = parsedPage;
+            }
+            else
+            {
+                // NextPage is not numeric - increment current page
+                // This is a fallback for potential API changes
+                pageNumber++;
+            }
+        }
     }
 
     public async Task<IEnumerable<ImmichAsset>> GetVideoAssetsAsync(int? limit = null, CancellationToken cancellationToken = default)
     {
-        return await GetAssetsAsync(AssetType.Video, limit, cancellationToken);
+        var results = new List<ImmichAsset>();
+        await foreach (var asset in GetAssetsAsync(AssetType.Video, limit, cancellationToken))
+        {
+            results.Add(asset);
+        }
+        return results;
     }
 
     public async Task UpdateAssetMetadataAsync(Guid assetId, UpdateAssetMetadata metadata, CancellationToken cancellationToken = default)

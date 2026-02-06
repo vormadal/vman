@@ -45,75 +45,48 @@ public class ImmichSyncProcessor
             job.Status = SyncJobStatus.InProgress;
             await _db.SaveChangesAsync(cancellationToken);
 
-            // Fetch all assets from Immich
-            var assets = await _immichService.GetAssetsAsync(cancellationToken: cancellationToken);
-            var assetList = assets.ToList();
-
-            job.TotalItems = assetList.Count;
+            // Get the total count first for progress reporting
+            var totalCount = await _immichService.GetAssetsTotalCountAsync(cancellationToken: cancellationToken);
+            job.TotalItems = totalCount;
             await _db.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("Syncing {Count} assets from Immich", assetList.Count);
+            _logger.LogInformation("Syncing {Count} assets from Immich", totalCount);
 
             var processedCount = 0;
             var now = DateTimeOffset.UtcNow;
+            var currentBatch = new List<Infrastructure.Immich.ImmichAsset>();
 
-            foreach (var batch in assetList.Chunk(BatchSize))
+            // Stream assets and process in batches
+            await foreach (var asset in _immichService.GetAssetsAsync(cancellationToken: cancellationToken).WithCancellation(cancellationToken))
             {
-                // Check if job was cancelled during processing
-                await _db.Entry(job).ReloadAsync(cancellationToken);
-                if (job.Status == SyncJobStatus.Cancelled)
+                currentBatch.Add(asset);
+
+                if (currentBatch.Count >= BatchSize)
                 {
-                    _logger.LogInformation("Sync job {JobId} was cancelled during processing", jobId);
-                    return;
-                }
-
-                var providerItemIds = batch.Select(a => a.Id.ToString()).ToList();
-
-                // Get existing items for this batch
-                var existingItems = await _db.Items
-                    .Where(i => i.ProviderName == "immich" && providerItemIds.Contains(i.ProviderItemId))
-                    .ToDictionaryAsync(i => i.ProviderItemId, cancellationToken);
-
-                foreach (var asset in batch)
-                {
-                    var providerItemId = asset.Id.ToString();
-
-                    if (existingItems.TryGetValue(providerItemId, out var existingItem))
+                    // Check if job was cancelled during processing
+                    await _db.Entry(job).ReloadAsync(cancellationToken);
+                    if (job.Status == SyncJobStatus.Cancelled)
                     {
-                        // Update existing item
-                        existingItem.OriginalFileName = asset.OriginalFileName;
-                        existingItem.Type = MapAssetType(asset.Type);
-                        existingItem.CreatedAt = asset.FileCreatedAt ?? asset.CreatedAt;
-                        existingItem.LastSyncedAt = now;
-                    }
-                    else
-                    {
-                        // Create new item
-                        var newItem = new Item
-                        {
-                            Id = Guid.NewGuid(),
-                            ProviderName = "immich",
-                            ProviderItemId = providerItemId,
-                            OriginalFileName = asset.OriginalFileName,
-                            Type = MapAssetType(asset.Type),
-                            CreatedAt = asset.FileCreatedAt ?? asset.CreatedAt,
-                            LastSyncedAt = now
-                        };
-                        _db.Items.Add(newItem);
+                        _logger.LogInformation("Sync job {JobId} was cancelled during processing", jobId);
+                        return;
                     }
 
-                    processedCount++;
-                }
+                    await ProcessBatchAsync(currentBatch, now, cancellationToken);
+                    processedCount += currentBatch.Count;
+                    currentBatch.Clear();
 
-                await _db.SaveChangesAsync(cancellationToken);
-
-                // Update progress periodically
-                if (processedCount % ProgressUpdateInterval == 0 || processedCount == assetList.Count)
-                {
+                    // Update progress
                     job.ProcessedItems = processedCount;
                     await _db.SaveChangesAsync(cancellationToken);
-                    _logger.LogDebug("Sync progress: {Processed}/{Total}", processedCount, assetList.Count);
+                    _logger.LogDebug("Sync progress: {Processed}/{Total}", processedCount, totalCount);
                 }
+            }
+
+            // Process remaining items in the last batch
+            if (currentBatch.Count > 0)
+            {
+                await ProcessBatchAsync(currentBatch, now, cancellationToken);
+                processedCount += currentBatch.Count;
             }
 
             job.Status = SyncJobStatus.Completed;
@@ -146,5 +119,46 @@ public class ImmichSyncProcessor
             Immich.AssetType.Other => MediaType.Other,
             _ => MediaType.Other
         };
+    }
+
+    private async Task ProcessBatchAsync(List<Infrastructure.Immich.ImmichAsset> batch, DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        var providerItemIds = batch.Select(a => a.Id.ToString()).ToList();
+
+        // Get existing items for this batch
+        var existingItems = await _db.Items
+            .Where(i => i.ProviderName == "immich" && providerItemIds.Contains(i.ProviderItemId))
+            .ToDictionaryAsync(i => i.ProviderItemId, cancellationToken);
+
+        foreach (var asset in batch)
+        {
+            var providerItemId = asset.Id.ToString();
+
+            if (existingItems.TryGetValue(providerItemId, out var existingItem))
+            {
+                // Update existing item
+                existingItem.OriginalFileName = asset.OriginalFileName;
+                existingItem.Type = MapAssetType(asset.Type);
+                existingItem.CreatedAt = asset.FileCreatedAt ?? asset.CreatedAt;
+                existingItem.LastSyncedAt = now;
+            }
+            else
+            {
+                // Create new item
+                var newItem = new Item
+                {
+                    Id = Guid.NewGuid(),
+                    ProviderName = "immich",
+                    ProviderItemId = providerItemId,
+                    OriginalFileName = asset.OriginalFileName,
+                    Type = MapAssetType(asset.Type),
+                    CreatedAt = asset.FileCreatedAt ?? asset.CreatedAt,
+                    LastSyncedAt = now
+                };
+                _db.Items.Add(newItem);
+            }
+        }
+
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

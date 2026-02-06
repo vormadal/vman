@@ -53,8 +53,8 @@ public static class ExportCollectionToShotcut
                 throw new InvalidOperationException("Collection is empty. Add items before exporting.");
             }
 
-            // Fetch item details from the database
-            var itemTasks = orderedItems.Select(async collectionItem =>
+            // Fetch item details from the database and Immich metadata
+            var itemDetailsTasks = orderedItems.Select(async collectionItem =>
             {
                 var item = await db.Items
                     .Where(i => i.ProviderName == collectionItem.ProviderName && 
@@ -62,13 +62,40 @@ public static class ExportCollectionToShotcut
                     .Select(i => new { i.ProviderName, i.ProviderItemId, i.Type, i.OriginalFileName })
                     .FirstOrDefaultAsync(cancellationToken);
                     
-                return item;
+                if (item == null)
+                    return null;
+                
+                // Fetch duration from Immich for videos and audio
+                string? duration = null;
+                if (item.ProviderName.ToLower() == "immich" && 
+                    (item.Type == MediaType.Video || item.Type == MediaType.Audio))
+                {
+                    try
+                    {
+                        var assetId = Guid.Parse(item.ProviderItemId);
+                        var assetMetadata = await immichService.GetAssetAsync(assetId, cancellationToken);
+                        duration = assetMetadata?.Duration;
+                    }
+                    catch
+                    {
+                        // If we can't get duration, we'll use placeholder
+                    }
+                }
+                    
+                return new
+                {
+                    item.ProviderName,
+                    item.ProviderItemId,
+                    item.Type,
+                    item.OriginalFileName,
+                    Duration = duration
+                };
             });
             
-            var items = await Task.WhenAll(itemTasks);
-            var itemDetails = items
+            var itemsWithMetadata = await Task.WhenAll(itemDetailsTasks);
+            var itemDetails = itemsWithMetadata
                 .Where(item => item != null)
-                .Select(item => (item!.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName))
+                .Select(item => (item!.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName, item.Duration))
                 .ToList();
 
             // Create a memory stream for the zip file
@@ -144,7 +171,7 @@ public static class ExportCollectionToShotcut
 
         private static string GenerateMltXml(
             string collectionName, 
-            List<(string ProviderName, string ProviderItemId, MediaType Type, string FileName)> items,
+            List<(string ProviderName, string ProviderItemId, MediaType Type, string FileName, string? Duration)> items,
             List<(int Index, string FileName)> assetFileNames)
         {
             var mlt = new XElement("mlt",
@@ -191,15 +218,24 @@ public static class ExportCollectionToShotcut
                     continue;
                 }
                 
-                // TODO: Retrieve actual video duration from provider metadata
-                // For now, using a placeholder duration of 10 seconds (300 frames at 30fps)
-                // Images use 5 seconds (150 frames)
-                var outFrame = item.Type == MediaType.Image ? "149" : "299";
+                // Calculate frame count based on duration
+                // Images use 5 seconds (150 frames at 30fps)
+                // Videos/Audio use actual duration from metadata or 10 second placeholder
+                int outFrame;
+                if (item.Type == MediaType.Image)
+                {
+                    outFrame = 149; // 5 seconds at 30fps (150 frames - 1 for 0-indexed)
+                }
+                else
+                {
+                    // Parse duration string (format: "HH:MM:SS.mmm" or "M:SS.mmm")
+                    outFrame = ParseDurationToFrames(item.Duration, frameRate: 30);
+                }
                 
                 var producer = new XElement("producer",
                     new XAttribute("id", $"producer{producerId}"),
                     new XAttribute("in", "0"),
-                    new XAttribute("out", outFrame)
+                    new XAttribute("out", outFrame.ToString())
                 );
 
                 // Use relative path to asset file within the zip
@@ -229,7 +265,7 @@ public static class ExportCollectionToShotcut
                 playlist.Add(new XElement("entry",
                     new XAttribute("producer", $"producer{producerId}"),
                     new XAttribute("in", "0"),
-                    new XAttribute("out", outFrame)
+                    new XAttribute("out", outFrame.ToString())
                 ));
 
                 producerId++;
@@ -258,6 +294,37 @@ public static class ExportCollectionToShotcut
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", null), mlt);
             return doc.ToString();
+        }
+
+        private static int ParseDurationToFrames(string? durationString, int frameRate)
+        {
+            // Default to 10 seconds if no duration provided
+            if (string.IsNullOrWhiteSpace(durationString))
+            {
+                return (10 * frameRate) - 1; // 299 frames for 10 seconds at 30fps
+            }
+
+            try
+            {
+                // Duration format from Immich is typically "HH:MM:SS.mmm" or "M:SS.mmm"
+                TimeSpan duration;
+                
+                if (TimeSpan.TryParse(durationString, out duration))
+                {
+                    // Convert to total seconds and multiply by frame rate
+                    var totalFrames = (int)(duration.TotalSeconds * frameRate);
+                    // Return frame count - 1 (for 0-indexed frame counting)
+                    return Math.Max(0, totalFrames - 1);
+                }
+                
+                // If parsing fails, return default
+                return (10 * frameRate) - 1;
+            }
+            catch
+            {
+                // Fallback to 10 seconds on any error
+                return (10 * frameRate) - 1;
+            }
         }
 
         private static string SanitizeFileName(string fileName)

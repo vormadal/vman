@@ -29,8 +29,12 @@ public class ImmichMediaProvider : IMediaProvider
             _ => null
         };
 
-        // Get assets from Immich
-        var assets = await _immichService.GetAssetsAsync(immichType, null, cancellationToken);
+        // Get assets from Immich - stream and collect them
+        var assets = new List<ImmichAsset>();
+        await foreach (var asset in _immichService.GetAssetsAsync(immichType, null, cancellationToken))
+        {
+            assets.Add(asset);
+        }
         
         // Apply filters
         var filteredAssets = assets.AsEnumerable();
@@ -104,7 +108,12 @@ public class ImmichMediaProvider : IMediaProvider
         try
         {
             // Try to fetch a small number of assets to verify connection
-            await _immichService.GetAssetsAsync(null, 1, cancellationToken);
+            await foreach (var _ in _immichService.GetAssetsAsync(null, 1, cancellationToken))
+            {
+                // If we get at least one asset, the service is available
+                return true;
+            }
+            // Even if there are no assets, if we didn't get an exception, it's available
             return true;
         }
         catch

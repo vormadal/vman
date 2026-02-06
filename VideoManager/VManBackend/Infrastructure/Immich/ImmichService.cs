@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using VManBackend.Infrastructure.Immich.Generated;
@@ -31,9 +32,21 @@ public class ImmichService : IImmichService
         return asset == null ? null : MapToImmichAsset(asset);
     }
 
-    public async Task<IEnumerable<ImmichAsset>> GetAssetsAsync(AssetType? type = null, int? limit = null, CancellationToken cancellationToken = default)
+    public async Task<int> GetAssetsTotalCountAsync(AssetType? type = null, CancellationToken cancellationToken = default)
     {
-        var allAssets = new List<ImmichAsset>();
+        var searchDto = new MetadataSearchDto
+        {
+            Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
+            Size = 1 // We only need the total count, not the items
+        };
+
+        var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
+        
+        return searchResponse?.Assets?.Total ?? 0;
+    }
+
+    public async IAsyncEnumerable<ImmichAsset> GetAssetsAsync(AssetType? type = null, int? limit = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
         var remaining = limit;
         double? pageNumber = 1.0;
 
@@ -49,21 +62,19 @@ public class ImmichService : IImmichService
             var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
             
             if (searchResponse?.Assets?.Items == null || searchResponse.Assets.Items.Count == 0)
-                break;
+                yield break;
 
-            var pageAssets = searchResponse.Assets.Items
-                .Where(a => a != null)
-                .Select(MapToImmichAsset)
-                .ToList();
-
-            allAssets.AddRange(pageAssets);
-
-            // Update remaining count if limit is specified
-            if (remaining.HasValue)
+            foreach (var asset in searchResponse.Assets.Items.Where(a => a != null))
             {
-                remaining -= pageAssets.Count;
-                if (remaining <= 0)
-                    break;
+                yield return MapToImmichAsset(asset);
+                
+                // Update remaining count if limit is specified
+                if (remaining.HasValue)
+                {
+                    remaining--;
+                    if (remaining <= 0)
+                        yield break;
+                }
             }
 
             // Check if there's a next page
@@ -84,13 +95,16 @@ public class ImmichService : IImmichService
                 pageNumber++;
             }
         }
-
-        return allAssets;
     }
 
     public async Task<IEnumerable<ImmichAsset>> GetVideoAssetsAsync(int? limit = null, CancellationToken cancellationToken = default)
     {
-        return await GetAssetsAsync(AssetType.Video, limit, cancellationToken);
+        var results = new List<ImmichAsset>();
+        await foreach (var asset in GetAssetsAsync(AssetType.Video, limit, cancellationToken))
+        {
+            results.Add(asset);
+        }
+        return results;
     }
 
     public async Task UpdateAssetMetadataAsync(Guid assetId, UpdateAssetMetadata metadata, CancellationToken cancellationToken = default)

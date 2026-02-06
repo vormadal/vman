@@ -2,13 +2,17 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Public routes that don't require authentication
-const PUBLIC_ROUTES = ['/login', '/register'];
+const PUBLIC_ROUTES = ['/login', '/accept-invite'];
+
+// Routes that don't require profile completion
+const PROFILE_EXEMPT_ROUTES = ['/complete-profile'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if route is public
   const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+  const isProfileExempt = PROFILE_EXEMPT_ROUTES.some(route => pathname.startsWith(route));
 
   // Get auth token from localStorage (stored as JSON by zustand persist)
   // Since middleware runs on edge, we need to check via cookie or header
@@ -16,10 +20,12 @@ export function middleware(request: NextRequest) {
   const authCookie = request.cookies.get('auth-storage');
   
   let isAuthenticated = false;
+  let isProfileComplete = true;
   if (authCookie) {
     try {
       const authData = JSON.parse(authCookie.value);
       isAuthenticated = !!authData?.state?.accessToken;
+      isProfileComplete = authData?.state?.isProfileComplete !== false;
     } catch (error) {
       // Invalid cookie data
       isAuthenticated = false;
@@ -33,8 +39,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Redirect to home if accessing auth pages while logged in
-  if (isPublicRoute && isAuthenticated) {
+  // Redirect to profile completion if authenticated but profile incomplete
+  if (isAuthenticated && !isProfileComplete && !isPublicRoute && !isProfileExempt && pathname !== '/complete-profile') {
+    return NextResponse.redirect(new URL('/complete-profile', request.url));
+  }
+
+  // Redirect to home if accessing auth pages while logged in with complete profile
+  if (isPublicRoute && isAuthenticated && isProfileComplete) {
     return NextResponse.redirect(new URL('/videos', request.url));
   }
 

@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Database, FolderOpen, Grid3x3, LogOut, Film, Image as ImageIcon, Tag } from 'lucide-react';
+import { Menu, Database, FolderOpen, Grid3x3, LogOut, Film, Image as ImageIcon, Tag, Users, Mail } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useLogout } from '@/lib/hooks/useAuth';
+import { useAuthStore } from '@/lib/store/authStore';
 import { cn } from '@/lib/utils';
 
 const navigationItems = [
@@ -48,10 +49,26 @@ const navigationItems = [
   },
 ];
 
+const adminItems = [
+  {
+    title: 'Users',
+    href: '/admin/users',
+    icon: Users,
+    description: 'Manage users',
+  },
+  {
+    title: 'Invites',
+    href: '/admin/invites',
+    icon: Mail,
+    description: 'Manage invitations',
+  },
+];
+
 export function NavigationDrawer() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const logout = useLogout();
+  const isAdmin = useAuthStore((state) => state.isAdmin());
 
   const handleLogout = () => {
     setOpen(false);
@@ -100,6 +117,44 @@ export function NavigationDrawer() {
               </Link>
             );
           })}
+          
+          {isAdmin && (
+            <>
+              <div className="my-4 border-t" />
+              <div className="px-3 py-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase">Admin</p>
+              </div>
+              {adminItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground'
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <div className="flex flex-col">
+                      <span className="font-medium">{item.title}</span>
+                      <span className={cn(
+                        'text-xs',
+                        isActive ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                      )}>
+                        {item.description}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </>
+          )}
           
           <div className="my-4 border-t" />
           

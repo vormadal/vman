@@ -203,7 +203,6 @@ export default function ItemsPage() {
           </div>
         </div>
 
-        <div>
         {/* Media Type Filter */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">

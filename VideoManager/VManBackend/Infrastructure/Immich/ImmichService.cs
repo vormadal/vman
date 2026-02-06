@@ -33,21 +33,45 @@ public class ImmichService : IImmichService
 
     public async Task<IEnumerable<ImmichAsset>> GetAssetsAsync(AssetType? type = null, int? limit = null, CancellationToken cancellationToken = default)
     {
-        var searchDto = new MetadataSearchDto
+        var allAssets = new List<ImmichAsset>();
+        string? nextPage = null;
+        var remaining = limit;
+
+        do
         {
-            Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
-            Size = limit
-        };
+            var searchDto = new MetadataSearchDto
+            {
+                Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
+                Size = remaining,
+                Page = string.IsNullOrEmpty(nextPage) ? null : double.Parse(nextPage)
+            };
 
-        var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
-        
-        if (searchResponse?.Assets?.Items == null)
-            return Enumerable.Empty<ImmichAsset>();
+            var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
+            
+            if (searchResponse?.Assets?.Items == null || searchResponse.Assets.Items.Count == 0)
+                break;
 
-        return searchResponse.Assets.Items
-            .Where(a => a != null)
-            .Select(MapToImmichAsset)
-            .ToList();
+            var pageAssets = searchResponse.Assets.Items
+                .Where(a => a != null)
+                .Select(MapToImmichAsset)
+                .ToList();
+
+            allAssets.AddRange(pageAssets);
+
+            // Update remaining count if limit is specified
+            if (remaining.HasValue)
+            {
+                remaining -= pageAssets.Count;
+                if (remaining <= 0)
+                    break;
+            }
+
+            // Get the next page cursor
+            nextPage = searchResponse.Assets.NextPage;
+        }
+        while (!string.IsNullOrEmpty(nextPage));
+
+        return allAssets;
     }
 
     public async Task<IEnumerable<ImmichAsset>> GetVideoAssetsAsync(int? limit = null, CancellationToken cancellationToken = default)

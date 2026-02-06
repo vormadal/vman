@@ -61,25 +61,37 @@ export default function TaggingModePage() {
   }, [currentIndex]);
 
   const handleNext = useCallback(() => {
-    if (currentIndex < allItems.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      
-      // Fetch next page when approaching the end
-      if (currentIndex >= allItems.length - 5 && hasNextPage) {
+    setCurrentIndex(prevIndex => {
+      const lastLoadedIndex = allItems.length - 1;
+
+      // If we still have a next loaded item, advance to it
+      if (prevIndex < lastLoadedIndex) {
+        const nextIndex = prevIndex + 1;
+
+        // Fetch next page when approaching the end of loaded items
+        if (nextIndex >= allItems.length - 5 && hasNextPage) {
+          fetchNextPage();
+        }
+
+        return nextIndex;
+      }
+
+      // We're at the last loaded item; if more pages are available, trigger a fetch
+      if (hasNextPage) {
         fetchNextPage();
       }
-    }
-  }, [currentIndex, allItems.length, hasNextPage, fetchNextPage]);
+
+      // Stay on the current index until new items have been loaded
+      return prevIndex;
+    });
+  }, [allItems.length, hasNextPage, fetchNextPage]);
 
   const handleAddTag = (tagId: string) => {
     if (!currentItem) return;
     
     // Check if tag is already added
     if (currentItem.tags.some(t => t.id === tagId)) {
-      toast({
-        title: "Tag already added",
-        variant: "destructive",
-      });
+      toast.error("Tag already added");
       return;
     }
     
@@ -87,9 +99,7 @@ export default function TaggingModePage() {
       { provider: currentItem.provider, itemId: currentItem.id, tagId },
       {
         onSuccess: () => {
-          toast({
-            title: "Tag added",
-          });
+          toast.success("Tag added");
         },
       }
     );
@@ -107,17 +117,23 @@ export default function TaggingModePage() {
   const handleCreateTag = () => {
     if (!newTagName.trim()) return;
     
+    // Capture current item details to avoid race condition
+    const targetProvider = currentItem?.provider;
+    const targetItemId = currentItem?.id;
+    
     createTagMutation.mutate(
       { name: newTagName.trim() },
       {
         onSuccess: (tag) => {
           setNewTagName('');
-          toast({
-            title: "Tag created",
-          });
-          // Auto-add the newly created tag to the current item
-          if (currentItem) {
-            handleAddTag(tag.id);
+          toast.success("Tag created");
+          // Auto-add the newly created tag to the captured item
+          if (targetProvider && targetItemId) {
+            addTagMutation.mutate({
+              provider: targetProvider,
+              itemId: targetItemId,
+              tagId: tag.id,
+            });
           }
         },
       }
@@ -233,6 +249,7 @@ export default function TaggingModePage() {
                   className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12"
                   onClick={handlePrevious}
                   disabled={currentIndex === 0}
+                  aria-label="Previous item"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </Button>
@@ -241,7 +258,8 @@ export default function TaggingModePage() {
                   size="icon"
                   className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12"
                   onClick={handleNext}
-                  disabled={currentIndex >= allItems.length - 1}
+                  disabled={currentIndex >= allItems.length - 1 && !hasNextPage}
+                  aria-label="Next item"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </Button>
@@ -275,6 +293,7 @@ export default function TaggingModePage() {
                     <button
                       onClick={() => handleRemoveTag(tag.id)}
                       className="ml-1 hover:text-destructive"
+                      aria-label={`Remove ${tag.name} tag`}
                     >
                       <X className="h-3 w-3" />
                     </button>

@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
     // e.g., services__apiservice__http__0 or services__apiservice__https__0
     NEXT_PUBLIC_API_URL: process.env.services__apiservice__http__0 || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
   },
+
+  // Enable standalone output for Docker deployments
+  output: 'standalone',
 };
 
 export default nextConfig;

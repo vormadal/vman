@@ -29,6 +29,11 @@
     <ProjectReference Include="..\VideoManager.ServiceDefaults\VideoManager.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <!-- Workaround for .NET SDK 10.0.102 bug with glob pattern resource files -->
+  <ItemGroup>
+    <EmbeddedResource Remove="**/*.resx" />
+  </ItemGroup>
+
   <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec Command="dotnet tool restore" WorkingDirectory="$(ProjectDir)..\" />
     <Exec Command="dotnet tool run kiota generate -l CSharp -c ImmichClient -n VManBackend.Infrastructure.Immich.Generated -o VManBackend\Infrastructure\Immich\Generated -d https://raw.githubusercontent.com/immich-app/immich/master/open-api/immich-openapi-specs.json" WorkingDirectory="$(ProjectDir)..\" />

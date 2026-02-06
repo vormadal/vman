@@ -171,7 +171,7 @@ export default function ItemsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       {collectionModeActive && (
         <CollectionOverlay
           activeCollectionId={activeCollectionId}
@@ -183,30 +183,26 @@ export default function ItemsPage() {
         />
       )}
       
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Media Items</h1>
-            <div className="flex gap-2">
-              <Button
-                variant={collectionModeActive ? "default" : "outline"}
-                onClick={() => setCollectionModeActive(!collectionModeActive)}
-              >
-                <ToggleRight className="h-4 w-4 mr-2" />
-                Collection Mode
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Media Items</h1>
+          <div className="flex gap-2">
+            <Button
+              variant={collectionModeActive ? "default" : "outline"}
+              onClick={() => setCollectionModeActive(!collectionModeActive)}
+            >
+              <ToggleRight className="h-4 w-4 mr-2" />
+              Collection Mode
+            </Button>
+            <Link href="/collections">
+              <Button variant="outline">
+                <FolderPlus className="h-4 w-4 mr-2" />
+                Collections
               </Button>
-              <Link href="/collections">
-                <Button variant="outline">
-                  <FolderPlus className="h-4 w-4 mr-2" />
-                  Collections
-                </Button>
-              </Link>
-            </div>
+            </Link>
           </div>
         </div>
-      </header>
 
-      <main className="container mx-auto px-4 py-8">
         {/* Media Type Filter */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -558,7 +554,7 @@ export default function ItemsPage() {
             </CardContent>
           </Card>
         )}
-      </main>
-    </div>
+      </div>
+    </>
   );
 }

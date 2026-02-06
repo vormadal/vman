@@ -11,6 +11,8 @@ import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 
+const PREFETCH_THRESHOLD = 5; // Trigger next page load when this many items from the end
+
 export default function TaggingModePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newTagName, setNewTagName] = useState('');
@@ -69,7 +71,7 @@ export default function TaggingModePage() {
         const nextIndex = prevIndex + 1;
 
         // Fetch next page when approaching the end of loaded items
-        if (nextIndex >= allItems.length - 5 && hasNextPage) {
+        if (nextIndex >= allItems.length - PREFETCH_THRESHOLD && hasNextPage) {
           fetchNextPage();
         }
 

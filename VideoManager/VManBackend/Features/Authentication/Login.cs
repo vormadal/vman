@@ -15,14 +15,16 @@ public static class Login
     public record Response(
         UserDto User,
         string AccessToken,
-        string RefreshToken
+        string RefreshToken,
+        bool IsProfileComplete
     );
 
     public record UserDto(
         Guid Id,
         string Email,
-        string FirstName,
-        string LastName
+        string? FirstName,
+        string? LastName,
+        string Role
     );
 
     public class Validator
@@ -59,6 +61,12 @@ public static class Login
                 return null; // User not found
             }
 
+            // Check if user is blocked
+            if (user.IsBlocked)
+            {
+                return null; // User is blocked
+            }
+
             // Verify password
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
@@ -76,9 +84,10 @@ public static class Login
 
             // Return user and token
             return new Response(
-                new UserDto(user.Id, user.Email, user.FirstName, user.LastName),
+                new UserDto(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString()),
                 token,
-                token // Using same token as refresh for now
+                token, // Using same token as refresh for now
+                user.IsProfileComplete
             );
         }
     }

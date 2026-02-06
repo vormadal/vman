@@ -184,6 +184,9 @@ app.UseStatusCodePages();
 // For production, HTTPS redirection is handled by reverse proxy/hosting
 // app.UseHttpsRedirection();
 
+// Serve static files from wwwroot (frontend build)
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -197,6 +200,13 @@ app.MapItemEndpoints();
 app.MapSyncEndpoints();
 app.MapProviderEndpoints();
 app.MapCollectionEndpoints();
+
+// Serve frontend (SPA fallback for Next.js)
+// In production, serve the Next.js app for non-API routes
+if (!app.Environment.IsDevelopment())
+{
+    app.MapFallbackToFile("index.html");
+}
 
 // Apply migrations on startup (development only)
 if (app.Environment.IsDevelopment())

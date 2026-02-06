@@ -68,17 +68,17 @@ export default function CollectionDetailPage() {
       const link = document.createElement('a');
       link.href = url;
       
-      // Create filename from collection name
+      // Create filename from collection name (will be .zip now)
       const safeCollectionName = collection?.name.replace(/[^a-z0-9]/gi, '_') || 'collection';
       const dateStr = new Date().toISOString().slice(0, 10);
-      link.download = `${safeCollectionName}_${dateStr}.mlt`;
+      link.download = `${safeCollectionName}_${dateStr}.zip`;
       
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      toast.success('Collection exported to Shotcut MLT format');
+      toast.success('Collection exported as zip archive with MLT file and assets');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to export collection');
     }

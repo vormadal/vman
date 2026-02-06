@@ -1,8 +1,10 @@
 using System.Text;
 using System.Xml.Linq;
+using System.IO.Compression;
 using Microsoft.EntityFrameworkCore;
 using VManBackend.Common.Data;
 using VManBackend.Infrastructure.Providers;
+using VManBackend.Infrastructure.Immich;
 using VManBackend.Mediator;
 
 namespace VManBackend.Features.Collections;
@@ -11,7 +13,7 @@ public static class ExportCollectionToShotcut
 {
     public record Request(Guid CollectionId) : IRequest<Response>;
     
-    public record Response(string MltXml, string FileName);
+    public record Response(Stream ZipStream, string FileName);
 
     public class Validator
     {
@@ -28,7 +30,7 @@ public static class ExportCollectionToShotcut
         }
     }
 
-    public class Handler(ApplicationDbContext db, IConfiguration configuration) : IRequestHandler<Request, Response>
+    public class Handler(ApplicationDbContext db, IImmichService immichService) : IRequestHandler<Request, Response>
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
@@ -69,17 +71,81 @@ public static class ExportCollectionToShotcut
                 .Select(item => (item!.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName))
                 .ToList();
 
-            // Get Immich base URL from configuration
-            var immichBaseUrl = configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl not configured");
+            // Create a memory stream for the zip file
+            var zipStream = new MemoryStream();
             
-            // Generate MLT XML
-            var mltXml = GenerateMltXml(collection.Name, itemDetails, immichBaseUrl);
-            var fileName = $"{SanitizeFileName(collection.Name)}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.mlt";
-
-            return new Response(mltXml, fileName);
+            using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
+            {
+                // Create assets directory in zip
+                var assetFileNames = new List<(int Index, string FileName)>();
+                
+                // Download and add each asset to the zip
+                for (int i = 0; i < itemDetails.Count; i++)
+                {
+                    var item = itemDetails[i];
+                    
+                    // Only download from Immich for now
+                    if (item.ProviderName.ToLower() == "immich")
+                    {
+                        try
+                        {
+                            var assetId = Guid.Parse(item.ProviderItemId);
+                            var assetStream = await immichService.GetOriginalAssetAsync(assetId, cancellationToken);
+                            
+                            if (assetStream != null)
+                            {
+                                // Get file extension from original filename or default based on type
+                                var extension = Path.GetExtension(item.OriginalFileName);
+                                if (string.IsNullOrEmpty(extension))
+                                {
+                                    extension = item.Type == MediaType.Image ? ".jpg" : 
+                                               item.Type == MediaType.Video ? ".mp4" : 
+                                               item.Type == MediaType.Audio ? ".mp3" : ".dat";
+                                }
+                                
+                                var fileName = $"asset_{i:D3}{extension}";
+                                var entry = archive.CreateEntry($"assets/{fileName}", CompressionLevel.NoCompression);
+                                
+                                using (var entryStream = entry.Open())
+                                {
+                                    await assetStream.CopyToAsync(entryStream, cancellationToken);
+                                }
+                                
+                                assetFileNames.Add((i, fileName));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log error but continue with other assets
+                            // In production, proper logging should be added
+                            Console.WriteLine($"Failed to download asset {item.ProviderItemId}: {ex.Message}");
+                        }
+                    }
+                }
+                
+                // Generate MLT XML with local file references
+                var mltXml = GenerateMltXml(collection.Name, itemDetails, assetFileNames);
+                
+                // Add MLT file to zip
+                var mltEntry = archive.CreateEntry($"{SanitizeFileName(collection.Name)}.mlt", CompressionLevel.Optimal);
+                using (var mltStream = mltEntry.Open())
+                using (var writer = new StreamWriter(mltStream, Encoding.UTF8))
+                {
+                    await writer.WriteAsync(mltXml);
+                }
+            }
+            
+            // Reset stream position for reading
+            zipStream.Position = 0;
+            
+            var zipFileName = $"{SanitizeFileName(collection.Name)}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.zip";
+            return new Response(zipStream, zipFileName);
         }
 
-        private static string GenerateMltXml(string collectionName, List<(string ProviderName, string ProviderItemId, MediaType Type, string FileName)> items, string immichBaseUrl)
+        private static string GenerateMltXml(
+            string collectionName, 
+            List<(string ProviderName, string ProviderItemId, MediaType Type, string FileName)> items,
+            List<(int Index, string FileName)> assetFileNames)
         {
             var mlt = new XElement("mlt",
                 new XAttribute("version", "7.20.0"),
@@ -112,8 +178,19 @@ public static class ExportCollectionToShotcut
             var producers = new List<XElement>();
 
             // Add each item as a producer and playlist entry
-            foreach (var item in items)
+            for (int i = 0; i < items.Count; i++)
             {
+                var item = items[i];
+                
+                // Find the corresponding asset file name
+                var assetFile = assetFileNames.FirstOrDefault(a => a.Index == i);
+                
+                // Skip if asset wasn't downloaded
+                if (assetFile.FileName == null)
+                {
+                    continue;
+                }
+                
                 // TODO: Retrieve actual video duration from provider metadata
                 // For now, using a placeholder duration of 10 seconds (300 frames at 30fps)
                 // Images use 5 seconds (150 frames)
@@ -125,11 +202,11 @@ public static class ExportCollectionToShotcut
                     new XAttribute("out", outFrame)
                 );
 
-                // Add resource property with the file path or URL
-                var resourceUrl = GetResourceUrl(item.ProviderName, item.ProviderItemId, immichBaseUrl);
+                // Use relative path to asset file within the zip
+                var resourcePath = $"assets/{assetFile.FileName}";
                 producer.Add(new XElement("property",
                     new XAttribute("name", "resource"),
-                    resourceUrl
+                    resourcePath
                 ));
 
                 // Choose appropriate MLT service based on media type
@@ -181,39 +258,6 @@ public static class ExportCollectionToShotcut
 
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", null), mlt);
             return doc.ToString();
-        }
-
-        private static string GetResourceUrl(string providerName, string providerItemId, string immichBaseUrl)
-        {
-            // IMPORTANT: Resource URL considerations for Shotcut MLT files
-            //
-            // Current implementation returns Immich API URLs directly. This approach has limitations:
-            //
-            // 1. AUTHENTICATION: Immich asset URLs require API key authentication. Shotcut cannot
-            //    automatically provide auth headers when loading these URLs. Users must either:
-            //    - Configure Immich to allow unauthenticated access to specific assets (NOT recommended)
-            //    - Use a proxy that adds authentication headers
-            //    - Download files locally before using them in Shotcut (RECOMMENDED for production)
-            //
-            // 2. NETWORK RELIABILITY: Remote URLs can introduce latency and availability issues
-            //    during video editing. Local file paths provide better editing performance.
-            //
-            // RECOMMENDED PRODUCTION APPROACH:
-            // - Download all collection items to a local directory
-            // - Store files with consistent naming (e.g., {collectionName}/{index}_{originalFileName})
-            // - Return local file paths in the MLT instead of remote URLs
-            // - Include downloaded files alongside the .mlt file when distributing the project
-            //
-            // The current URL-based approach works for testing but should be replaced with
-            // file download logic for production use.
-            
-            if (providerName.ToLower() == "immich")
-            {
-                // Construct Immich asset original URL
-                return $"{immichBaseUrl}/api/assets/{providerItemId}/original";
-            }
-
-            return $"{providerName}://{providerItemId}";
         }
 
         private static string SanitizeFileName(string fileName)

@@ -152,4 +152,9 @@ public class ImmichService : IImmichService
             config => config.QueryParameters.SizeAsAssetMediaSize = AssetMediaSize.Preview,
             cancellationToken: cancellationToken);
     }
+
+    public async Task<Stream?> GetOriginalAssetAsync(Guid assetId, CancellationToken cancellationToken = default)
+    {
+        return await _client.Assets[assetId].Original.GetAsync(cancellationToken: cancellationToken);
+    }
 }

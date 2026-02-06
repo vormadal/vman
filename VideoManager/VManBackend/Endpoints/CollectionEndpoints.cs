@@ -216,8 +216,8 @@ public static class CollectionEndpoints
             {
                 var response = await mediator.Send(request);
                 return Results.File(
-                    System.Text.Encoding.UTF8.GetBytes(response.MltXml),
-                    "application/xml",
+                    response.ZipStream,
+                    "application/zip",
                     response.FileName
                 );
             }

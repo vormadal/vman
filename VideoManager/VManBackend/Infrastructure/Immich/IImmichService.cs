@@ -9,4 +9,5 @@ public interface IImmichService
     Task UpdateAssetsMetadataAsync(IEnumerable<Guid> assetIds, UpdateAssetMetadata metadata, CancellationToken cancellationToken = default);
     Task<Stream?> GetThumbnailAsync(Guid assetId, CancellationToken cancellationToken = default);
     Task<Stream?> GetPreviewAsync(Guid assetId, CancellationToken cancellationToken = default);
+    Task<Stream?> GetOriginalAssetAsync(Guid assetId, CancellationToken cancellationToken = default);
 }

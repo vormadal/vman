@@ -34,11 +34,10 @@ public class ImmichService : IImmichService
     public async Task<IEnumerable<ImmichAsset>> GetAssetsAsync(AssetType? type = null, int? limit = null, CancellationToken cancellationToken = default)
     {
         var allAssets = new List<ImmichAsset>();
-        string? nextPage = null;
         var remaining = limit;
-        var pageNumber = 1.0;
+        double? pageNumber = 1.0;
 
-        do
+        while (pageNumber.HasValue)
         {
             var searchDto = new MetadataSearchDto
             {
@@ -67,22 +66,24 @@ public class ImmichService : IImmichService
                     break;
             }
 
-            // Get the next page - try parsing as number, fallback to incrementing page number
-            nextPage = searchResponse.Assets.NextPage;
-            if (!string.IsNullOrEmpty(nextPage))
+            // Check if there's a next page
+            if (string.IsNullOrEmpty(searchResponse.Assets.NextPage))
             {
-                if (double.TryParse(nextPage, out var parsedPage))
-                {
-                    pageNumber = parsedPage;
-                }
-                else
-                {
-                    // If nextPage is not a number, increment page number
-                    pageNumber++;
-                }
+                // No more pages
+                pageNumber = null;
+            }
+            else if (double.TryParse(searchResponse.Assets.NextPage, out var parsedPage))
+            {
+                // NextPage is a numeric value, use it directly
+                pageNumber = parsedPage;
+            }
+            else
+            {
+                // NextPage is not numeric - increment current page
+                // This is a fallback for potential API changes
+                pageNumber++;
             }
         }
-        while (!string.IsNullOrEmpty(nextPage));
 
         return allAssets;
     }

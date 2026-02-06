@@ -86,7 +86,7 @@ export default function CollectionDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <p className="text-muted-foreground">Loading collection...</p>
         </div>
@@ -96,7 +96,7 @@ export default function CollectionDetailPage() {
 
   if (error || !collection) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
           <p className="text-destructive">Collection not found</p>
         </div>
@@ -105,7 +105,7 @@ export default function CollectionDetailPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <Link href="/collections">
           <Button variant="ghost" size="sm">

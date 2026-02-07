@@ -34,15 +34,25 @@ public class ImmichService : IImmichService
 
     public async Task<int> GetAssetsTotalCountAsync(AssetType? type = null, CancellationToken cancellationToken = default)
     {
-        var searchDto = new MetadataSearchDto
-        {
-            Type = type.HasValue ? MapToAssetTypeEnum(type.Value) : null,
-            Size = 1 // We only need the total count, not the items
-        };
-
-        var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
+        // Use the dedicated statistics endpoint for accurate counts
+        var stats = await _client.Assets.Statistics.GetAsync(cancellationToken: cancellationToken);
         
-        return searchResponse?.Assets?.Total ?? 0;
+        if (stats == null)
+            return 0;
+            
+        // If a specific type is requested, return that count
+        if (type.HasValue)
+        {
+            return type.Value switch
+            {
+                AssetType.Image => stats.Images ?? 0,
+                AssetType.Video => stats.Videos ?? 0,
+                _ => stats.Total ?? 0
+            };
+        }
+        
+        // Return total count for all assets
+        return stats.Total ?? 0;
     }
 
     public async IAsyncEnumerable<ImmichAsset> GetAssetsAsync(AssetType? type = null, int? limit = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)

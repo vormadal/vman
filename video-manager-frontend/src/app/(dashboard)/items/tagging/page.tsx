@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,6 +18,7 @@ export default function TaggingModePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newTagName, setNewTagName] = useState('');
   const { toast } = useToast();
+  const router = useRouter();
 
   const {
     data,
@@ -89,8 +91,8 @@ export default function TaggingModePage() {
         });
       }
     } catch (error) {
-      toast('Error', {
-        description: error instanceof Error ? error.message : 'Failed to update tag',
+      toast(hasTag ? 'Failed to remove tag' : 'Failed to add tag', {
+        description: error instanceof Error ? error.message : 'An error occurred while updating the tag',
       });
     }
   };
@@ -115,8 +117,8 @@ export default function TaggingModePage() {
         description: `"${newTagName}" has been created and added.`,
       });
     } catch (error) {
-      toast('Error', {
-        description: error instanceof Error ? error.message : 'Failed to create tag',
+      toast('Failed to create tag', {
+        description: error instanceof Error ? error.message : 'An error occurred while creating the tag',
       });
     }
   };
@@ -173,7 +175,7 @@ export default function TaggingModePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-muted-foreground mb-4">No items found for tagging</p>
-          <Button onClick={() => window.location.href = '/items'}>
+          <Button onClick={() => router.push('/items')}>
             Go to Items
           </Button>
         </div>

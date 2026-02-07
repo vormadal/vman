@@ -16,7 +16,7 @@ A dedicated tagging mode interface has been implemented at `/items/tagging` to p
 - Clear sections for:
   - Creating new tags
   - Current item tags (highlighted)
-  - All available tags (alphabetically sorted)
+  - All available tags (sorted with current tags first)
 - Scrollable tag list for large tag collections
 
 ### ✅ 3. Most Recent Tags First

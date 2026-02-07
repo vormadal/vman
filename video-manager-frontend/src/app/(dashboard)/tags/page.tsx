@@ -36,6 +36,20 @@ export default function TagsPage() {
   const handleCreateTag = async () => {
     if (!newTagName.trim()) return;
 
+    // Check for exact match (case insensitive) in all tags
+    const exactMatch = tagsData?.tags.find(
+      tag => tag.name.toLowerCase() === newTagName.trim().toLowerCase()
+    );
+
+    if (exactMatch) {
+      toast('Tag already exists', {
+        description: `A tag named "${exactMatch.name}" already exists.`,
+      });
+      setNewTagName('');
+      setIsCreateDialogOpen(false);
+      return;
+    }
+
     try {
       await createTag.mutateAsync({ name: newTagName.trim() });
       toast('Tag created', {

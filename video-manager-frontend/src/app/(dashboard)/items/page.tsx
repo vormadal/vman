@@ -110,17 +110,31 @@ export default function ItemsPage() {
   };
 
   const handleCreateTag = () => {
-    if (newTagName.trim()) {
-      createTagMutation.mutate(
-        { name: newTagName.trim() },
-        {
-          onSuccess: () => {
-            setNewTagName('');
-            setIsAddingTag(false);
-          },
-        }
-      );
+    if (!newTagName.trim()) return;
+
+    // Check for exact match (case insensitive) in all tags
+    const exactMatch = tagsData?.tags.find(
+      tag => tag.name.toLowerCase() === newTagName.trim().toLowerCase()
+    );
+
+    if (exactMatch) {
+      toast('Tag already exists', {
+        description: `A tag named "${exactMatch.name}" already exists.`,
+      });
+      setNewTagName('');
+      setIsAddingTag(false);
+      return;
     }
+
+    createTagMutation.mutate(
+      { name: newTagName.trim() },
+      {
+        onSuccess: () => {
+          setNewTagName('');
+          setIsAddingTag(false);
+        },
+      }
+    );
   };
 
   const getMediaTypeIcon = (type: MediaType) => {

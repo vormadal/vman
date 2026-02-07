@@ -400,160 +400,114 @@ export default function ItemsPage() {
                             </Badge>
                           </div>
                           <CardContent className="p-4">
-                            <h3 className="font-semibold mb-1 truncate" title={item.name}>
-                              {item.name}
-                            </h3>
-                            <p className="text-xs text-muted-foreground mb-3">
-                              {new Date(item.createdAt).toLocaleDateString('en-GB', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                              })}
-                            </p>
+                            {/* Item tags and people - show first 10 combined */}
+                            {(() => {
+                              const combinedTagsAndPeople = [
+                                ...item.tags.map(tag => ({ type: 'tag' as const, data: tag })),
+                                ...((item.people || []).map(person => ({ type: 'person' as const, data: person })))
+                              ].slice(0, 10);
 
-                            {/* Item tags and people - only show if not in collection mode or hide is not active */}
-                            {!collectionModeActive && (
-                              <>
+                              return (
                                 <div className="flex flex-wrap gap-1 mb-2 min-h-[24px]">
-                                  {item.tags.map((tag) => (
-                                    <Badge
-                                      key={tag.id}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      <TagIcon className="h-3 w-3 mr-1" />
-                                      {tag.name}
-                                      <button
-                                        onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
-                                        className="ml-1 hover:text-destructive"
+                                  {combinedTagsAndPeople.map((entry) => 
+                                    entry.type === 'tag' ? (
+                                      <Badge
+                                        key={`tag-${entry.data.id}`}
+                                        variant="secondary"
+                                        className="text-xs"
                                       >
-                                        <X className="h-3 w-3" />
-                                      </button>
-                                    </Badge>
-                                  ))}
+                                        <TagIcon className="h-3 w-3 mr-1" />
+                                        {entry.data.name}
+                                        <button
+                                          onClick={() => handleRemoveTag(item.provider, item.id, entry.data.id)}
+                                          className="ml-1 hover:text-destructive"
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </button>
+                                      </Badge>
+                                    ) : (
+                                      <Badge
+                                        key={`person-${entry.data.id}`}
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        <UserIcon className="h-3 w-3 mr-1" />
+                                        {entry.data.name}
+                                      </Badge>
+                                    )
+                                  )}
                                 </div>
-                                <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
-                                  {item.people?.map((person) => (
-                                    <Badge
-                                      key={person.id}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      <UserIcon className="h-3 w-3 mr-1" />
-                                      {person.name}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </>
-                            )}
+                              );
+                            })()}
 
                             {/* Action buttons */}
                             <div className="flex gap-2">
                               {/* Quick add to active collection when in collection mode */}
-                              {collectionModeActive && activeCollectionId ? (
-                                <Button
-                                  variant="default"
-                                  size="sm"
-                                  className="flex-1"
-                                  onClick={() => handleQuickAddToActiveCollection(item.provider, item.id)}
-                                  disabled={addToCollectionMutation.isPending}
-                                >
-                                  <Plus className="h-4 w-4 mr-1" />
-                                  Add to Collection
-                                </Button>
-                              ) : (
+                              {collectionModeActive && activeCollectionId && (
                                 <>
-                                  {/* Add tag dialog - hidden in collection mode */}
-                                  {!collectionModeActive && (
-                                    <Dialog>
-                                      <DialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="flex-1">
-                                          <Plus className="h-4 w-4 mr-1" />
-                                          Add Tag
-                                        </Button>
-                                      </DialogTrigger>
-                                      <DialogContent>
-                                        <DialogHeader>
-                                          <DialogTitle>Add Tag to {item.name}</DialogTitle>
-                                          <DialogDescription>
-                                            Select a tag to add to this item.
-                                          </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto">
-                                          {tagsData?.tags
-                                            ?.filter((tag) => !item.tags.find((t) => t.id === tag.id))
-                                            .map((tag) => (
-                                              <Badge
-                                          key={tag.id}
-                                          variant="outline"
-                                          className="cursor-pointer hover:bg-accent"
-                                          onClick={() => handleAddTag(item.provider, item.id, tag.id)}
-                                        >
-                                        {tag.name}
-                                      </Badge>
-                                    ))}
-                                  {tagsData?.tags?.every((tag) => item.tags.find((t) => t.id === tag.id)) && (
-                                    <p className="text-sm text-muted-foreground">
-                                      All tags are already added to this item.
-                                    </p>
-                                  )}
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          )}
-
-                            {/* Add to collection dialog - available in all modes */}
-                            <Dialog
-                              open={openDialogItemId === `${item.provider}-${item.id}`}
-                              onOpenChange={(open) => setOpenDialogItemId(open ? `${item.provider}-${item.id}` : null)}
-                            >
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="flex-1">
-                                  <FolderPlus className="h-4 w-4 mr-1" />
-                                  {collectionModeActive ? 'Other Collection' : 'Add to Collection'}
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Add to Collection</DialogTitle>
-                                    <DialogDescription>
-                                      Select a collection to add {item.name} to.
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                                    {collectionsData?.collections && collectionsData.collections.length > 0 ? (
-                                      collectionsData.collections.map((collection) => (
-                                        <Button
-                                          key={collection.id}
-                                          variant="outline"
-                                          className="w-full justify-start"
-                                          onClick={() => handleAddToCollection(collection.id, item.provider, item.id)}
-                                        >
-                                          <FolderPlus className="h-4 w-4 mr-2" />
-                                          {collection.name}
-                                          <span className="ml-auto text-xs text-muted-foreground">
-                                            {collection.itemCount} items
-                                          </span>
-                                        </Button>
-                                      ))
-                                    ) : (
-                                      <div className="text-center py-4">
-                                        <p className="text-sm text-muted-foreground mb-3">
-                                          No collections yet. Create one first.
-                                        </p>
-                                        <Link href="/collections">
-                                          <Button variant="outline" size="sm">
-                                            Go to Collections
-                                          </Button>
-                                        </Link>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="flex-1"
+                                    onClick={() => handleQuickAddToActiveCollection(item.provider, item.id)}
+                                    disabled={addToCollectionMutation.isPending}
+                                  >
+                                    <Plus className="h-4 w-4 mr-1" />
+                                    Add to Collection
+                                  </Button>
+                                  
+                                  {/* Add to other collection dialog - available in collection mode */}
+                                  <Dialog
+                                    open={openDialogItemId === `${item.provider}-${item.id}`}
+                                    onOpenChange={(open) => setOpenDialogItemId(open ? `${item.provider}-${item.id}` : null)}
+                                  >
+                                    <DialogTrigger asChild>
+                                      <Button variant="outline" size="sm" className="flex-1">
+                                        <FolderPlus className="h-4 w-4 mr-1" />
+                                        Other Collection
+                                      </Button>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                      <DialogHeader>
+                                        <DialogTitle>Add to Collection</DialogTitle>
+                                        <DialogDescription>
+                                          Select a collection to add {item.name} to.
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                                        {collectionsData?.collections && collectionsData.collections.length > 0 ? (
+                                          collectionsData.collections.map((collection) => (
+                                            <Button
+                                              key={collection.id}
+                                              variant="outline"
+                                              className="w-full justify-start"
+                                              onClick={() => handleAddToCollection(collection.id, item.provider, item.id)}
+                                            >
+                                              <FolderPlus className="h-4 w-4 mr-2" />
+                                              {collection.name}
+                                              <span className="ml-auto text-xs text-muted-foreground">
+                                                {collection.itemCount} items
+                                              </span>
+                                            </Button>
+                                          ))
+                                        ) : (
+                                          <div className="text-center py-4">
+                                            <p className="text-sm text-muted-foreground mb-3">
+                                              No collections yet. Create one first.
+                                            </p>
+                                            <Link href="/collections">
+                                              <Button variant="outline" size="sm">
+                                                Go to Collections
+                                              </Button>
+                                            </Link>
+                                          </div>
+                                        )}
                                       </div>
-                                    )}
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          </>
-                        )}
-                      </div>
+                                    </DialogContent>
+                                  </Dialog>
+                                </>
+                              )}
+                            </div>
                     </CardContent>
                         </Card>
                       ))}

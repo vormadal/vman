@@ -16,7 +16,8 @@ interface CollectionOverlayProps {
 
 export function CollectionOverlay({ activeCollectionId, onClose }: CollectionOverlayProps) {
   const [isMinimized, setIsMinimized] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: 20 });
+  const DEFAULT_Y_POSITION = 20;
+  const [position, setPosition] = useState({ x: 20, y: DEFAULT_Y_POSITION });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   
@@ -26,9 +27,9 @@ export function CollectionOverlay({ activeCollectionId, onClose }: CollectionOve
 
   useEffect(() => {
     if (isMobile) {
-      setPosition({ x: 0, y: 20 });
+      setPosition({ x: 0, y: DEFAULT_Y_POSITION });
     }
-  }, [isMobile]);
+  }, [isMobile, DEFAULT_Y_POSITION]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (isMobile) return;

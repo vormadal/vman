@@ -22,9 +22,9 @@ public static class GetPeople
                 return false;
             }
 
-            if (request.PageSize < 1 || request.PageSize > 100)
+            if (request.PageSize < 1 || request.PageSize > 500)
             {
-                error = "PageSize must be between 1 and 100";
+                error = "PageSize must be between 1 and 500";
                 return false;
             }
 

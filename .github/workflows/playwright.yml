@@ -14,28 +14,91 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./video-manager-frontend
-    
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: videomanager
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: 'npm'
         cache-dependency-path: './video-manager-frontend/package-lock.json'
-    
-    - name: Install dependencies
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Restore backend dependencies
+      working-directory: ./VideoManager/VManBackend
+      run: dotnet restore
+
+    - name: Build backend
+      working-directory: ./VideoManager/VManBackend
+      run: dotnet build --no-restore
+
+    - name: Apply database migrations
+      working-directory: ./VideoManager/VManBackend
+      run: dotnet ef database update
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Database=videomanager;Username=postgres;Password=postgres"
+
+    - name: Start backend
+      working-directory: ./VideoManager/VManBackend
+      run: |
+        dotnet run --no-build &
+        echo $! > backend.pid
+      env:
+        USE_STUB_IMMICH: "true"
+        ConnectionStrings__DefaultConnection: "Host=localhost;Database=videomanager;Username=postgres;Password=postgres"
+        ASPNETCORE_URLS: "http://localhost:5001"
+        Jwt__SecretKey: "test-secret-key-min-32-characters-long-for-testing-only"
+        Jwt__Issuer: "VManBackend"
+        Jwt__Audience: "VManBackend"
+        Immich__BaseUrl: "http://stub"
+
+    - name: Wait for backend to be ready
+      run: |
+        timeout 60 bash -c 'until curl -s http://localhost:5001/health > /dev/null; do sleep 1; done' || exit 1
+
+    - name: Install frontend dependencies
+      working-directory: ./video-manager-frontend
       run: npm ci
-    
+
     - name: Install Playwright Browsers
+      working-directory: ./video-manager-frontend
       run: npx playwright install --with-deps
-    
+
     - name: Run Playwright tests
+      working-directory: ./video-manager-frontend
       run: npm run test:e2e
-    
+      env:
+        NEXT_PUBLIC_API_URL: "http://localhost:5001"
+
+    - name: Stop backend
+      if: always()
+      working-directory: ./VideoManager/VManBackend
+      run: |
+        if [ -f backend.pid ]; then
+          kill $(cat backend.pid) || true
+          rm backend.pid
+        fi
+
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

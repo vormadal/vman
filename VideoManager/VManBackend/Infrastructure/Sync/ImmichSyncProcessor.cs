@@ -57,7 +57,7 @@ public class ImmichSyncProcessor
             var currentBatch = new List<Infrastructure.Immich.ImmichAsset>();
 
             // Stream assets and process in batches
-            await foreach (var asset in _immichService.GetAssetsAsync(cancellationToken: cancellationToken).WithCancellation(cancellationToken))
+            await foreach (var asset in _immichService.GetAssetsAsync(cancellationToken: cancellationToken))
             {
                 currentBatch.Add(asset);
 
@@ -93,6 +93,9 @@ public class ImmichSyncProcessor
             _logger.LogInformation("Starting people sync from Immich");
             await SyncPeopleAsync(now, cancellationToken);
 
+            // Reload job since SyncPeopleAsync may clear the change tracker
+            job = await _db.SyncJobs.FindAsync([jobId], cancellationToken)
+                ?? throw new InvalidOperationException($"Sync job {jobId} not found after people sync");
             job.Status = SyncJobStatus.Completed;
             job.ProcessedItems = processedCount;
             job.CompletedAt = DateTimeOffset.UtcNow;

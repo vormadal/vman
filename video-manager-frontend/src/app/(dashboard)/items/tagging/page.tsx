@@ -89,10 +89,8 @@ export default function TaggingModePage() {
         });
       }
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast('Error', {
         description: error instanceof Error ? error.message : 'Failed to update tag',
-        variant: 'destructive',
       });
     }
   };
@@ -113,15 +111,12 @@ export default function TaggingModePage() {
         });
       }
       
-      toast({
-        title: 'Tag created',
+      toast('Tag created', {
         description: `"${newTagName}" has been created and added.`,
       });
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast('Error', {
         description: error instanceof Error ? error.message : 'Failed to create tag',
-        variant: 'destructive',
       });
     }
   };

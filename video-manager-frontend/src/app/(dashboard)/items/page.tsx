@@ -41,7 +41,7 @@ export default function ItemsPage() {
   });
 
   const { data: tagsData } = useTags();
-  const { data: peopleData } = usePeople();
+  const { data: peopleData } = usePeople(undefined, 500);
   const addTagMutation = useAddTagToItem();
   const removeTagMutation = useRemoveTagFromItem();
   const createTagMutation = useCreateTag();

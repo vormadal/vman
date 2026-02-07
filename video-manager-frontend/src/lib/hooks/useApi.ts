@@ -291,10 +291,10 @@ export function useExportCollectionToShotcut() {
 }
 
 // People hooks
-export function usePeople(search?: string) {
+export function usePeople(search?: string, pageSize = 50) {
   return useQuery({
     queryKey: peopleKeys.list(search),
-    queryFn: () => apiClient.getPeople(search),
+    queryFn: () => apiClient.getPeople(search, 1, pageSize),
   });
 }
 

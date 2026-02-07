@@ -35,7 +35,7 @@ public static class GetPersonById
                 person.Person.IsFavorite,
                 person.Person.IsHidden,
                 person.ItemCount,
-                person.Person.UpdatedAt.DateTime
+                person.Person.UpdatedAt.UtcDateTime
             );
 
             return new Response(personDto);

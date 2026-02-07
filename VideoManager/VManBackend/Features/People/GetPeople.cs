@@ -71,7 +71,7 @@ public static class GetPeople
                 p.IsFavorite,
                 p.IsHidden,
                 itemCounts.GetValueOrDefault(p.Id, 0),
-                p.UpdatedAt.DateTime
+                p.UpdatedAt.UtcDateTime
             )).ToList();
 
             return new Response(peopleDtos, totalCount, request.Page, request.PageSize);

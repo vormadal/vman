@@ -171,6 +171,7 @@ class ApiClient {
     if (params?.type) searchParams.append('type', params.type);
     if (params?.untagged !== undefined) searchParams.append('untagged', params.untagged.toString());
     if (params?.tagId) searchParams.append('tagId', params.tagId);
+    if (params?.personId) searchParams.append('personId', params.personId);
     if (params?.isFavorite !== undefined) searchParams.append('isFavorite', params.isFavorite.toString());
     if (params?.sortBy) searchParams.append('sortBy', params.sortBy);
     if (params?.sortDescending !== undefined) searchParams.append('sortDescending', params.sortDescending.toString());
@@ -312,11 +313,11 @@ class ApiClient {
       params.append('search', search);
     }
 
-    return this.request(`/api/people?${params.toString()}`);
+    return this.request<PeopleResponse>(`/api/people?${params.toString()}`);
   }
 
   async getPersonById(id: string): Promise<PersonDetailResponse> {
-    return this.request(`/api/people/${id}`);
+    return this.request<PersonDetailResponse>(`/api/people/${id}`);
   }
 }
 

@@ -241,65 +241,106 @@ public class ImmichSyncProcessor
 
     private async Task SyncPersonAssetsAsync(DateTimeOffset now, CancellationToken cancellationToken)
     {
+        const int AssetBatchSize = 1000;
+        
         // Get all people from database
         var allPeople = await _db.People
             .Where(p => p.ProviderName == "immich")
             .ToListAsync(cancellationToken);
 
-        foreach (var person in allPeople)
+        foreach (var person in allPeople.Where(p => Guid.TryParse(p.ProviderItemId, out _)))
         {
             if (!Guid.TryParse(person.ProviderItemId, out var personGuid))
-                continue;
-
-            // Get all assets for this person from Immich
-            var assetIds = new List<string>();
-            await foreach (var asset in _immichService.GetAssetsForPersonAsync(personGuid, cancellationToken))
-            {
-                assetIds.Add(asset.Id.ToString());
-            }
-
-            if (assetIds.Count == 0)
                 continue;
 
             // Get existing ItemPerson relationships for this person
             var existingRelationships = await _db.ItemPeople
                 .Where(ip => ip.PersonId == person.Id)
-                .Select(ip => ip.ItemId)
-                .ToHashSetAsync(cancellationToken);
-
-            // Find items that exist in our database
-            var existingItems = await _db.Items
-                .Where(i => i.ProviderName == "immich" && assetIds.Contains(i.ProviderItemId))
-                .Select(i => new { i.Id, i.ProviderItemId })
+                .Select(ip => new { ip.ItemId, ip.ProviderItemId })
                 .ToListAsync(cancellationToken);
+            
+            var existingItemIds = existingRelationships.Select(r => r.ItemId).ToHashSet();
+            var existingProviderIds = existingRelationships.Select(r => r.ProviderItemId).ToHashSet();
 
-            // Add new relationships
-            foreach (var item in existingItems)
+            // Process assets in batches to avoid large IN clauses
+            var assetBatch = new List<string>();
+            await foreach (var asset in _immichService.GetAssetsForPersonAsync(personGuid, cancellationToken))
             {
-                if (!existingRelationships.Contains(item.Id))
+                assetBatch.Add(asset.Id.ToString());
+
+                if (assetBatch.Count >= AssetBatchSize)
                 {
-                    var itemPerson = new ItemPerson
-                    {
-                        Id = Guid.NewGuid(),
-                        PersonId = person.Id,
-                        ItemId = item.Id,
-                        ProviderName = "immich",
-                        ProviderItemId = item.ProviderItemId,
-                        CreatedAt = now
-                    };
-                    _db.ItemPeople.Add(itemPerson);
+                    await ProcessAssetBatchForPersonAsync(person, assetBatch, existingItemIds, existingProviderIds, now, cancellationToken);
+                    assetBatch.Clear();
                 }
             }
 
-            // Remove relationships that no longer exist in Immich
-            var relationshipsToRemove = await _db.ItemPeople
-                .Where(ip => ip.PersonId == person.Id && !assetIds.Contains(ip.ProviderItemId))
-                .ToListAsync(cancellationToken);
+            // Process remaining assets
+            if (assetBatch.Count > 0)
+            {
+                await ProcessAssetBatchForPersonAsync(person, assetBatch, existingItemIds, existingProviderIds, now, cancellationToken);
+            }
 
-            _db.ItemPeople.RemoveRange(relationshipsToRemove);
+            // Remove relationships that no longer exist in Immich (only need to check against provider IDs we've seen)
+            var allProcessedProviderIds = existingProviderIds.ToHashSet();
+            var relationshipsToRemove = existingRelationships
+                .Where(r => allProcessedProviderIds.Contains(r.ProviderItemId))
+                .Select(r => r.ItemId)
+                .ToHashSet();
+            
+            if (relationshipsToRemove.Count > 0)
+            {
+                var toRemove = await _db.ItemPeople
+                    .Where(ip => ip.PersonId == person.Id && !relationshipsToRemove.Contains(ip.ItemId))
+                    .ToListAsync(cancellationToken);
+                
+                _db.ItemPeople.RemoveRange(toRemove);
+            }
+
+            // Save changes per person to keep transaction sizes bounded
+            await _db.SaveChangesAsync(cancellationToken);
+            
+            // Clear change tracker to prevent memory bloat
+            _db.ChangeTracker.Clear();
         }
 
-        await _db.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Person-to-asset relationships synced");
+    }
+
+    private async Task ProcessAssetBatchForPersonAsync(
+        Person person,
+        List<string> assetIds,
+        HashSet<Guid> existingItemIds,
+        HashSet<string> existingProviderIds,
+        DateTimeOffset now,
+        CancellationToken cancellationToken)
+    {
+        // Find items that exist in our database for this batch
+        var existingItems = await _db.Items
+            .Where(i => i.ProviderName == "immich" && assetIds.Contains(i.ProviderItemId))
+            .Select(i => new { i.Id, i.ProviderItemId })
+            .ToListAsync(cancellationToken);
+
+        // Add new relationships
+        foreach (var item in existingItems.Where(item => !existingItemIds.Contains(item.Id)))
+        {
+            var itemPerson = new ItemPerson
+            {
+                Id = Guid.NewGuid(),
+                PersonId = person.Id,
+                ItemId = item.Id,
+                ProviderName = "immich",
+                ProviderItemId = item.ProviderItemId,
+                CreatedAt = now
+            };
+            _db.ItemPeople.Add(itemPerson);
+            existingItemIds.Add(item.Id);
+        }
+        
+        // Track provider IDs we've seen
+        foreach (var providerItemId in assetIds)
+        {
+            existingProviderIds.Add(providerItemId);
+        }
     }
 }

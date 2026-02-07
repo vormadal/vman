@@ -402,7 +402,7 @@ export default function ItemsPage() {
                             </Badge>
                           </div>
                           <CardContent className="p-4">
-                            {/* Item tags and people - show first 10 combined */}
+                            {/* Item tags and people - show first 10 combined (tags first, then people) */}
                             {(() => {
                               const combinedTagsAndPeople = [
                                 ...item.tags.map(tag => ({ type: 'tag' as const, data: tag })),

@@ -74,7 +74,6 @@ A dedicated tagging mode interface has been implemented at `/items/tagging` to p
 - Uses React Query for data fetching and mutations
 - Local state for current item index
 - Infinite scroll with automatic prefetching
-- Optimistic UI updates for tag operations
 
 ### API Integration
 Uses existing hooks:
@@ -86,9 +85,8 @@ Uses existing hooks:
 
 ### Performance Optimizations
 - Infinite scroll with prefetching (loads next page when 5 items from end)
-- Virtual scrolling ready (can be added for tag list if needed)
 - Memoized computations for sorted tags
-- Debounced keyboard event handlers
+- Keyboard event handlers respect input focus state
 
 ## Access Point
 A "Tagging Mode" button has been added to the main items page (`/items`) header for easy access.

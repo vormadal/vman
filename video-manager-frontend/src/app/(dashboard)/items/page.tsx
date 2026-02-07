@@ -190,12 +190,12 @@ export default function ItemsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Media Items</h1>
           <div className="flex gap-2">
-            <Link href="/items/tagging">
-              <Button variant="outline">
+            <Button variant="outline" asChild>
+              <Link href="/items/tagging">
                 <Tags className="h-4 w-4 mr-2" />
                 Tagging Mode
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <Button
               variant={collectionModeActive ? "default" : "outline"}
               onClick={() => setCollectionModeActive(!collectionModeActive)}
@@ -203,12 +203,12 @@ export default function ItemsPage() {
               <ToggleRight className="h-4 w-4 mr-2" />
               Collection Mode
             </Button>
-            <Link href="/collections">
-              <Button variant="outline">
+            <Button variant="outline" asChild>
+              <Link href="/collections">
                 <FolderPlus className="h-4 w-4 mr-2" />
                 Collections
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
 

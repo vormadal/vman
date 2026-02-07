@@ -68,6 +68,25 @@ export default function TaggingModePage() {
     );
   }, [sortedTags, newTagName]);
 
+  // Helper function to get input helper text
+  const getInputHelperText = () => {
+    if (newTagName.trim() && filteredTags.length > 0) {
+      return 'Press Enter to add or create tag';
+    }
+    return 'Press Enter to create and add tag';
+  };
+
+  // Helper function to get empty state message
+  const getEmptyStateMessage = () => {
+    if (newTagName.trim()) {
+      return 'No matching tags found. Press Enter to create a new tag.';
+    }
+    if (currentItem?.tags.length > 0) {
+      return 'All tags have been added to this item.';
+    }
+    return 'No tags available. Create one above!';
+  };
+
   const handlePrevious = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -354,9 +373,7 @@ export default function TaggingModePage() {
                       />
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {newTagName.trim() && filteredTags.length > 0
-                        ? 'Press Enter to use existing tag or create new if no exact match'
-                        : 'Press Enter to create and add tag'}
+                      {getInputHelperText()}
                     </p>
                   </div>
 
@@ -382,11 +399,7 @@ export default function TaggingModePage() {
                       ))}
                       {filteredTags.length === 0 && (
                         <p className="text-sm text-muted-foreground text-center py-4">
-                          {newTagName.trim() 
-                            ? 'No matching tags found. Press Enter to create a new tag.'
-                            : currentItem.tags.length > 0 
-                              ? 'All tags have been added to this item.' 
-                              : 'No tags available. Create one above!'}
+                          {getEmptyStateMessage()}
                         </p>
                       )}
                     </div>

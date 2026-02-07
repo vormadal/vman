@@ -198,9 +198,16 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PersonId).IsRequired();
+            entity.Property(e => e.ItemId).IsRequired();
             entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
             entity.Property(e => e.ProviderItemId).HasMaxLength(500).IsRequired();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+
+            // Configure relationship with Item
+            entity.HasOne(e => e.Item)
+                .WithMany(e => e.ItemPeople)
+                .HasForeignKey(e => e.ItemId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Composite unique index to prevent duplicate people on same item
             entity.HasIndex(e => new { e.PersonId, e.ProviderName, e.ProviderItemId })

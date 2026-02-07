@@ -264,26 +264,27 @@ public class ImmichSyncProcessor
             // Get existing ItemPerson relationships for this person
             var existingRelationships = await _db.ItemPeople
                 .Where(ip => ip.PersonId == person.Id)
-                .Select(ip => ip.ProviderItemId)
+                .Select(ip => ip.ItemId)
                 .ToHashSetAsync(cancellationToken);
 
             // Find items that exist in our database
             var existingItems = await _db.Items
                 .Where(i => i.ProviderName == "immich" && assetIds.Contains(i.ProviderItemId))
-                .Select(i => i.ProviderItemId)
+                .Select(i => new { i.Id, i.ProviderItemId })
                 .ToListAsync(cancellationToken);
 
             // Add new relationships
-            foreach (var itemId in existingItems)
+            foreach (var item in existingItems)
             {
-                if (!existingRelationships.Contains(itemId))
+                if (!existingRelationships.Contains(item.Id))
                 {
                     var itemPerson = new ItemPerson
                     {
                         Id = Guid.NewGuid(),
                         PersonId = person.Id,
+                        ItemId = item.Id,
                         ProviderName = "immich",
-                        ProviderItemId = itemId,
+                        ProviderItemId = item.ProviderItemId,
                         CreatedAt = now
                     };
                     _db.ItemPeople.Add(itemPerson);

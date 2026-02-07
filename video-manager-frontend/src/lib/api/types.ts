@@ -239,4 +239,3 @@ export interface PersonDetailResponse {
   person: PersonDto;
 }
 
-

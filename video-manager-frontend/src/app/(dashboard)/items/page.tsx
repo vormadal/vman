@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, ToggleRight, User as UserIcon } from 'lucide-react';
+import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, ToggleRight, User as UserIcon, Tags } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
@@ -190,6 +190,12 @@ export default function ItemsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Media Items</h1>
           <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link href="/items/tagging">
+                <Tags className="h-4 w-4 mr-2" />
+                Tagging Mode
+              </Link>
+            </Button>
             <Button
               variant={collectionModeActive ? "default" : "outline"}
               onClick={() => setCollectionModeActive(!collectionModeActive)}
@@ -197,12 +203,12 @@ export default function ItemsPage() {
               <ToggleRight className="h-4 w-4 mr-2" />
               Collection Mode
             </Button>
-            <Link href="/collections">
-              <Button variant="outline">
+            <Button variant="outline" asChild>
+              <Link href="/collections">
                 <FolderPlus className="h-4 w-4 mr-2" />
                 Collections
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
 

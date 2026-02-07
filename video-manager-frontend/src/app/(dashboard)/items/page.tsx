@@ -9,13 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, ToggleRight, User as UserIcon, Tags } from 'lucide-react';
+import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, User as UserIcon, Tags } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { CollectionOverlay } from '@/components/collection-overlay';
+import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
 
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
@@ -23,9 +24,9 @@ export default function ItemsPage() {
   const [selectedPersonId, setSelectedPersonId] = useState<string | undefined>();
   const [newTagName, setNewTagName] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
-  const [collectionModeActive, setCollectionModeActive] = useState(false);
-  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
   const [openDialogItemId, setOpenDialogItemId] = useState<string | null>(null);
+  
+  const { isActive: collectionModeActive, activeCollectionId, exitCollectionMode } = useCollectionModeStore();
 
   const {
     data,
@@ -178,11 +179,7 @@ export default function ItemsPage() {
       {collectionModeActive && (
         <CollectionOverlay
           activeCollectionId={activeCollectionId}
-          onClose={() => {
-            setCollectionModeActive(false);
-            setActiveCollectionId(null);
-          }}
-          onSelectCollection={setActiveCollectionId}
+          onClose={exitCollectionMode}
         />
       )}
       
@@ -195,13 +192,6 @@ export default function ItemsPage() {
                 <Tags className="h-4 w-4 mr-2" />
                 Tagging Mode
               </Link>
-            </Button>
-            <Button
-              variant={collectionModeActive ? "default" : "outline"}
-              onClick={() => setCollectionModeActive(!collectionModeActive)}
-            >
-              <ToggleRight className="h-4 w-4 mr-2" />
-              Collection Mode
             </Button>
             <Button variant="outline" asChild>
               <Link href="/collections">

@@ -89,6 +89,10 @@ public class ImmichSyncProcessor
                 processedCount += currentBatch.Count;
             }
 
+            // Sync people after assets are synced
+            _logger.LogInformation("Starting people sync from Immich");
+            await SyncPeopleAsync(now, cancellationToken);
+
             job.Status = SyncJobStatus.Completed;
             job.ProcessedItems = processedCount;
             job.CompletedAt = DateTimeOffset.UtcNow;
@@ -160,5 +164,141 @@ public class ImmichSyncProcessor
         }
 
         await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task SyncPeopleAsync(DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        // Get all people from Immich (including hidden)
+        var peopleResponse = await _immichService.GetPeopleAsync(withHidden: true, cancellationToken);
+        if (peopleResponse?.People == null || peopleResponse.People.Count == 0)
+        {
+            _logger.LogInformation("No people found in Immich");
+            return;
+        }
+
+        _logger.LogInformation("Syncing {Count} people from Immich", peopleResponse.People.Count);
+
+        var personIds = peopleResponse.People.Select(p => p.Id ?? string.Empty).Where(id => !string.IsNullOrEmpty(id)).ToList();
+
+        // Get existing people
+        var existingPeople = await _db.People
+            .Where(p => p.ProviderName == "immich" && personIds.Contains(p.ProviderItemId))
+            .ToDictionaryAsync(p => p.ProviderItemId, cancellationToken);
+
+        foreach (var personDto in peopleResponse.People)
+        {
+            if (string.IsNullOrEmpty(personDto.Id) || string.IsNullOrEmpty(personDto.Name))
+                continue;
+
+            DateOnly? birthDate = null;
+            if (personDto.BirthDate != null)
+            {
+                // Kiota's Date type has Year, Month, Day properties
+                birthDate = new DateOnly(
+                    personDto.BirthDate.Value.Year,
+                    personDto.BirthDate.Value.Month,
+                    personDto.BirthDate.Value.Day
+                );
+            }
+
+            if (existingPeople.TryGetValue(personDto.Id, out var existingPerson))
+            {
+                // Update existing person
+                existingPerson.Name = personDto.Name;
+                existingPerson.BirthDate = birthDate;
+                existingPerson.ThumbnailPath = personDto.ThumbnailPath;
+                existingPerson.IsFavorite = personDto.IsFavorite ?? false;
+                existingPerson.IsHidden = personDto.IsHidden ?? false;
+                existingPerson.UpdatedAt = personDto.UpdatedAt ?? DateTimeOffset.UtcNow;
+                existingPerson.LastSyncedAt = now;
+            }
+            else
+            {
+                // Create new person
+                var newPerson = new Person
+                {
+                    Id = Guid.NewGuid(),
+                    ProviderName = "immich",
+                    ProviderItemId = personDto.Id,
+                    Name = personDto.Name,
+                    BirthDate = birthDate,
+                    ThumbnailPath = personDto.ThumbnailPath,
+                    IsFavorite = personDto.IsFavorite ?? false,
+                    IsHidden = personDto.IsHidden ?? false,
+                    UpdatedAt = personDto.UpdatedAt ?? DateTimeOffset.UtcNow,
+                    LastSyncedAt = now
+                };
+                _db.People.Add(newPerson);
+            }
+        }
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        // Now sync the person-to-asset relationships
+        _logger.LogInformation("Syncing person-to-asset relationships");
+        await SyncPersonAssetsAsync(now, cancellationToken);
+    }
+
+    private async Task SyncPersonAssetsAsync(DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        // Get all people from database
+        var allPeople = await _db.People
+            .Where(p => p.ProviderName == "immich")
+            .ToListAsync(cancellationToken);
+
+        foreach (var person in allPeople)
+        {
+            if (!Guid.TryParse(person.ProviderItemId, out var personGuid))
+                continue;
+
+            // Get all assets for this person from Immich
+            var assetIds = new List<string>();
+            await foreach (var asset in _immichService.GetAssetsForPersonAsync(personGuid, cancellationToken))
+            {
+                assetIds.Add(asset.Id.ToString());
+            }
+
+            if (assetIds.Count == 0)
+                continue;
+
+            // Get existing ItemPerson relationships for this person
+            var existingRelationships = await _db.ItemPeople
+                .Where(ip => ip.PersonId == person.Id)
+                .Select(ip => ip.ProviderItemId)
+                .ToHashSetAsync(cancellationToken);
+
+            // Find items that exist in our database
+            var existingItems = await _db.Items
+                .Where(i => i.ProviderName == "immich" && assetIds.Contains(i.ProviderItemId))
+                .Select(i => i.ProviderItemId)
+                .ToListAsync(cancellationToken);
+
+            // Add new relationships
+            foreach (var itemId in existingItems)
+            {
+                if (!existingRelationships.Contains(itemId))
+                {
+                    var itemPerson = new ItemPerson
+                    {
+                        Id = Guid.NewGuid(),
+                        PersonId = person.Id,
+                        ProviderName = "immich",
+                        ProviderItemId = itemId,
+                        CreatedAt = now
+                    };
+                    _db.ItemPeople.Add(itemPerson);
+                }
+            }
+
+            // Remove relationships that no longer exist in Immich
+            var relationshipsToRemove = await _db.ItemPeople
+                .Where(ip => ip.PersonId == person.Id && !assetIds.Contains(ip.ProviderItemId))
+                .ToListAsync(cancellationToken);
+
+            _db.ItemPeople.RemoveRange(relationshipsToRemove);
+        }
+
+        await _db.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("Person-to-asset relationships synced");
     }
 }

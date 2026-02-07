@@ -72,6 +72,11 @@ export interface ItemTagDto {
   name: string;
 }
 
+export interface ItemPersonDto {
+  id: string;
+  name: string;
+}
+
 export interface ItemDto {
   provider: string;
   id: string;
@@ -82,6 +87,7 @@ export interface ItemDto {
   previewUrl?: string;
   isFavorite: boolean;
   tags: ItemTagDto[];
+  people: ItemPersonDto[];
 }
 
 export interface ItemDetailDto extends ItemDto {
@@ -105,6 +111,7 @@ export interface GetItemsParams {
   type?: MediaType;
   untagged?: boolean;
   tagId?: string;
+  personId?: string;
   isFavorite?: boolean;
   sortBy?: string;
   sortDescending?: boolean;
@@ -209,4 +216,27 @@ export interface UpdateCollectionItemOrderRequest {
   collectionId: string;
   items: Array<{ itemId: string; newOrder: number }>;
 }
+
+// People types
+export interface PersonDto {
+  id: string;
+  name: string;
+  birthDate?: string;
+  isFavorite: boolean;
+  isHidden: boolean;
+  itemCount: number;
+  updatedAt: string;
+}
+
+export interface PeopleResponse {
+  people: PersonDto[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface PersonDetailResponse {
+  person: PersonDto;
+}
+
 

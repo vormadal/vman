@@ -23,7 +23,10 @@ import type {
   CollectionDetailDto,
   AddItemToCollectionRequest,
   AddItemToCollectionResponse,
-  UpdateCollectionItemOrderRequest
+  UpdateCollectionItemOrderRequest,
+  PersonDto,
+  PeopleResponse,
+  PersonDetailResponse
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -296,6 +299,24 @@ class ApiClient {
 
   async exportCollectionToShotcut(collectionId: string): Promise<Blob> {
     return this.requestBinary(`/api/collections/${collectionId}/export/shotcut`);
+  }
+
+  // People endpoints
+  async getPeople(search?: string, page = 1, pageSize = 50): Promise<PeopleResponse> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+    });
+    
+    if (search) {
+      params.append('search', search);
+    }
+
+    return this.request(`/api/people?${params.toString()}`);
+  }
+
+  async getPersonById(id: string): Promise<PersonDetailResponse> {
+    return this.request(`/api/people/${id}`);
   }
 }
 

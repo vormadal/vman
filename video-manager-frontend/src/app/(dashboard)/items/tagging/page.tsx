@@ -58,6 +58,35 @@ export default function TaggingModePage() {
     );
   }, [tagsData, currentItem]);
 
+  // Filter tags based on input (case insensitive)
+  const filteredTags = useMemo(() => {
+    if (!newTagName.trim()) return sortedTags;
+    
+    const searchLower = newTagName.toLowerCase();
+    return sortedTags.filter(tag => 
+      tag.name.toLowerCase().includes(searchLower)
+    );
+  }, [sortedTags, newTagName]);
+
+  // Helper function to get input helper text
+  const getInputHelperText = () => {
+    if (newTagName.trim() && filteredTags.length > 0) {
+      return 'Press Enter to add or create tag';
+    }
+    return 'Press Enter to create and add tag';
+  };
+
+  // Helper function to get empty state message
+  const getEmptyStateMessage = () => {
+    if (newTagName.trim()) {
+      return 'No matching tags found. Press Enter to create a new tag.';
+    }
+    if (currentItem?.tags.length > 0) {
+      return 'All tags have been added to this item.';
+    }
+    return 'No tags available. Create one above!';
+  };
+
   const handlePrevious = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -106,6 +135,35 @@ export default function TaggingModePage() {
 
   const handleCreateTag = async () => {
     if (!newTagName.trim()) return;
+    
+    // Check for exact match (case insensitive) in all tags
+    const exactMatch = tagsData?.tags.find(
+      tag => tag.name.toLowerCase() === newTagName.trim().toLowerCase()
+    );
+    
+    if (exactMatch) {
+      // Use existing tag instead of creating a new one
+      setNewTagName('');
+      
+      if (currentItem) {
+        try {
+          await addTagMutation.mutateAsync({
+            provider: currentItem.provider,
+            itemId: currentItem.id,
+            tagId: exactMatch.id,
+          });
+          
+          toast('Tag added', {
+            description: `"${exactMatch.name}" has been added to the item.`,
+          });
+        } catch (error) {
+          toast('Failed to add tag', {
+            description: error instanceof Error ? error.message : 'An error occurred while adding the tag',
+          });
+        }
+      }
+      return;
+    }
     
     try {
       const result = await createTagMutation.mutateAsync({ name: newTagName.trim() });
@@ -315,7 +373,7 @@ export default function TaggingModePage() {
                       />
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Press Enter to create and add tag
+                      {getInputHelperText()}
                     </p>
                   </div>
 
@@ -325,7 +383,7 @@ export default function TaggingModePage() {
                       Available Tags
                     </Label>
                     <div className="space-y-2 max-h-96 overflow-y-auto" role="list">
-                      {sortedTags.map((tag) => (
+                      {filteredTags.map((tag) => (
                         <button
                           key={tag.id}
                           type="button"
@@ -339,11 +397,9 @@ export default function TaggingModePage() {
                           </Badge>
                         </button>
                       ))}
-                      {sortedTags.length === 0 && (
+                      {filteredTags.length === 0 && (
                         <p className="text-sm text-muted-foreground text-center py-4">
-                          {currentItem.tags.length > 0 
-                            ? 'All tags have been added to this item.' 
-                            : 'No tags available. Create one above!'}
+                          {getEmptyStateMessage()}
                         </p>
                       )}
                     </div>

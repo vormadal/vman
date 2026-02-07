@@ -18,6 +18,8 @@ import Link from 'next/link';
 import { CollectionOverlay } from '@/components/collection-overlay';
 import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
 
+const MAX_DISPLAYED_BADGES = 10;
+
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
   const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
@@ -405,7 +407,7 @@ export default function ItemsPage() {
                               const combinedTagsAndPeople = [
                                 ...item.tags.map(tag => ({ type: 'tag' as const, data: tag })),
                                 ...((item.people || []).map(person => ({ type: 'person' as const, data: person })))
-                              ].slice(0, 10);
+                              ].slice(0, MAX_DISPLAYED_BADGES);
 
                               return (
                                 <div className="flex flex-wrap gap-1 mb-2 min-h-[24px]">
@@ -455,7 +457,7 @@ export default function ItemsPage() {
                                     <Plus className="h-4 w-4 mr-1" />
                                     Add to Collection
                                   </Button>
-                                  
+
                                   {/* Add to other collection dialog - available in collection mode */}
                                   <Dialog
                                     open={openDialogItemId === `${item.provider}-${item.id}`}

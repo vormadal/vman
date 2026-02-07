@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag, useCollections, useAddItemToCollection } from '@/lib/hooks/useApi';
+import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag, useCollections, useAddItemToCollection, usePeople } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, ToggleRight } from 'lucide-react';
+import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, ToggleRight, User as UserIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
@@ -20,6 +20,7 @@ import { CollectionOverlay } from '@/components/collection-overlay';
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
   const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
+  const [selectedPersonId, setSelectedPersonId] = useState<string | undefined>();
   const [newTagName, setNewTagName] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [collectionModeActive, setCollectionModeActive] = useState(false);
@@ -36,9 +37,11 @@ export default function ItemsPage() {
   } = useInfiniteItems({
     type: selectedMediaType,
     tagId: selectedTagId,
+    personId: selectedPersonId,
   });
 
   const { data: tagsData } = useTags();
+  const { data: peopleData } = usePeople(undefined, 500);
   const addTagMutation = useAddTagToItem();
   const removeTagMutation = useRemoveTagFromItem();
   const createTagMutation = useCreateTag();
@@ -282,6 +285,34 @@ export default function ItemsPage() {
           </div>
         </div>
 
+        {/* People Filter */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <UserIcon className="h-5 w-5 text-muted-foreground" />
+            <h2 className="text-sm font-semibold text-muted-foreground">Filter by Person</h2>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Badge
+              variant={selectedPersonId === undefined ? 'default' : 'outline'}
+              className="cursor-pointer"
+              onClick={() => setSelectedPersonId(undefined)}
+            >
+              All
+            </Badge>
+            {peopleData?.people?.filter(p => !p.isHidden).map((person) => (
+              <Badge
+                key={person.id}
+                variant={selectedPersonId === person.id ? 'default' : 'outline'}
+                className="cursor-pointer"
+                onClick={() => setSelectedPersonId(selectedPersonId === person.id ? undefined : person.id)}
+              >
+                {person.name} ({person.itemCount})
+              </Badge>
+            ))}
+          </div>
+        </div>
+
         {/* Create new tag dialog */}
         <Dialog open={isAddingTag} onOpenChange={setIsAddingTag}>
           <DialogContent>
@@ -384,25 +415,40 @@ export default function ItemsPage() {
                               })}
                             </p>
 
-                            {/* Item tags - only show if not in collection mode or hide is not active */}
+                            {/* Item tags and people - only show if not in collection mode or hide is not active */}
                             {!collectionModeActive && (
-                              <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
-                                {item.tags.map((tag) => (
-                                  <Badge
-                                    key={tag.id}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {tag.name}
-                                    <button
-                                      onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
-                                      className="ml-1 hover:text-destructive"
+                              <>
+                                <div className="flex flex-wrap gap-1 mb-2 min-h-[24px]">
+                                  {item.tags.map((tag) => (
+                                    <Badge
+                                      key={tag.id}
+                                      variant="secondary"
+                                      className="text-xs"
                                     >
-                                      <X className="h-3 w-3" />
-                                    </button>
-                                  </Badge>
-                                ))}
-                              </div>
+                                      <TagIcon className="h-3 w-3 mr-1" />
+                                      {tag.name}
+                                      <button
+                                        onClick={() => handleRemoveTag(item.provider, item.id, tag.id)}
+                                        className="ml-1 hover:text-destructive"
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </button>
+                                    </Badge>
+                                  ))}
+                                </div>
+                                <div className="flex flex-wrap gap-1 mb-3 min-h-[24px]">
+                                  {item.people?.map((person) => (
+                                    <Badge
+                                      key={person.id}
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      <UserIcon className="h-3 w-3 mr-1" />
+                                      {person.name}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </>
                             )}
 
                             {/* Action buttons */}

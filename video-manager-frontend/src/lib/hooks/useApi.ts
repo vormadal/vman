@@ -36,6 +36,15 @@ export const collectionKeys = {
   detail: (id: string) => [...collectionKeys.details(), id] as const,
 };
 
+// People query keys
+export const peopleKeys = {
+  all: ['people'] as const,
+  lists: () => [...peopleKeys.all, 'list'] as const,
+  list: (search?: string) => [...peopleKeys.lists(), { search }] as const,
+  details: () => [...peopleKeys.all, 'detail'] as const,
+  detail: (id: string) => [...peopleKeys.details(), id] as const,
+};
+
 // Tag hooks
 export function useTags(search?: string) {
   return useQuery({
@@ -278,5 +287,21 @@ export function useUpdateCollectionItemOrder() {
 export function useExportCollectionToShotcut() {
   return useMutation({
     mutationFn: (collectionId: string) => apiClient.exportCollectionToShotcut(collectionId),
+  });
+}
+
+// People hooks
+export function usePeople(search?: string, pageSize = 50) {
+  return useQuery({
+    queryKey: peopleKeys.list(search),
+    queryFn: () => apiClient.getPeople(search, 1, pageSize),
+  });
+}
+
+export function usePerson(id: string) {
+  return useQuery({
+    queryKey: peopleKeys.detail(id),
+    queryFn: () => apiClient.getPersonById(id),
+    enabled: !!id,
   });
 }

@@ -12,6 +12,7 @@ public static class GetItems
         MediaType? Type = null,
         bool? Untagged = null,
         Guid? TagId = null,
+        Guid? PersonId = null,
         string? SortBy = "createdAt",
         bool SortDescending = true,
         int Page = 1,
@@ -19,6 +20,8 @@ public static class GetItems
     ) : IRequest<Response>;
 
     public record TagDto(Guid Id, string Name);
+    
+    public record PersonDto(Guid Id, string Name);
 
     public record ItemDto(
         string Provider,
@@ -28,7 +31,8 @@ public static class GetItems
         DateTimeOffset CreatedAt,
         string ThumbnailUrl,
         string PreviewUrl,
-        List<TagDto> Tags
+        List<TagDto> Tags,
+        List<PersonDto> People
     );
 
     public record Response(List<ItemDto> Items, int TotalCount, int Page, int PageSize);
@@ -93,6 +97,16 @@ public static class GetItems
                             && it.TagId == request.TagId.Value));
             }
 
+            // Apply person filter
+            if (request.PersonId.HasValue)
+            {
+                // Items with a specific person
+                query = query.Where(i => db.ItemPeople
+                    .Any(ip => ip.ProviderName == i.ProviderName
+                            && ip.ProviderItemId == i.ProviderItemId
+                            && ip.PersonId == request.PersonId.Value));
+            }
+
             // Apply sorting
             query = request.SortBy?.ToLowerInvariant() switch
             {
@@ -125,6 +139,17 @@ public static class GetItems
                     cancellationToken
                 );
 
+            // Batch fetch people for all items on this page
+            var itemPeopleDict = await db.ItemPeople
+                .Include(ip => ip.Person)
+                .Where(ip => ip.ProviderName == providerName && itemIds.Contains(ip.ProviderItemId))
+                .GroupBy(ip => ip.ProviderItemId)
+                .ToDictionaryAsync(
+                    g => g.Key,
+                    g => g.Select(ip => new PersonDto(ip.Person.Id, ip.Person.Name)).ToList(),
+                    cancellationToken
+                );
+
             // Map to DTOs with dynamically generated thumbnail URLs
             var itemDtos = items.Select(item => new ItemDto(
                 item.ProviderName,
@@ -134,7 +159,8 @@ public static class GetItems
                 item.CreatedAt,
                 $"/api/providers/{item.ProviderName}/items/{item.ProviderItemId}/thumbnail",
                 $"/api/providers/{item.ProviderName}/items/{item.ProviderItemId}/preview",
-                itemTagsDict.GetValueOrDefault(item.ProviderItemId, [])
+                itemTagsDict.GetValueOrDefault(item.ProviderItemId, []),
+                itemPeopleDict.GetValueOrDefault(item.ProviderItemId, [])
             )).ToList();
 
             return new Response(itemDtos, totalCount, request.Page, request.PageSize);

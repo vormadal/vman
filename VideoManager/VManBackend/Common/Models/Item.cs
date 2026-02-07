@@ -12,6 +12,7 @@ public class Item
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset LastSyncedAt { get; set; }
 
-    // Navigation property
+    // Navigation properties
     public ICollection<ItemTag> ItemTags { get; set; } = new List<ItemTag>();
+    public ICollection<ItemPerson> ItemPeople { get; set; } = new List<ItemPerson>();
 }

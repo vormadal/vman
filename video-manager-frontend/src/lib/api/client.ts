@@ -23,7 +23,10 @@ import type {
   CollectionDetailDto,
   AddItemToCollectionRequest,
   AddItemToCollectionResponse,
-  UpdateCollectionItemOrderRequest
+  UpdateCollectionItemOrderRequest,
+  PersonDto,
+  PeopleResponse,
+  PersonDetailResponse
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -168,6 +171,7 @@ class ApiClient {
     if (params?.type) searchParams.append('type', params.type);
     if (params?.untagged !== undefined) searchParams.append('untagged', params.untagged.toString());
     if (params?.tagId) searchParams.append('tagId', params.tagId);
+    if (params?.personId) searchParams.append('personId', params.personId);
     if (params?.isFavorite !== undefined) searchParams.append('isFavorite', params.isFavorite.toString());
     if (params?.sortBy) searchParams.append('sortBy', params.sortBy);
     if (params?.sortDescending !== undefined) searchParams.append('sortDescending', params.sortDescending.toString());
@@ -296,6 +300,24 @@ class ApiClient {
 
   async exportCollectionToShotcut(collectionId: string): Promise<Blob> {
     return this.requestBinary(`/api/collections/${collectionId}/export/shotcut`);
+  }
+
+  // People endpoints
+  async getPeople(search?: string, page = 1, pageSize = 50): Promise<PeopleResponse> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+    });
+    
+    if (search) {
+      params.append('search', search);
+    }
+
+    return this.request<PeopleResponse>(`/api/people?${params.toString()}`);
+  }
+
+  async getPersonById(id: string): Promise<PersonDetailResponse> {
+    return this.request<PersonDetailResponse>(`/api/people/${id}`);
   }
 }
 

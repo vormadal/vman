@@ -209,4 +209,55 @@ public class ImmichService : IImmichService
     {
         return await _client.Assets[assetId].Original.GetAsync(cancellationToken: cancellationToken);
     }
+
+    public async Task<PeopleResponseDto?> GetPeopleAsync(bool withHidden = false, CancellationToken cancellationToken = default)
+    {
+        return await _client.People.GetAsync(config =>
+        {
+            config.QueryParameters.WithHidden = withHidden;
+        }, cancellationToken: cancellationToken);
+    }
+
+    public async Task<PersonResponseDto?> GetPersonAsync(Guid personId, CancellationToken cancellationToken = default)
+    {
+        return await _client.People[personId].GetAsync(cancellationToken: cancellationToken);
+    }
+
+    public async IAsyncEnumerable<ImmichAsset> GetAssetsForPersonAsync(Guid personId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        double? pageNumber = 1.0;
+
+        while (pageNumber.HasValue)
+        {
+            var searchDto = new MetadataSearchDto
+            {
+                PersonIds = new List<Guid?> { personId },
+                Page = pageNumber
+            };
+
+            var searchResponse = await _client.Search.Metadata.PostAsync(searchDto, cancellationToken: cancellationToken);
+            
+            if (searchResponse?.Assets?.Items == null || searchResponse.Assets.Items.Count == 0)
+                yield break;
+
+            foreach (var asset in searchResponse.Assets.Items.Where(a => a != null))
+            {
+                yield return MapToImmichAsset(asset);
+            }
+
+            // Check if there's a next page
+            if (string.IsNullOrEmpty(searchResponse.Assets.NextPage))
+            {
+                pageNumber = null;
+            }
+            else if (double.TryParse(searchResponse.Assets.NextPage, out var parsedPage))
+            {
+                pageNumber = parsedPage;
+            }
+            else
+            {
+                pageNumber++;
+            }
+        }
+    }
 }

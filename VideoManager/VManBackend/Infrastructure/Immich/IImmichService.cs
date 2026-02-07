@@ -1,3 +1,5 @@
+using VManBackend.Infrastructure.Immich.Generated.Models;
+
 namespace VManBackend.Infrastructure.Immich;
 
 public interface IImmichService
@@ -11,4 +13,9 @@ public interface IImmichService
     Task<Stream?> GetThumbnailAsync(Guid assetId, CancellationToken cancellationToken = default);
     Task<Stream?> GetPreviewAsync(Guid assetId, CancellationToken cancellationToken = default);
     Task<Stream?> GetOriginalAssetAsync(Guid assetId, CancellationToken cancellationToken = default);
+    
+    // People-related methods
+    Task<PeopleResponseDto?> GetPeopleAsync(bool withHidden = false, CancellationToken cancellationToken = default);
+    Task<PersonResponseDto?> GetPersonAsync(Guid personId, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<ImmichAsset> GetAssetsForPersonAsync(Guid personId, CancellationToken cancellationToken = default);
 }

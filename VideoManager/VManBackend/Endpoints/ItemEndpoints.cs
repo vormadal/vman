@@ -14,7 +14,7 @@ public static class ItemEndpoints
             .WithTags("Items");
 
         group.MapGet("/", async (IMediator mediator, string? provider = null, string? type = null,
-            bool? untagged = null, Guid? tagId = null, string? sortBy = "createdAt", bool sortDescending = true,
+            bool? untagged = null, Guid? tagId = null, Guid? personId = null, string? sortBy = "createdAt", bool sortDescending = true,
             int page = 1, int pageSize = 50) =>
         {
             MediaType? mediaType = null;
@@ -23,7 +23,7 @@ public static class ItemEndpoints
                 mediaType = parsedType;
             }
 
-            var request = new GetItems.Request(provider, mediaType, untagged, tagId, sortBy, sortDescending, page, pageSize);
+            var request = new GetItems.Request(provider, mediaType, untagged, tagId, personId, sortBy, sortDescending, page, pageSize);
             if (!GetItems.Validator.Validate(request, out var error))
             {
                 return Results.Problem(

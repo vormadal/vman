@@ -19,6 +19,7 @@ using VManBackend.Features.Tags;
 using VManBackend.Features.Items;
 using VManBackend.Features.Sync;
 using VManBackend.Features.Collections;
+using VManBackend.Features.People;
 using VManBackend.Infrastructure.Sync;
 using VideoManager.ServiceDefaults;
 
@@ -96,6 +97,10 @@ builder.Services.AddRequestHandler<RenameTag.Handler, RenameTag.Request, RenameT
 builder.Services.AddRequestHandler<DeleteTag.Handler, DeleteTag.Request, DeleteTag.Response>();
 builder.Services.AddRequestHandler<GetTags.Handler, GetTags.Request, GetTags.Response>();
 builder.Services.AddRequestHandler<GetTagById.Handler, GetTagById.Request, GetTagById.Response>();
+
+// People handlers
+builder.Services.AddRequestHandler<GetPeople.Handler, GetPeople.Request, GetPeople.Response>();
+builder.Services.AddRequestHandler<GetPersonById.Handler, GetPersonById.Request, GetPersonById.Response?>();
 
 // Item handlers
 builder.Services.AddRequestHandler<AddTagToItem.Handler, AddTagToItem.Request, AddTagToItem.Response>();
@@ -200,6 +205,7 @@ app.MapItemEndpoints();
 app.MapSyncEndpoints();
 app.MapProviderEndpoints();
 app.MapCollectionEndpoints();
+app.MapPeopleEndpoints();
 
 // Serve frontend (SPA fallback for Next.js)
 // In production, serve the Next.js app for non-API routes

@@ -422,7 +422,7 @@ export default function ItemsPage() {
                                 {item.name}
                               </h3>
                               <p className="text-xs text-muted-foreground">
-                                {new Date(item.createdAt).toLocaleString('en-GB', {
+                                {new Date(item.createdAt).toLocaleDateString('en-GB', {
                                   day: '2-digit',
                                   month: '2-digit',
                                   year: 'numeric',

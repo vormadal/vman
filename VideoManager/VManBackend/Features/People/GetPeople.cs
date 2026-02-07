@@ -49,26 +49,29 @@ public static class GetPeople
             // Get total count
             var totalCount = await query.CountAsync(cancellationToken);
 
-            // Apply pagination and sort by name
-            var people = await query
+            // Get person IDs for this page
+            var pagedPeople = await query
                 .OrderBy(p => p.Name)
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(p => new
-                {
-                    Person = p,
-                    ItemCount = db.ItemPeople.Count(ip => ip.PersonId == p.Id)
-                })
                 .ToListAsync(cancellationToken);
 
-            var peopleDtos = people.Select(p => new PersonDto(
-                p.Person.Id,
-                p.Person.Name,
-                p.Person.BirthDate?.ToString("yyyy-MM-dd"),
-                p.Person.IsFavorite,
-                p.Person.IsHidden,
-                p.ItemCount,
-                p.Person.UpdatedAt.DateTime
+            // Batch fetch item counts for all people on this page
+            var personIds = pagedPeople.Select(p => p.Id).ToList();
+            var itemCounts = await db.ItemPeople
+                .Where(ip => personIds.Contains(ip.PersonId))
+                .GroupBy(ip => ip.PersonId)
+                .Select(g => new { PersonId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.PersonId, x => x.Count, cancellationToken);
+
+            var peopleDtos = pagedPeople.Select(p => new PersonDto(
+                p.Id,
+                p.Name,
+                p.BirthDate?.ToString("yyyy-MM-dd"),
+                p.IsFavorite,
+                p.IsHidden,
+                itemCounts.GetValueOrDefault(p.Id, 0),
+                p.UpdatedAt.DateTime
             )).ToList();
 
             return new Response(peopleDtos, totalCount, request.Page, request.PageSize);

@@ -5,15 +5,17 @@ import { useState } from 'react';
 import { useCollection, useRemoveItemFromCollection, useUpdateCollectionItemOrder, useExportCollectionToShotcut } from '@/lib/hooks/useApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, GripVertical, Trash2 } from 'lucide-react';
+import { ArrowLeft, Download, GripVertical, Trash2, FolderPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
 
 export default function CollectionDetailPage() {
   const params = useParams();
   const router = useRouter();
   const collectionId = params.id as string;
   const { toast } = useToast();
+  const { enterCollectionMode } = useCollectionModeStore();
 
   const { data: collection, isLoading, error } = useCollection(collectionId);
   const removeMutation = useRemoveItemFromCollection();
@@ -59,6 +61,11 @@ export default function CollectionDetailPage() {
     } catch (error) {
       toast.error('Failed to reorder items');
     }
+  };
+
+  const handleEnterCollectionMode = () => {
+    enterCollectionMode(collectionId);
+    router.push('/items');
   };
 
   const handleExport = async () => {
@@ -126,13 +133,22 @@ export default function CollectionDetailPage() {
           </p>
         </div>
         
-        <Button
-          onClick={handleExport}
-          disabled={collection.items.length === 0 || exportMutation.isPending}
-        >
-          <Download className="mr-2 h-4 w-4" />
-          {exportMutation.isPending ? 'Exporting...' : 'Export to Shotcut'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleEnterCollectionMode}
+          >
+            <FolderPlus className="mr-2 h-4 w-4" />
+            Collection Mode
+          </Button>
+          <Button
+            onClick={handleExport}
+            disabled={collection.items.length === 0 || exportMutation.isPending}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            {exportMutation.isPending ? 'Exporting...' : 'Export to Shotcut'}
+          </Button>
+        </div>
       </div>
 
       {collection.items.length === 0 ? (

@@ -4,6 +4,8 @@ permissions:
   contents: read
 
 on:
+  push:
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -131,3 +133,17 @@ jobs:
           name: playwright-report
           path: video-manager-frontend/playwright-report/
           retention-days: 30
+
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

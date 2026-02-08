@@ -54,6 +54,7 @@ test('should display page', async ({ page }) => {
 - Actions as methods, assertions as `expectToX` methods
 - Do NOT include Playwright tests in Aspire AppHost
 - Run tests independently after starting the app
+- Use selectors in the following order: role selectors, text selectors, test id selectors. Avoid at all cost xpath selectors.
 
 ## Commands
 

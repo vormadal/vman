@@ -30,7 +30,8 @@ export class ItemsPage extends BasePage {
   }
 
   async filterByMediaType(type: string) {
-    await this.page.getByText(type, { exact: true }).first().click();
+    const mediaTypeSection = this.page.getByRole('heading', { name: /media type/i }).locator('..');
+    await mediaTypeSection.getByText(type, { exact: true }).first().click();
   }
 
   async clickTaggingMode() {

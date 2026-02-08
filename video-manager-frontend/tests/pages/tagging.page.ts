@@ -39,18 +39,25 @@ export class TaggingPage extends BasePage {
   }
 
   async removeTagFromOverlay(tagName: string) {
-    await this.page.locator('.absolute').getByText(tagName, { exact: true }).click();
+    await this.page
+      .locator('.relative.aspect-video')
+      .locator('.absolute')
+      .getByText(tagName, { exact: true })
+      .click();
   }
 
   async expectTagInOverlay(tagName: string) {
     await expect(
-      this.page.locator('.absolute').getByText(tagName, { exact: true })
+      this.page
+        .locator('.relative.aspect-video')
+        .locator('.absolute')
+        .getByText(tagName, { exact: true })
     ).toBeVisible({ timeout: 5000 });
   }
 
   async expectTagInAvailableList(tagName: string) {
     await expect(
-      this.page.getByRole('button', { name: new RegExp(`Add tag ${tagName}`, 'i') })
+      this.page.getByRole('button', { name: `Add tag ${tagName}`, exact: true })
     ).toBeVisible({ timeout: 5000 });
   }
 

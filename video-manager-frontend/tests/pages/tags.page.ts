@@ -29,9 +29,7 @@ export class TagsPage extends BasePage {
   }
 
   async renameTag(currentName: string, newName: string) {
-    const heading = this.page.getByRole('heading', { name: currentName, exact: true });
-    // Edit button is the first button in the card header's button group
-    await heading.locator('xpath=../..//button[1]').click();
+    await this.page.getByRole('button', { name: `Edit tag ${currentName}`, exact: true }).click();
 
     await this.page.locator('#editTagName').fill(newName);
     await this.page.getByRole('button', { name: 'Rename' }).click();
@@ -39,9 +37,7 @@ export class TagsPage extends BasePage {
   }
 
   async deleteTag(name: string) {
-    const heading = this.page.getByRole('heading', { name, exact: true });
-    // Delete button is the second button in the card header's button group
-    await heading.locator('xpath=../..//button[2]').click();
+    await this.page.getByRole('button', { name: `Delete tag ${name}`, exact: true }).click();
 
     await this.page.getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(this.page.getByRole('dialog')).not.toBeVisible({ timeout: 5000 });

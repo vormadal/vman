@@ -70,6 +70,10 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Restore .NET tools
+        working-directory: ./VideoManager
+        run: dotnet tool restore
+
       - name: Build backend
         working-directory: ./VideoManager/VManBackend
         run: dotnet build

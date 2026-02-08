@@ -14,9 +14,7 @@ jobs:
   claude-review:
     # Only run when the PR has the "claude-review" label
     # This provides an opt-in mechanism to trigger automatic code reviews
-    if: |
-      (github.event.action == 'labeled' && github.event.label.name == 'claude-review') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'claude-review'))
+    if: contains(github.event.pull_request.labels.*.name, 'claude-review')
     
     # Optional: Additional filter by PR author
     # if: |

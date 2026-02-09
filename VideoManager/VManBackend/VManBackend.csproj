@@ -31,8 +31,6 @@
 
   <!-- Workaround for .NET SDK 10.0.102 bug with glob pattern expansion -->
   <ItemGroup>
-    <Compile Remove="**/*.cs" />
-    <Compile Include="**/*.cs" Exclude="bin/**;obj/**" />
     <Content Remove="**/*.razor;**/*.cshtml" />
     <EmbeddedResource Remove="**/*.resx" />
   </ItemGroup>

@@ -52,6 +52,9 @@ jobs:
       working-directory: ./VideoManager/VManBackend
       run: dotnet build --no-restore
 
+    - name: Install EF Core tools
+      run: dotnet tool install --global dotnet-ef
+
     - name: Apply database migrations
       working-directory: ./VideoManager/VManBackend
       run: dotnet ef database update

@@ -34,7 +34,7 @@
     <EmbeddedResource Remove="**/*.resx" />
   </ItemGroup>
 
-  <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true' And '$(CI)' != 'true'">
     <Exec Command="dotnet tool restore" WorkingDirectory="$(ProjectDir)..\" />
     <Exec Command="dotnet tool run kiota generate -l CSharp -c ImmichClient -n VManBackend.Infrastructure.Immich.Generated -o VManBackend\Infrastructure\Immich\Generated -d https://raw.githubusercontent.com/immich-app/immich/master/open-api/immich-openapi-specs.json" WorkingDirectory="$(ProjectDir)..\" />
   </Target>

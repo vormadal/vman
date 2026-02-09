@@ -18,7 +18,11 @@ jobs:
             - name: Build backend
               shell: pwsh
               working-directory: VideoManager
-              run: dotnet run & echo $! > backend.pid
+              run: dotnet run --project VideoManager.AppHost & echo $! > backend.pid
+
+            - name: Install dependencies
+              working-directory: video-manager-frontend
+              run: npm ci
 
             - name: Install Playwright Browsers
               working-directory: video-manager-frontend
@@ -26,10 +30,9 @@ jobs:
 
             - name: Run Playwright tests
               working-directory: video-manager-frontend
-              run: npm run test:e2e
+              run: npx playwright test
               env:
                   NEXT_PUBLIC_API_URL: "http://localhost:5001"
-
 
             - name: Stop backend
               if: always()

@@ -15,7 +15,8 @@ jobs:
             - uses: actions/setup-dotnet@v5
               with:
                   dotnet-version: "10.0.101"
-            - name: Build backend
+            
+            - name: Run Aspire
               shell: pwsh
               working-directory: VideoManager
               run: dotnet run --project VideoManager.AppHost & echo $! > backend.pid
@@ -28,11 +29,18 @@ jobs:
               working-directory: video-manager-frontend
               run: npx playwright install --with-deps
 
+            - name: Wait for backend to be ready
+              run: timeout 60 bash -c 'until curl -s http://localhost:5001/health > /dev/null; do sleep 1; done' || exit 1
+
             - name: Run Playwright tests
               working-directory: video-manager-frontend
               run: npx playwright test
               env:
                   NEXT_PUBLIC_API_URL: "http://localhost:5001"
+                  PLAYWRIGHT_BASE_URL: "http://localhost:3000"
+                  TEST_USER_EMAIL: test.user@example.com
+                  TEST_USER_PASSWORD: TestPassword123!
+
 
             - name: Stop backend
               if: always()

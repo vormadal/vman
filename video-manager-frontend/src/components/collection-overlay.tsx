@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useCollections, useCollection, useAddItemToCollection, useRemoveItemFromCollection } from '@/lib/hooks/useApi';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { useCollection } from '@/lib/hooks/useApi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, ChevronDown, ChevronUp, FolderOpen, Download, Trash2 } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -15,148 +14,77 @@ interface CollectionOverlayProps {
 }
 
 export function CollectionOverlay({ activeCollectionId, onClose }: CollectionOverlayProps) {
-  const [isMinimized, setIsMinimized] = useState(false);
-  const DEFAULT_Y_POSITION = 20;
-  const [position, setPosition] = useState({ x: 20, y: DEFAULT_Y_POSITION });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  
+  const [isExpanded, setIsExpanded] = useState(false);
   const { data: activeCollection } = useCollection(activeCollectionId || '');
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-  useEffect(() => {
-    if (isMobile) {
-      setPosition({ x: 0, y: DEFAULT_Y_POSITION });
-    }
-  }, [isMobile, DEFAULT_Y_POSITION]);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (isMobile) return;
-    setIsDragging(true);
-    setDragOffset({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
-    });
-  };
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging || isMobile) return;
-      
-      const newX = Math.max(0, Math.min(window.innerWidth - 350, e.clientX - dragOffset.x));
-      const newY = Math.max(0, Math.min(window.innerHeight - 100, e.clientY - dragOffset.y));
-      
-      setPosition({ x: newX, y: newY });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, dragOffset, isMobile]);
-
-  if (!activeCollectionId) {
-    return null;
-  }
+  if (!activeCollectionId) return null;
 
   return (
-    <div
-      className={cn(
-        "fixed z-50 bg-background border rounded-lg shadow-2xl",
-        isMobile 
-          ? "left-0 right-0 top-0" 
-          : "w-[350px]"
-      )}
-      style={
-        isMobile
-          ? undefined
-          : {
-              left: `${position.x}px`,
-              top: `${position.y}px`,
-            }
-      }
-    >
-      <CardHeader
-        className={cn(
-          "flex flex-row items-center justify-between space-y-0 pb-2 cursor-move select-none",
-          isMobile && "cursor-default"
-        )}
-        onMouseDown={handleMouseDown}
-      >
-        <CardTitle className="text-sm font-medium">
-          Collection Mode
-        </CardTitle>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsMinimized(!isMinimized)}
-          >
-            {isMinimized ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardHeader>
-
-      {!isMinimized && (
-        <CardContent className="space-y-3">
-          {/* Active Collection Details */}
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
+      {/* Expanded item list */}
+      {isExpanded && (
+        <div className="max-h-48 overflow-y-auto border-b">
           {activeCollection ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  {activeCollection.name}
-                </span>
-                <Badge variant="secondary" className="text-xs">
-                  {activeCollection.items.length} items
-                </Badge>
-              </div>
-
-              {/* Items List */}
-              <div className="max-h-48 overflow-y-auto space-y-1">
-                {activeCollection.items.length === 0 ? (
-                  <p className="text-xs text-muted-foreground text-center py-4">
-                    No items yet. Browse items and add them to this collection.
-                  </p>
-                ) : (
-                  activeCollection.items.map((item, index) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between text-xs p-2 bg-muted/50 rounded"
-                    >
-                      <span className="truncate flex-1">
-                        {index + 1}. {item.providerItemId.substring(0, 20)}...
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">
-                Loading collection...
+            activeCollection.items.length === 0 ? (
+              <p className="px-4 py-3 text-xs text-muted-foreground">
+                No items yet — browse and add items to this collection.
               </p>
-            </div>
+            ) : (
+              <ul className="divide-y">
+                {activeCollection.items.map((item, index) => (
+                  <li key={item.id} className="px-4 py-2 text-xs text-muted-foreground">
+                    {index + 1}. {item.providerItemId.substring(0, 40)}
+                  </li>
+                ))}
+              </ul>
+            )
+          ) : (
+            <p className="px-4 py-3 text-xs text-muted-foreground">Loading…</p>
           )}
-        </CardContent>
+        </div>
       )}
+
+      {/* Dock bar */}
+      <div className="flex items-center gap-3 px-4 py-3">
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Collection Mode
+        </span>
+
+        <span className="font-medium text-sm truncate flex-1">
+          {activeCollection?.name ?? '…'}
+        </span>
+
+        <Badge variant="secondary" className="shrink-0 text-xs">
+          {activeCollection?.items.length ?? 0} items
+        </Badge>
+
+        <Link href={`/collections/${activeCollectionId}`}>
+          <Button variant="ghost" size="sm" className="gap-1.5 shrink-0">
+            <ExternalLink className="h-4 w-4" />
+            <span className="hidden sm:inline text-xs">Manage</span>
+          </Button>
+        </Link>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsExpanded(v => !v)}
+          className="shrink-0"
+          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+        >
+          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="shrink-0"
+          aria-label="Exit collection mode"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }

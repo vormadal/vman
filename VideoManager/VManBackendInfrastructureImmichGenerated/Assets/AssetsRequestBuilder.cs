@@ -10,12 +10,9 @@ using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Assets.BulkUploadCheck;
 using VManBackend.Infrastructure.Immich.Generated.Assets.Copy;
-using VManBackend.Infrastructure.Immich.Generated.Assets.Device;
-using VManBackend.Infrastructure.Immich.Generated.Assets.Exist;
 using VManBackend.Infrastructure.Immich.Generated.Assets.Item;
 using VManBackend.Infrastructure.Immich.Generated.Assets.Jobs;
 using VManBackend.Infrastructure.Immich.Generated.Assets.Metadata;
-using VManBackend.Infrastructure.Immich.Generated.Assets.RandomNamespace;
 using VManBackend.Infrastructure.Immich.Generated.Assets.Statistics;
 using VManBackend.Infrastructure.Immich.Generated.Models;
 namespace VManBackend.Infrastructure.Immich.Generated.Assets
@@ -36,16 +33,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.Copy.CopyRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>The device property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Assets.Device.DeviceRequestBuilder Device
-        {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.Device.DeviceRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The exist property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Assets.Exist.ExistRequestBuilder Exist
-        {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.Exist.ExistRequestBuilder(PathParameters, RequestAdapter);
-        }
         /// <summary>The jobs property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Assets.Jobs.JobsRequestBuilder Jobs
         {
@@ -55,11 +42,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets
         public global::VManBackend.Infrastructure.Immich.Generated.Assets.Metadata.MetadataRequestBuilder Metadata
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.Metadata.MetadataRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The random property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Assets.RandomNamespace.RandomRequestBuilder Random
-        {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.RandomNamespace.RandomRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The statistics property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Assets.Statistics.StatisticsRequestBuilder Statistics

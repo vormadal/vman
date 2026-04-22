@@ -58,22 +58,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Filter by device asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DeviceAssetId { get; set; }
-#nullable restore
-#else
-        public string DeviceAssetId { get; set; }
-#endif
-        /// <summary>Device ID to filter by</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DeviceId { get; set; }
-#nullable restore
-#else
-        public string DeviceId { get; set; }
-#endif
         /// <summary>Filter by encoded video file path</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -128,7 +112,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Ocr { get; set; }
 #endif
-        /// <summary>Sort order</summary>
+        /// <summary>Asset sort order</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder? Order { get; set; }
         /// <summary>Filter by original file name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -164,7 +148,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string PreviewPath { get; set; }
 #endif
-        /// <summary>Filter by rating</summary>
+        /// <summary>Filter by rating [1-5], or null for unrated</summary>
         public double? Rating { get; set; }
         /// <summary>Number of results to return</summary>
         public double? Size { get; set; }
@@ -200,19 +184,19 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public DateTimeOffset? TrashedAfter { get; set; }
         /// <summary>Filter by trash date (before)</summary>
         public DateTimeOffset? TrashedBefore { get; set; }
-        /// <summary>Asset type filter</summary>
+        /// <summary>Asset type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum? Type { get; set; }
         /// <summary>Filter by update date (after)</summary>
         public DateTimeOffset? UpdatedAfter { get; set; }
         /// <summary>Filter by update date (before)</summary>
         public DateTimeOffset? UpdatedBefore { get; set; }
-        /// <summary>Filter by visibility</summary>
+        /// <summary>Asset visibility</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? Visibility { get; set; }
         /// <summary>Include deleted assets</summary>
         public bool? WithDeleted { get; set; }
         /// <summary>Include EXIF data in response</summary>
         public bool? WithExif { get; set; }
-        /// <summary>Include assets with people</summary>
+        /// <summary>Include people data in response</summary>
         public bool? WithPeople { get; set; }
         /// <summary>Include stacked assets</summary>
         public bool? WithStacked { get; set; }
@@ -222,7 +206,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public MetadataSearchDto()
         {
             AdditionalData = new Dictionary<string, object>();
-            Order = global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder.Desc;
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -249,8 +232,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "createdAfter", n => { CreatedAfter = n.GetDateTimeOffsetValue(); } },
                 { "createdBefore", n => { CreatedBefore = n.GetDateTimeOffsetValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "deviceAssetId", n => { DeviceAssetId = n.GetStringValue(); } },
-                { "deviceId", n => { DeviceId = n.GetStringValue(); } },
                 { "encodedVideoPath", n => { EncodedVideoPath = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "isEncoded", n => { IsEncoded = n.GetBoolValue(); } },
@@ -302,8 +283,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateTimeOffsetValue("createdAfter", CreatedAfter);
             writer.WriteDateTimeOffsetValue("createdBefore", CreatedBefore);
             writer.WriteStringValue("description", Description);
-            writer.WriteStringValue("deviceAssetId", DeviceAssetId);
-            writer.WriteStringValue("deviceId", DeviceId);
             writer.WriteStringValue("encodedVideoPath", EncodedVideoPath);
             writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isEncoded", IsEncoded);

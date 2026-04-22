@@ -42,14 +42,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public DateTimeOffset? CreatedAfter { get; set; }
         /// <summary>Filter by creation date (before)</summary>
         public DateTimeOffset? CreatedBefore { get; set; }
-        /// <summary>Device ID to filter by</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DeviceId { get; set; }
-#nullable restore
-#else
-        public string DeviceId { get; set; }
-#endif
         /// <summary>Filter by encoded status</summary>
         public bool? IsEncoded { get; set; }
         /// <summary>Filter by favorite status</summary>
@@ -122,7 +114,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Asset ID to use as search reference</summary>
         public Guid? QueryAssetId { get; set; }
-        /// <summary>Filter by rating</summary>
+        /// <summary>Filter by rating [1-5], or null for unrated</summary>
         public double? Rating { get; set; }
         /// <summary>Number of results to return</summary>
         public double? Size { get; set; }
@@ -150,13 +142,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public DateTimeOffset? TrashedAfter { get; set; }
         /// <summary>Filter by trash date (before)</summary>
         public DateTimeOffset? TrashedBefore { get; set; }
-        /// <summary>Asset type filter</summary>
+        /// <summary>Asset type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum? Type { get; set; }
         /// <summary>Filter by update date (after)</summary>
         public DateTimeOffset? UpdatedAfter { get; set; }
         /// <summary>Filter by update date (before)</summary>
         public DateTimeOffset? UpdatedBefore { get; set; }
-        /// <summary>Filter by visibility</summary>
+        /// <summary>Asset visibility</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? Visibility { get; set; }
         /// <summary>Include deleted assets</summary>
         public bool? WithDeleted { get; set; }
@@ -192,7 +184,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "createdAfter", n => { CreatedAfter = n.GetDateTimeOffsetValue(); } },
                 { "createdBefore", n => { CreatedBefore = n.GetDateTimeOffsetValue(); } },
-                { "deviceId", n => { DeviceId = n.GetStringValue(); } },
                 { "isEncoded", n => { IsEncoded = n.GetBoolValue(); } },
                 { "isFavorite", n => { IsFavorite = n.GetBoolValue(); } },
                 { "isMotion", n => { IsMotion = n.GetBoolValue(); } },
@@ -236,7 +227,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("country", Country);
             writer.WriteDateTimeOffsetValue("createdAfter", CreatedAfter);
             writer.WriteDateTimeOffsetValue("createdBefore", CreatedBefore);
-            writer.WriteStringValue("deviceId", DeviceId);
             writer.WriteBoolValue("isEncoded", IsEncoded);
             writer.WriteBoolValue("isFavorite", IsFavorite);
             writer.WriteBoolValue("isMotion", IsMotion);

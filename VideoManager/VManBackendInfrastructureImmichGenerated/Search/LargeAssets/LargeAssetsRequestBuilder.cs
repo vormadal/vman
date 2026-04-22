@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public LargeAssetsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/search/large-assets{?albumIds*,city*,country*,createdAfter*,createdBefore*,deviceId*,isEncoded*,isFavorite*,isMotion*,isNotInAlbum*,isOffline*,lensModel*,libraryId*,make*,minFileSize*,model*,ocr*,personIds*,rating*,size*,state*,tagIds*,takenAfter*,takenBefore*,trashedAfter*,trashedBefore*,type*,updatedAfter*,updatedBefore*,visibility*,withDeleted*,withExif*}", pathParameters)
+        public LargeAssetsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/search/large-assets{?albumIds*,city*,country*,createdAfter*,createdBefore*,isEncoded*,isFavorite*,isMotion*,isNotInAlbum*,isOffline*,lensModel*,libraryId*,make*,minFileSize*,model*,ocr*,personIds*,rating*,size*,state*,tagIds*,takenAfter*,takenBefore*,trashedAfter*,trashedBefore*,type*,updatedAfter*,updatedBefore*,visibility*,withDeleted*,withExif*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public LargeAssetsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/search/large-assets{?albumIds*,city*,country*,createdAfter*,createdBefore*,deviceId*,isEncoded*,isFavorite*,isMotion*,isNotInAlbum*,isOffline*,lensModel*,libraryId*,make*,minFileSize*,model*,ocr*,personIds*,rating*,size*,state*,tagIds*,takenAfter*,takenBefore*,trashedAfter*,trashedBefore*,type*,updatedAfter*,updatedBefore*,visibility*,withDeleted*,withExif*}", rawUrl)
+        public LargeAssetsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/search/large-assets{?albumIds*,city*,country*,createdAfter*,createdBefore*,isEncoded*,isFavorite*,isMotion*,isNotInAlbum*,isOffline*,lensModel*,libraryId*,make*,minFileSize*,model*,ocr*,personIds*,rating*,size*,state*,tagIds*,takenAfter*,takenBefore*,trashedAfter*,trashedBefore*,type*,updatedAfter*,updatedBefore*,visibility*,withDeleted*,withExif*}", rawUrl)
         {
         }
         /// <summary>
@@ -122,16 +122,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
             /// <summary>Filter by creation date (before)</summary>
             [QueryParameter("createdBefore")]
             public DateTimeOffset? CreatedBefore { get; set; }
-            /// <summary>Device ID to filter by</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("deviceId")]
-            public string? DeviceId { get; set; }
-#nullable restore
-#else
-            [QueryParameter("deviceId")]
-            public string DeviceId { get; set; }
-#endif
             /// <summary>Filter by encoded status</summary>
             [QueryParameter("isEncoded")]
             public bool? IsEncoded { get; set; }
@@ -203,7 +193,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
             [QueryParameter("personIds")]
             public Guid?[] PersonIds { get; set; }
 #endif
-            /// <summary>Filter by rating</summary>
+            /// <summary>Filter by rating [1-5], or null for unrated</summary>
             [QueryParameter("rating")]
             public double? Rating { get; set; }
             /// <summary>Number of results to return</summary>
@@ -241,7 +231,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
             /// <summary>Filter by trash date (before)</summary>
             [QueryParameter("trashedBefore")]
             public DateTimeOffset? TrashedBefore { get; set; }
-            /// <summary>Asset type filter</summary>
             [Obsolete("This property is deprecated, use TypeAsAssetTypeEnum instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -252,7 +241,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
             [QueryParameter("type")]
             public string Type { get; set; }
 #endif
-            /// <summary>Asset type filter</summary>
             [QueryParameter("type")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum? TypeAsAssetTypeEnum { get; set; }
             /// <summary>Filter by update date (after)</summary>
@@ -261,7 +249,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
             /// <summary>Filter by update date (before)</summary>
             [QueryParameter("updatedBefore")]
             public DateTimeOffset? UpdatedBefore { get; set; }
-            /// <summary>Filter by visibility</summary>
             [Obsolete("This property is deprecated, use VisibilityAsAssetVisibility instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -272,7 +259,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
             [QueryParameter("visibility")]
             public string Visibility { get; set; }
 #endif
-            /// <summary>Filter by visibility</summary>
             [QueryParameter("visibility")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? VisibilityAsAssetVisibility { get; set; }
             /// <summary>Include deleted assets</summary>

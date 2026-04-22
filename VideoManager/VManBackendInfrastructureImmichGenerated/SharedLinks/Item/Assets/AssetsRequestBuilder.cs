@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AssetsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/{id}/assets{?key*,slug*}", pathParameters)
+        public AssetsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/{id}/assets", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AssetsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/{id}/assets{?key*,slug*}", rawUrl)
+        public AssetsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/{id}/assets", rawUrl)
         {
         }
         /// <summary>
@@ -42,11 +42,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>?> DeleteAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderDeleteQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>?> DeleteAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>> DeleteAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderDeleteQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>> DeleteAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -63,11 +63,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>?> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderPutQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>?> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderPutQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto>> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -83,11 +83,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToDeleteRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderDeleteQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToDeleteRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToDeleteRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderDeleteQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToDeleteRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -105,11 +105,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderPutQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderPutQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -129,69 +129,19 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets
             return new global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
-        /// Remove assets from a specific shared link by its ID. This endpoint is only relevant for shared link of type individual.
+        /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
+        [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class AssetsRequestBuilderDeleteQueryParameters 
+        public partial class AssetsRequestBuilderDeleteRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
         {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("key")]
-            public string? Key { get; set; }
-#nullable restore
-#else
-            [QueryParameter("key")]
-            public string Key { get; set; }
-#endif
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("slug")]
-            public string? Slug { get; set; }
-#nullable restore
-#else
-            [QueryParameter("slug")]
-            public string Slug { get; set; }
-#endif
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class AssetsRequestBuilderDeleteRequestConfiguration : RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderDeleteQueryParameters>
-        {
-        }
-        /// <summary>
-        /// Add assets to a specific shared link by its ID. This endpoint is only relevant for shared link of type individual.
-        /// </summary>
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class AssetsRequestBuilderPutQueryParameters 
-        {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("key")]
-            public string? Key { get; set; }
-#nullable restore
-#else
-            [QueryParameter("key")]
-            public string Key { get; set; }
-#endif
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("slug")]
-            public string? Slug { get; set; }
-#nullable restore
-#else
-            [QueryParameter("slug")]
-            public string Slug { get; set; }
-#endif
-        }
-        /// <summary>
-        /// Configuration for the request such as headers, query parameters, and middleware options.
-        /// </summary>
-        [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class AssetsRequestBuilderPutRequestConfiguration : RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item.Assets.AssetsRequestBuilder.AssetsRequestBuilderPutQueryParameters>
+        public partial class AssetsRequestBuilderPutRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
         {
         }
     }

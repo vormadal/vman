@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Buckets
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BucketsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", pathParameters)
+        public BucketsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Buckets
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BucketsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", rawUrl)
+        public BucketsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", rawUrl)
         {
         }
         /// <summary>
@@ -89,6 +89,16 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Buckets
             /// <summary>Filter assets belonging to a specific album</summary>
             [QueryParameter("albumId")]
             public Guid? AlbumId { get; set; }
+            /// <summary>Bounding box coordinates as west,south,east,north (WGS84)</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("bbox")]
+            public string? Bbox { get; set; }
+#nullable restore
+#else
+            [QueryParameter("bbox")]
+            public string Bbox { get; set; }
+#endif
             /// <summary>Filter by favorite status (true for favorites only, false for non-favorites only)</summary>
             [QueryParameter("isFavorite")]
             public bool? IsFavorite { get; set; }

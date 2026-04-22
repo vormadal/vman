@@ -14,13 +14,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Filter configuration</summary>
+        /// <summary>The filterConfig property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterResponseDto_filterConfig? FilterConfig { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig? FilterConfig { get; set; }
 #nullable restore
 #else
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterResponseDto_filterConfig FilterConfig { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig FilterConfig { get; set; }
 #endif
         /// <summary>Filter ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -73,7 +73,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "filterConfig", n => { FilterConfig = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterResponseDto_filterConfig>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterResponseDto_filterConfig.CreateFromDiscriminatorValue); } },
+                { "filterConfig", n => { FilterConfig = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig.CreateFromDiscriminatorValue); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "order", n => { Order = n.GetDoubleValue(); } },
                 { "pluginFilterId", n => { PluginFilterId = n.GetStringValue(); } },
@@ -87,7 +87,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterResponseDto_filterConfig>("filterConfig", FilterConfig);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig>("filterConfig", FilterConfig);
             writer.WriteStringValue("id", Id);
             writer.WriteDoubleValue("order", Order);
             writer.WriteStringValue("pluginFilterId", PluginFilterId);

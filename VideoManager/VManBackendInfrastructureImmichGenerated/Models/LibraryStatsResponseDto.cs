@@ -19,7 +19,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Total number of assets</summary>
         public int? Total { get; set; }
         /// <summary>Storage usage in bytes</summary>
-        public long? Usage { get; set; }
+        public int? Usage { get; set; }
         /// <summary>Number of videos</summary>
         public int? Videos { get; set; }
         /// <summary>
@@ -49,7 +49,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "photos", n => { Photos = n.GetIntValue(); } },
                 { "total", n => { Total = n.GetIntValue(); } },
-                { "usage", n => { Usage = n.GetLongValue(); } },
+                { "usage", n => { Usage = n.GetIntValue(); } },
                 { "videos", n => { Videos = n.GetIntValue(); } },
             };
         }
@@ -62,7 +62,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("photos", Photos);
             writer.WriteIntValue("total", Total);
-            writer.WriteLongValue("usage", Usage);
+            writer.WriteIntValue("usage", Usage);
             writer.WriteIntValue("videos", Videos);
             writer.WriteAdditionalData(AdditionalData);
         }

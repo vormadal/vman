@@ -154,7 +154,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Partners
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class PartnersRequestBuilderGetQueryParameters 
         {
-            /// <summary>Partner direction</summary>
             [Obsolete("This property is deprecated, use DirectionAsPartnerDirection instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -165,7 +164,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Partners
             [QueryParameter("direction")]
             public string Direction { get; set; }
 #endif
-            /// <summary>Partner direction</summary>
             [QueryParameter("direction")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.PartnerDirection? DirectionAsPartnerDirection { get; set; }
         }

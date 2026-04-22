@@ -16,7 +16,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Image format</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.ImageFormat? Format { get; set; }
-        /// <summary>The progressive property</summary>
+        /// <summary>Progressive</summary>
         public bool? Progressive { get; set; }
         /// <summary>Quality</summary>
         public int? Quality { get; set; }

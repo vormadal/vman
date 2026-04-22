@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The albumInviteTemplate property</summary>
+        /// <summary>Album invite template</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? AlbumInviteTemplate { get; set; }
@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string AlbumInviteTemplate { get; set; }
 #endif
-        /// <summary>The albumUpdateTemplate property</summary>
+        /// <summary>Album update template</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? AlbumUpdateTemplate { get; set; }
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string AlbumUpdateTemplate { get; set; }
 #endif
-        /// <summary>The welcomeTemplate property</summary>
+        /// <summary>Welcome template</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? WelcomeTemplate { get; set; }

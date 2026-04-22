@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
-    /// <summary>Token endpoint auth method</summary>
+    /// <summary>OAuth token endpoint auth method</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public enum OAuthTokenEndpointAuthMethod
     {

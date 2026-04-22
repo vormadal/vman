@@ -14,6 +14,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>Allow insecure requests</summary>
+        public bool? AllowInsecureRequests { get; set; }
         /// <summary>Auto launch</summary>
         public bool? AutoLaunch { get; set; }
         /// <summary>Auto register</summary>
@@ -43,9 +45,17 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ClientSecret { get; set; }
 #endif
         /// <summary>Default storage quota</summary>
-        public long? DefaultStorageQuota { get; set; }
+        public double? DefaultStorageQuota { get; set; }
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
+        /// <summary>End session endpoint</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? EndSessionEndpoint { get; set; }
+#nullable restore
+#else
+        public string EndSessionEndpoint { get; set; }
+#endif
         /// <summary>Issuer URL</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -56,7 +66,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Mobile override enabled</summary>
         public bool? MobileOverrideEnabled { get; set; }
-        /// <summary>Mobile redirect URI</summary>
+        /// <summary>Mobile redirect URI (set to empty string to disable)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? MobileRedirectUri { get; set; }
@@ -71,6 +81,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #nullable restore
 #else
         public string ProfileSigningAlgorithm { get; set; }
+#endif
+        /// <summary>OAuth prompt parameter (e.g. select_account, login, consent)</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Prompt { get; set; }
+#nullable restore
+#else
+        public string Prompt { get; set; }
 #endif
         /// <summary>Role claim</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -88,7 +106,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Scope { get; set; }
 #endif
-        /// <summary>The signingAlgorithm property</summary>
+        /// <summary>Signing algorithm</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? SigningAlgorithm { get; set; }
@@ -114,7 +132,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Timeout</summary>
         public int? Timeout { get; set; }
-        /// <summary>Token endpoint auth method</summary>
+        /// <summary>OAuth token endpoint auth method</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.OAuthTokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigOAuthDto"/> and sets the default values.
@@ -141,17 +159,20 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "allowInsecureRequests", n => { AllowInsecureRequests = n.GetBoolValue(); } },
                 { "autoLaunch", n => { AutoLaunch = n.GetBoolValue(); } },
                 { "autoRegister", n => { AutoRegister = n.GetBoolValue(); } },
                 { "buttonText", n => { ButtonText = n.GetStringValue(); } },
                 { "clientId", n => { ClientId = n.GetStringValue(); } },
                 { "clientSecret", n => { ClientSecret = n.GetStringValue(); } },
-                { "defaultStorageQuota", n => { DefaultStorageQuota = n.GetLongValue(); } },
+                { "defaultStorageQuota", n => { DefaultStorageQuota = n.GetDoubleValue(); } },
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
+                { "endSessionEndpoint", n => { EndSessionEndpoint = n.GetStringValue(); } },
                 { "issuerUrl", n => { IssuerUrl = n.GetStringValue(); } },
                 { "mobileOverrideEnabled", n => { MobileOverrideEnabled = n.GetBoolValue(); } },
                 { "mobileRedirectUri", n => { MobileRedirectUri = n.GetStringValue(); } },
                 { "profileSigningAlgorithm", n => { ProfileSigningAlgorithm = n.GetStringValue(); } },
+                { "prompt", n => { Prompt = n.GetStringValue(); } },
                 { "roleClaim", n => { RoleClaim = n.GetStringValue(); } },
                 { "scope", n => { Scope = n.GetStringValue(); } },
                 { "signingAlgorithm", n => { SigningAlgorithm = n.GetStringValue(); } },
@@ -168,17 +189,20 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteBoolValue("allowInsecureRequests", AllowInsecureRequests);
             writer.WriteBoolValue("autoLaunch", AutoLaunch);
             writer.WriteBoolValue("autoRegister", AutoRegister);
             writer.WriteStringValue("buttonText", ButtonText);
             writer.WriteStringValue("clientId", ClientId);
             writer.WriteStringValue("clientSecret", ClientSecret);
-            writer.WriteLongValue("defaultStorageQuota", DefaultStorageQuota);
+            writer.WriteDoubleValue("defaultStorageQuota", DefaultStorageQuota);
             writer.WriteBoolValue("enabled", Enabled);
+            writer.WriteStringValue("endSessionEndpoint", EndSessionEndpoint);
             writer.WriteStringValue("issuerUrl", IssuerUrl);
             writer.WriteBoolValue("mobileOverrideEnabled", MobileOverrideEnabled);
             writer.WriteStringValue("mobileRedirectUri", MobileRedirectUri);
             writer.WriteStringValue("profileSigningAlgorithm", ProfileSigningAlgorithm);
+            writer.WriteStringValue("prompt", Prompt);
             writer.WriteStringValue("roleClaim", RoleClaim);
             writer.WriteStringValue("scope", Scope);
             writer.WriteStringValue("signingAlgorithm", SigningAlgorithm);

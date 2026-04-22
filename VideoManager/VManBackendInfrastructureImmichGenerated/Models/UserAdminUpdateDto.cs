@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Avatar color</summary>
+        /// <summary>The avatarColor property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.UserAvatarColor? AvatarColor { get; set; }
         /// <summary>User email</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -51,7 +51,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string PinCode { get; set; }
 #endif
         /// <summary>Storage quota in bytes</summary>
-        public long? QuotaSizeInBytes { get; set; }
+        public int? QuotaSizeInBytes { get; set; }
         /// <summary>Require password change on next login</summary>
         public bool? ShouldChangePassword { get; set; }
         /// <summary>Storage label</summary>
@@ -93,7 +93,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
                 { "pinCode", n => { PinCode = n.GetStringValue(); } },
-                { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetLongValue(); } },
+                { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetIntValue(); } },
                 { "shouldChangePassword", n => { ShouldChangePassword = n.GetBoolValue(); } },
                 { "storageLabel", n => { StorageLabel = n.GetStringValue(); } },
             };
@@ -111,7 +111,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("password", Password);
             writer.WriteStringValue("pinCode", PinCode);
-            writer.WriteLongValue("quotaSizeInBytes", QuotaSizeInBytes);
+            writer.WriteIntValue("quotaSizeInBytes", QuotaSizeInBytes);
             writer.WriteBoolValue("shouldChangePassword", ShouldChangePassword);
             writer.WriteStringValue("storageLabel", StorageLabel);
             writer.WriteAdditionalData(AdditionalData);

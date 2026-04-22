@@ -13,7 +13,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     #pragma warning restore CS1591
     {
         /// <summary>Upload action</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult_action? Action { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetUploadAction? Action { get; set; }
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Existing asset ID if duplicate</summary>
@@ -35,7 +35,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Whether existing asset is trashed</summary>
         public bool? IsTrashed { get; set; }
         /// <summary>Rejection reason if rejected</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult_reason? Reason { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetRejectReason? Reason { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult"/> and sets the default values.
         /// </summary>
@@ -61,11 +61,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "action", n => { Action = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult_action>(); } },
+                { "action", n => { Action = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetUploadAction>(); } },
                 { "assetId", n => { AssetId = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "isTrashed", n => { IsTrashed = n.GetBoolValue(); } },
-                { "reason", n => { Reason = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult_reason>(); } },
+                { "reason", n => { Reason = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetRejectReason>(); } },
             };
         }
         /// <summary>
@@ -75,11 +75,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult_action>("action", Action);
+            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetUploadAction>("action", Action);
             writer.WriteStringValue("assetId", AssetId);
             writer.WriteStringValue("id", Id);
             writer.WriteBoolValue("isTrashed", IsTrashed);
-            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetBulkUploadCheckResult_reason>("reason", Reason);
+            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetRejectReason>("reason", Reason);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

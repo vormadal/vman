@@ -166,6 +166,7 @@ export interface CollectionItemDto {
   providerName: string;
   providerItemId: string;
   order: number;
+  note?: string | null;
   createdAt: string;
 }
 
@@ -215,6 +216,29 @@ export interface AddItemToCollectionResponse {
 export interface UpdateCollectionItemOrderRequest {
   collectionId: string;
   items: Array<{ itemId: string; newOrder: number }>;
+}
+
+export interface UpdateCollectionItemNoteRequest {
+  collectionId: string;
+  itemId: string;
+  note: string | null;
+}
+
+export interface UpdateCollectionItemNoteResponse {
+  itemId: string;
+  note: string | null;
+}
+
+export interface BulkAddFilteredItemsParams {
+  provider?: string;
+  type?: MediaType;
+  tagId?: string;
+  personId?: string;
+}
+
+export interface BulkAddFilteredItemsResponse {
+  addedCount: number;
+  skippedCount: number;
 }
 
 // People types

@@ -28,7 +28,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public int? ImageHeight { get; set; }
         /// <summary>Image width in pixels</summary>
         public int? ImageWidth { get; set; }
-        /// <summary>Person associated with face</summary>
+        /// <summary>The person property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto? Person { get; set; }

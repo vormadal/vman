@@ -49,10 +49,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Filter schema</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginFilterResponseDto_schema? Schema { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginJsonSchema? Schema { get; set; }
 #nullable restore
 #else
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginFilterResponseDto_schema Schema { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginJsonSchema Schema { get; set; }
 #endif
         /// <summary>Supported contexts</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -99,7 +99,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "methodName", n => { MethodName = n.GetStringValue(); } },
                 { "pluginId", n => { PluginId = n.GetStringValue(); } },
-                { "schema", n => { Schema = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginFilterResponseDto_schema>(global::VManBackend.Infrastructure.Immich.Generated.Models.PluginFilterResponseDto_schema.CreateFromDiscriminatorValue); } },
+                { "schema", n => { Schema = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginJsonSchema>(global::VManBackend.Infrastructure.Immich.Generated.Models.PluginJsonSchema.CreateFromDiscriminatorValue); } },
                 { "supportedContexts", n => { SupportedContexts = n.GetCollectionOfEnumValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginContextType>()?.AsList(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
             };
@@ -115,7 +115,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("id", Id);
             writer.WriteStringValue("methodName", MethodName);
             writer.WriteStringValue("pluginId", PluginId);
-            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginFilterResponseDto_schema>("schema", Schema);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginJsonSchema>("schema", Schema);
             writer.WriteCollectionOfEnumValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginContextType>("supportedContexts", SupportedContexts);
             writer.WriteStringValue("title", Title);
             writer.WriteAdditionalData(AdditionalData);

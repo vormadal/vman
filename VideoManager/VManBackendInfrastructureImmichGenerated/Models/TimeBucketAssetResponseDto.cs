@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public List<string> Country { get; set; }
 #endif
-        /// <summary>Array of video durations in HH:MM:SS format (null for images)</summary>
+        /// <summary>Array of video/gif durations in hh:mm:ss.SSS format (null for static images)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<string>? Duration { get; set; }

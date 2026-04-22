@@ -139,7 +139,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.Suggestions
             [QueryParameter("state")]
             public string State { get; set; }
 #endif
-            /// <summary>Suggestion type</summary>
             [Obsolete("This property is deprecated, use TypeAsSearchSuggestionType instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -150,7 +149,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.Suggestions
             [QueryParameter("type")]
             public string Type { get; set; }
 #endif
-            /// <summary>Suggestion type</summary>
             [QueryParameter("type")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.SearchSuggestionType? TypeAsSearchSuggestionType { get; set; }
         }

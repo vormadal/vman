@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The darkStyle property</summary>
+        /// <summary>Dark map style URL</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? DarkStyle { get; set; }
@@ -24,7 +24,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
-        /// <summary>The lightStyle property</summary>
+        /// <summary>Light map style URL</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? LightStyle { get; set; }

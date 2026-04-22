@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The filename property</summary>
+        /// <summary>Backup filename</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Filename { get; set; }
@@ -22,8 +22,16 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Filename { get; set; }
 #endif
-        /// <summary>The filesize property</summary>
+        /// <summary>Backup file size</summary>
         public double? Filesize { get; set; }
+        /// <summary>Backup timezone</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Timezone { get; set; }
+#nullable restore
+#else
+        public string Timezone { get; set; }
+#endif
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.DatabaseBackupDto"/> and sets the default values.
         /// </summary>
@@ -51,6 +59,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "filename", n => { Filename = n.GetStringValue(); } },
                 { "filesize", n => { Filesize = n.GetDoubleValue(); } },
+                { "timezone", n => { Timezone = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -62,6 +71,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("filename", Filename);
             writer.WriteDoubleValue("filesize", Filesize);
+            writer.WriteStringValue("timezone", Timezone);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

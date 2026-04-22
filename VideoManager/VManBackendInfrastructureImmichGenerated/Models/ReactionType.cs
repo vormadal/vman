@@ -3,10 +3,9 @@ using System.Runtime.Serialization;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>Reaction type</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public enum ReactionType
-    #pragma warning restore CS1591
     {
         [EnumMember(Value = "comment")]
         #pragma warning disable CS1591

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag, useCollections, useAddItemToCollection, usePeople } from '@/lib/hooks/useApi';
+import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag, useCollections, useAddItemToCollection, useBulkAddFilteredItemsToCollection, usePeople } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,7 +50,27 @@ export default function ItemsPage() {
   const createTagMutation = useCreateTag();
   const { data: collectionsData } = useCollections();
   const addToCollectionMutation = useAddItemToCollection();
+  const bulkAddFilteredMutation = useBulkAddFilteredItemsToCollection();
   const { toast } = useToast();
+
+  const hasActiveFilter = !!(selectedMediaType || selectedTagId || selectedPersonId);
+
+  const handleBulkAddFiltered = async () => {
+    if (!activeCollectionId) return;
+    try {
+      const result = await bulkAddFilteredMutation.mutateAsync({
+        collectionId: activeCollectionId,
+        params: {
+          type: selectedMediaType,
+          tagId: selectedTagId,
+          personId: selectedPersonId,
+        },
+      });
+      toast.success(`Added ${result.addedCount} item${result.addedCount !== 1 ? 's' : ''} to collection${result.skippedCount > 0 ? ` (${result.skippedCount} already present)` : ''}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add items to collection');
+    }
+  };
 
   const allItems = useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
@@ -199,7 +219,7 @@ export default function ItemsPage() {
         />
       )}
       
-      <div className="container mx-auto px-4 py-4">
+      <div className={cn("container mx-auto px-4 py-4", collectionModeActive && "pb-32")}>
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Media Items</h1>
           <div className="flex gap-2">
@@ -358,6 +378,23 @@ export default function ItemsPage() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Bulk add banner — shown in collection mode when a filter is active */}
+        {collectionModeActive && activeCollectionId && hasActiveFilter && (
+          <div className="mb-4 flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{totalCount}</span> item{totalCount !== 1 ? 's' : ''} match the current filter
+            </p>
+            <Button
+              size="sm"
+              onClick={handleBulkAddFiltered}
+              disabled={bulkAddFilteredMutation.isPending || totalCount === 0}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              {bulkAddFilteredMutation.isPending ? 'Adding...' : `Add all ${totalCount} to collection`}
+            </Button>
+          </div>
+        )}
 
         {/* Items grid */}
         {allItems.length > 0 ? (

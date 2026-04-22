@@ -10,6 +10,7 @@ using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Models;
 using VManBackend.Infrastructure.Immich.Generated.SharedLinks.Item;
+using VManBackend.Infrastructure.Immich.Generated.SharedLinks.Login;
 using VManBackend.Infrastructure.Immich.Generated.SharedLinks.Me;
 namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks
 {
@@ -19,6 +20,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class SharedLinksRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The login property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Login.LoginRequestBuilder Login
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Login.LoginRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The me property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.SharedLinks.Me.MeRequestBuilder Me
         {

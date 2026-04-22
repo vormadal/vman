@@ -19,7 +19,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Queues
     public partial class QueuesRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the VManBackend.Infrastructure.Immich.Generated.queues.item collection</summary>
-        /// <param name="position">Queue name</param>
+        /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Queues.Item.WithNameItemRequestBuilder"/></returns>
         public global::VManBackend.Infrastructure.Immich.Generated.Queues.Item.WithNameItemRequestBuilder this[string position]
         {

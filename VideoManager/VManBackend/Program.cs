@@ -123,6 +123,8 @@ builder.Services.AddRequestHandler<RemoveItemFromCollection.Handler, RemoveItemF
 builder.Services.AddRequestHandler<UpdateCollectionItemOrder.Handler, UpdateCollectionItemOrder.Request, UpdateCollectionItemOrder.Response>();
 builder.Services.AddRequestHandler<DeleteCollection.Handler, DeleteCollection.Request, DeleteCollection.Response>();
 builder.Services.AddRequestHandler<ExportCollectionToShotcut.Handler, ExportCollectionToShotcut.Request, ExportCollectionToShotcut.Response>();
+builder.Services.AddRequestHandler<BulkAddFilteredItemsToCollection.Handler, BulkAddFilteredItemsToCollection.Request, BulkAddFilteredItemsToCollection.Response>();
+builder.Services.AddRequestHandler<UpdateCollectionItemNote.Handler, UpdateCollectionItemNote.Request, UpdateCollectionItemNote.Response>();
 
 // Background sync infrastructure
 builder.Services.AddSingleton<SyncChannel>();

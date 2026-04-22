@@ -97,7 +97,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets.Item.Thumbnail
             [QueryParameter("key")]
             public string Key { get; set; }
 #endif
-            /// <summary>Asset media size</summary>
             [Obsolete("This property is deprecated, use SizeAsAssetMediaSize instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -108,7 +107,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets.Item.Thumbnail
             [QueryParameter("size")]
             public string Size { get; set; }
 #endif
-            /// <summary>Asset media size</summary>
             [QueryParameter("size")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetMediaSize? SizeAsAssetMediaSize { get; set; }
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

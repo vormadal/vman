@@ -17,10 +17,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>The res property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Res { get; private set; }
+        public string? Res { get; set; }
 #nullable restore
 #else
-        public string Res { get; private set; }
+        public string Res { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ServerPingResponse"/> and sets the default values.
@@ -57,6 +57,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("res", Res);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

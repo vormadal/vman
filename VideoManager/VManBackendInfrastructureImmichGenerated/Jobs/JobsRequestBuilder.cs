@@ -19,7 +19,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Jobs
     public partial class JobsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the VManBackend.Infrastructure.Immich.Generated.jobs.item collection</summary>
-        /// <param name="position">Queue name</param>
+        /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Jobs.Item.WithNameItemRequestBuilder"/></returns>
         [Obsolete("")]
         public global::VManBackend.Infrastructure.Immich.Generated.Jobs.Item.WithNameItemRequestBuilder this[string position]

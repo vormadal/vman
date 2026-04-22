@@ -70,7 +70,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Users.Me
             return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
-        /// Update the current user making teh API request.
+        /// Update the current user making the API request.
         /// </summary>
         /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminResponseDto"/></returns>
         /// <param name="body">The request body</param>
@@ -109,7 +109,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Users.Me
             return requestInfo;
         }
         /// <summary>
-        /// Update the current user making teh API request.
+        /// Update the current user making the API request.
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>

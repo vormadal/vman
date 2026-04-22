@@ -23,5 +23,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         Unknown,
         #pragma warning restore CS1591
+        [EnumMember(Value = "validation")]
+        #pragma warning disable CS1591
+        Validation,
+        #pragma warning restore CS1591
     }
 }

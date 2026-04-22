@@ -68,41 +68,41 @@ namespace VManBackend.Infrastructure.Immich.Generated.ApiKeys
         /// <summary>
         /// Retrieve all API keys of the current user.
         /// </summary>
-        /// <returns>A List&lt;global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyResponseDto&gt;</returns>
+        /// <returns>A List&lt;global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyResponseDto&gt;</returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyResponseDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyResponseDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyResponseDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyResponseDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
-            var collectionResult = await RequestAdapter.SendCollectionAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            var collectionResult = await RequestAdapter.SendCollectionAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
             return collectionResult?.AsList();
         }
         /// <summary>
         /// Creates a new API key. It will be limited to the permissions specified.
         /// </summary>
-        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateResponseDto"/></returns>
+        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateResponseDto"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateResponseDto?> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateResponseDto?> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateResponseDto> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateResponseDto> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
-            return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Retrieve all API keys of the current user.
@@ -131,11 +131,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.ApiKeys
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.APIKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.ApiKeyCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));

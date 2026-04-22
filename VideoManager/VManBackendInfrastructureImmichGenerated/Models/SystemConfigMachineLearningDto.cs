@@ -56,7 +56,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public global::VManBackend.Infrastructure.Immich.Generated.Models.OcrConfig Ocr { get; set; }
 #endif
-        /// <summary>The urls property</summary>
+        /// <summary>ML service URLs</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<string>? Urls { get; set; }

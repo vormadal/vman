@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { apiClient } from '../api/client';
-import type { CreateTagRequest, GetItemsParams } from '../api/types';
+import type { CreateTagRequest, GetItemsParams, BulkAddFilteredItemsParams } from '../api/types';
+
 
 // Tag query keys
 export const tagKeys = {
@@ -253,6 +254,31 @@ export function useAddItemToCollection() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
       queryClient.invalidateQueries({ queryKey: collectionKeys.lists() });
+    },
+  });
+}
+
+export function useBulkAddFilteredItemsToCollection() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ collectionId, params }: { collectionId: string; params: BulkAddFilteredItemsParams }) =>
+      apiClient.bulkAddFilteredItemsToCollection(collectionId, params),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
+      queryClient.invalidateQueries({ queryKey: collectionKeys.lists() });
+    },
+  });
+}
+
+export function useUpdateCollectionItemNote() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ collectionId, itemId, note }: { collectionId: string; itemId: string; note: string | null }) =>
+      apiClient.updateCollectionItemNote(collectionId, itemId, note),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
     },
   });
 }

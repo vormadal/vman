@@ -48,7 +48,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Name { get; set; }
 #endif
-        /// <summary>Workflow trigger type</summary>
+        /// <summary>Plugin trigger type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTriggerType? TriggerType { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowUpdateDto"/> and sets the default values.

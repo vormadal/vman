@@ -14,8 +14,16 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Error reason if failed</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdResponseDto_error? Error { get; set; }
+        /// <summary>Error reason</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdErrorReason? Error { get; set; }
+        /// <summary>The errorMessage property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? ErrorMessage { get; set; }
+#nullable restore
+#else
+        public string ErrorMessage { get; set; }
+#endif
         /// <summary>ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -51,7 +59,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "error", n => { Error = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdResponseDto_error>(); } },
+                { "error", n => { Error = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdErrorReason>(); } },
+                { "errorMessage", n => { ErrorMessage = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "success", n => { Success = n.GetBoolValue(); } },
             };
@@ -63,7 +72,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdResponseDto_error>("error", Error);
+            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdErrorReason>("error", Error);
+            writer.WriteStringValue("errorMessage", ErrorMessage);
             writer.WriteStringValue("id", Id);
             writer.WriteBoolValue("success", Success);
             writer.WriteAdditionalData(AdditionalData);

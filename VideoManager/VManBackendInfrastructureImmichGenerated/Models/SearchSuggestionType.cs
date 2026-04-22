@@ -3,10 +3,9 @@ using System.Runtime.Serialization;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>Suggestion type</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public enum SearchSuggestionType
-    #pragma warning restore CS1591
     {
         [EnumMember(Value = "country")]
         #pragma warning disable CS1591

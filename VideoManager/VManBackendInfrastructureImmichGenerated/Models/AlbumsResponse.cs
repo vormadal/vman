@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Default asset order for albums</summary>
+        /// <summary>Asset sort order</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder? DefaultAssetOrder { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumsResponse"/> and sets the default values.
@@ -22,7 +22,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public AlbumsResponse()
         {
             AdditionalData = new Dictionary<string, object>();
-            DefaultAssetOrder = global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder.Desc;
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value

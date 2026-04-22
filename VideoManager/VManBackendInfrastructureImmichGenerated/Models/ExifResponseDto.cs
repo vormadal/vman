@@ -7,10 +7,11 @@ using System.IO;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>
+    /// EXIF response
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public partial class ExifResponseDto : IAdditionalDataHolder, IParsable
-    #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
@@ -53,7 +54,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ExposureTime { get; set; }
 #endif
         /// <summary>File size in bytes</summary>
-        public long? FileSizeInByte { get; set; }
+        public int? FileSizeInByte { get; set; }
         /// <summary>F-number (aperture)</summary>
         public double? FNumber { get; set; }
         /// <summary>Focal length in mm</summary>
@@ -157,7 +158,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "exifImageWidth", n => { ExifImageWidth = n.GetDoubleValue(); } },
                 { "exposureTime", n => { ExposureTime = n.GetStringValue(); } },
                 { "fNumber", n => { FNumber = n.GetDoubleValue(); } },
-                { "fileSizeInByte", n => { FileSizeInByte = n.GetLongValue(); } },
+                { "fileSizeInByte", n => { FileSizeInByte = n.GetIntValue(); } },
                 { "focalLength", n => { FocalLength = n.GetDoubleValue(); } },
                 { "iso", n => { Iso = n.GetDoubleValue(); } },
                 { "latitude", n => { Latitude = n.GetDoubleValue(); } },
@@ -187,7 +188,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDoubleValue("exifImageHeight", ExifImageHeight);
             writer.WriteDoubleValue("exifImageWidth", ExifImageWidth);
             writer.WriteStringValue("exposureTime", ExposureTime);
-            writer.WriteLongValue("fileSizeInByte", FileSizeInByte);
+            writer.WriteIntValue("fileSizeInByte", FileSizeInByte);
             writer.WriteDoubleValue("fNumber", FNumber);
             writer.WriteDoubleValue("focalLength", FocalLength);
             writer.WriteDoubleValue("iso", Iso);

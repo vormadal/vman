@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Albums.Item.Assets;
+using VManBackend.Infrastructure.Immich.Generated.Albums.Item.MapMarkers;
 using VManBackend.Infrastructure.Immich.Generated.Albums.Item.User;
 using VManBackend.Infrastructure.Immich.Generated.Albums.Item.Users;
 using VManBackend.Infrastructure.Immich.Generated.Models;
@@ -25,6 +26,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums.Item
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Albums.Item.Assets.AssetsRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>The mapMarkers property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Albums.Item.MapMarkers.MapMarkersRequestBuilder MapMarkers
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Albums.Item.MapMarkers.MapMarkersRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The user property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Albums.Item.User.UserRequestBuilder User
         {
@@ -40,7 +46,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums.Item
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AlbumsItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums/{id}{?key*,slug*,withoutAssets*}", pathParameters)
+        public AlbumsItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums/{id}{?key*,slug*}", pathParameters)
         {
         }
         /// <summary>
@@ -48,7 +54,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums.Item
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AlbumsItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums/{id}{?key*,slug*,withoutAssets*}", rawUrl)
+        public AlbumsItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums/{id}{?key*,slug*}", rawUrl)
         {
         }
         /// <summary>
@@ -206,9 +212,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums.Item
             [QueryParameter("slug")]
             public string Slug { get; set; }
 #endif
-            /// <summary>Exclude assets from response</summary>
-            [QueryParameter("withoutAssets")]
-            public bool? WithoutAssets { get; set; }
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.

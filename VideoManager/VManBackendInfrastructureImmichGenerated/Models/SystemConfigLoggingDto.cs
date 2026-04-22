@@ -16,7 +16,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
-        /// <summary>The level property</summary>
+        /// <summary>Log level</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.LogLevel? Level { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLoggingDto"/> and sets the default values.

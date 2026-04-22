@@ -67,10 +67,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AssetGenerateThumbnails,
         #pragma warning restore CS1591
-        [EnumMember(Value = "AuditLogCleanup")]
-        #pragma warning disable CS1591
-        AuditLogCleanup,
-        #pragma warning restore CS1591
         [EnumMember(Value = "AuditTableCleanup")]
         #pragma warning disable CS1591
         AuditTableCleanup,

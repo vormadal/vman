@@ -203,7 +203,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Notifications
             /// <summary>Filter by notification ID</summary>
             [QueryParameter("id")]
             public Guid? Id { get; set; }
-            /// <summary>Filter by notification level</summary>
             [Obsolete("This property is deprecated, use LevelAsNotificationLevel instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -214,10 +213,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Notifications
             [QueryParameter("level")]
             public string Level { get; set; }
 #endif
-            /// <summary>Filter by notification level</summary>
             [QueryParameter("level")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationLevel? LevelAsNotificationLevel { get; set; }
-            /// <summary>Filter by notification type</summary>
             [Obsolete("This property is deprecated, use TypeAsNotificationType instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -228,7 +225,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Notifications
             [QueryParameter("type")]
             public string Type { get; set; }
 #endif
-            /// <summary>Filter by notification type</summary>
             [QueryParameter("type")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationType? TypeAsNotificationType { get; set; }
             /// <summary>Filter by unread status</summary>

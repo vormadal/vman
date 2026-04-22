@@ -42,11 +42,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Download.Archive
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<Stream?> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<Stream?> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.DownloadArchiveDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<Stream> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<Stream> PostAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.DownloadArchiveDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
@@ -61,11 +61,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Download.Archive
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.DownloadArchiveDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.DownloadArchiveDto body, Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Download.Archive.ArchiveRequestBuilder.ArchiveRequestBuilderPostQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));

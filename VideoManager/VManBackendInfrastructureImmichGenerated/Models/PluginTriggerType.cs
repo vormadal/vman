@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
-    /// <summary>Trigger type</summary>
+    /// <summary>Plugin trigger type</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public enum PluginTriggerType
     {

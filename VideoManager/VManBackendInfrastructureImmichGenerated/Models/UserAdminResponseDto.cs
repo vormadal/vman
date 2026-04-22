@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Avatar color</summary>
+        /// <summary>User avatar color</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.UserAvatarColor? AvatarColor { get; set; }
         /// <summary>Creation date</summary>
         public DateTimeOffset? CreatedAt { get; set; }
@@ -29,16 +29,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Email { get; set; }
 #endif
         /// <summary>User ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Is admin user</summary>
         public bool? IsAdmin { get; set; }
-        /// <summary>User license</summary>
+        /// <summary>The license property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::VManBackend.Infrastructure.Immich.Generated.Models.UserLicense? License { get; set; }
@@ -73,9 +67,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ProfileImagePath { get; set; }
 #endif
         /// <summary>Storage quota in bytes</summary>
-        public long? QuotaSizeInBytes { get; set; }
+        public int? QuotaSizeInBytes { get; set; }
         /// <summary>Storage usage in bytes</summary>
-        public long? QuotaUsageInBytes { get; set; }
+        public int? QuotaUsageInBytes { get; set; }
         /// <summary>Require password change on next login</summary>
         public bool? ShouldChangePassword { get; set; }
         /// <summary>User status</summary>
@@ -119,15 +113,15 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "deletedAt", n => { DeletedAt = n.GetDateTimeOffsetValue(); } },
                 { "email", n => { Email = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "isAdmin", n => { IsAdmin = n.GetBoolValue(); } },
                 { "license", n => { License = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserLicense>(global::VManBackend.Infrastructure.Immich.Generated.Models.UserLicense.CreateFromDiscriminatorValue); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "oauthId", n => { OauthId = n.GetStringValue(); } },
                 { "profileChangedAt", n => { ProfileChangedAt = n.GetDateTimeOffsetValue(); } },
                 { "profileImagePath", n => { ProfileImagePath = n.GetStringValue(); } },
-                { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetLongValue(); } },
-                { "quotaUsageInBytes", n => { QuotaUsageInBytes = n.GetLongValue(); } },
+                { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetIntValue(); } },
+                { "quotaUsageInBytes", n => { QuotaUsageInBytes = n.GetIntValue(); } },
                 { "shouldChangePassword", n => { ShouldChangePassword = n.GetBoolValue(); } },
                 { "status", n => { Status = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserStatus>(); } },
                 { "storageLabel", n => { StorageLabel = n.GetStringValue(); } },
@@ -145,15 +139,15 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteDateTimeOffsetValue("deletedAt", DeletedAt);
             writer.WriteStringValue("email", Email);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isAdmin", IsAdmin);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserLicense>("license", License);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("oauthId", OauthId);
             writer.WriteDateTimeOffsetValue("profileChangedAt", ProfileChangedAt);
             writer.WriteStringValue("profileImagePath", ProfileImagePath);
-            writer.WriteLongValue("quotaSizeInBytes", QuotaSizeInBytes);
-            writer.WriteLongValue("quotaUsageInBytes", QuotaUsageInBytes);
+            writer.WriteIntValue("quotaSizeInBytes", QuotaSizeInBytes);
+            writer.WriteIntValue("quotaUsageInBytes", QuotaUsageInBytes);
             writer.WriteBoolValue("shouldChangePassword", ShouldChangePassword);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserStatus>("status", Status);
             writer.WriteStringValue("storageLabel", StorageLabel);

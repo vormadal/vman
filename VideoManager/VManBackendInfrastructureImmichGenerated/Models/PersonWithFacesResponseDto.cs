@@ -25,7 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Color { get; set; }
 #endif
-        /// <summary>Face detections</summary>
+        /// <summary>The faces property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto>? Faces { get; set; }

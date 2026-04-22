@@ -1,10 +1,17 @@
+'use client';
+
 import { NavigationDrawer } from '@/components/navigation-drawer';
+import { CollectionOverlay } from '@/components/collection-overlay';
+import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isActive, activeCollectionId, exitCollectionMode } = useCollectionModeStore();
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-40 border-b bg-background">
@@ -15,9 +22,15 @@ export default function DashboardLayout({
           </div>
         </div>
       </header>
-      <main className="flex-1">
+      <main className={cn('flex-1', isActive && 'pb-16')}>
         {children}
       </main>
+      {isActive && (
+        <CollectionOverlay
+          activeCollectionId={activeCollectionId}
+          onClose={exitCollectionMode}
+        />
+      )}
     </div>
   );
 }

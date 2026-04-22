@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useInfiniteItems, useTags, useAddTagToItem, useRemoveTagFromItem, useCreateTag, useCollections, useAddItemToCollection, useBulkAddFilteredItemsToCollection, usePeople } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +16,6 @@ import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { CollectionOverlay } from '@/components/collection-overlay';
 import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
 
 const MAX_DISPLAYED_BADGES = 10;
@@ -28,7 +28,16 @@ export default function ItemsPage() {
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [openDialogItemId, setOpenDialogItemId] = useState<string | null>(null);
   
-  const { isActive: collectionModeActive, activeCollectionId, exitCollectionMode } = useCollectionModeStore();
+  const { isActive: collectionModeActive, activeCollectionId, enterCollectionMode, exitCollectionMode } = useCollectionModeStore();
+  const searchParams = useSearchParams();
+
+  // Auto-enter collection mode when arriving via a shared link (?collection=<id>)
+  useEffect(() => {
+    const collectionParam = searchParams.get('collection');
+    if (collectionParam && collectionParam !== activeCollectionId) {
+      enterCollectionMode(collectionParam);
+    }
+  }, [searchParams]);
 
   const {
     data,
@@ -100,7 +109,7 @@ export default function ItemsPage() {
 
   const rowVirtualizer = useWindowVirtualizer({
     count: rowCount,
-    estimateSize: () => 420,
+    estimateSize: () => 240,
     overscan: 3,
   });
 
@@ -211,15 +220,7 @@ export default function ItemsPage() {
   }
 
   return (
-    <>
-      {collectionModeActive && (
-        <CollectionOverlay
-          activeCollectionId={activeCollectionId}
-          onClose={exitCollectionMode}
-        />
-      )}
-      
-      <div className={cn("container mx-auto px-4 py-4", collectionModeActive && "pb-32")}>
+    <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Media Items</h1>
           <div className="flex gap-2">
@@ -416,6 +417,8 @@ export default function ItemsPage() {
                 return (
                   <div
                     key={virtualRow.key}
+                    data-index={virtualRow.index}
+                    ref={rowVirtualizer.measureElement}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -424,9 +427,9 @@ export default function ItemsPage() {
                       transform: `translateY(${virtualRow.start}px)`,
                     }}
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pb-2">
                       {rowItems.map(item => (
-                        <Card key={`${item.provider}-${item.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+                        <Card key={`${item.provider}-${item.id}`} className="overflow-hidden hover:shadow-lg transition-shadow p-0 gap-0">
                           <div className="relative aspect-video bg-muted">
                             {item.thumbnailUrl ? (
                               <AuthenticatedImage
@@ -451,32 +454,47 @@ export default function ItemsPage() {
                               {getMediaTypeIcon(item.type)}
                               <span className="ml-1">{item.type}</span>
                             </Badge>
-                          </div>
-                          <CardContent className="p-4">
-                            {/* Item metadata */}
-                            <div className="mb-3">
-                              <h3 className="font-semibold text-sm truncate" title={item.name}>
-                                {item.name}
-                              </h3>
-                              <p className="text-xs text-muted-foreground">
-                                {new Date(item.createdAt).toLocaleDateString('en-GB', {
-                                  day: '2-digit',
-                                  month: '2-digit',
-                                  year: 'numeric',
-                                })}
-                              </p>
+                            {/* Name + date overlay */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 pt-4 pb-1.5">
+                              <div className="flex items-end justify-between gap-2">
+                                <div className="pointer-events-none min-w-0">
+                                  <p className="text-white/80 text-xs font-medium truncate leading-tight" title={item.name}>
+                                    {item.name}
+                                  </p>
+                                  <p className="text-white/50 text-xs leading-tight">
+                                    {new Date(item.createdAt).toLocaleDateString('en-GB', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: 'numeric',
+                                    })}
+                                  </p>
+                                </div>
+                                {collectionModeActive && activeCollectionId && (
+                                  <button
+                                    onClick={() => handleQuickAddToActiveCollection(item.provider, item.id)}
+                                    disabled={addToCollectionMutation.isPending}
+                                    className="shrink-0 bg-white/20 hover:bg-white/40 disabled:opacity-50 rounded-full p-1.5 transition-colors"
+                                    title="Add to collection"
+                                  >
+                                    <Plus className="h-4 w-4 text-white" />
+                                  </button>
+                                )}
+                              </div>
                             </div>
+                          </div>
+                          {!collectionModeActive && (
+                          <CardContent className="p-0">
 
-                            {/* Item tags and people - show first 10 combined (tags first, then people) */}
+                            {/* Item tags and people */}
                             {(() => {
                               const combinedTagsAndPeople = [
                                 ...item.tags.map(tag => ({ type: 'tag' as const, data: tag })),
                                 ...((item.people || []).map(person => ({ type: 'person' as const, data: person })))
                               ].slice(0, MAX_DISPLAYED_BADGES);
 
-                              return (
-                                <div className="flex flex-wrap gap-1 mb-2 min-h-[24px]">
-                                  {combinedTagsAndPeople.map((entry) => 
+                              return combinedTagsAndPeople.length > 0 ? (
+                                <div className="flex flex-wrap gap-1 px-2 pt-1.5 pb-1">
+                                  {combinedTagsAndPeople.map((entry) =>
                                     entry.type === 'tag' ? (
                                       <Badge
                                         key={`tag-${entry.data.id}`}
@@ -504,76 +522,12 @@ export default function ItemsPage() {
                                     )
                                   )}
                                 </div>
-                              );
+                              ) : null;
                             })()}
 
                             {/* Action buttons */}
-                            <div className="flex flex-col sm:flex-row gap-2">
-                              {/* Quick add to active collection when in collection mode */}
-                              {collectionModeActive && activeCollectionId ? (
-                                <>
-                                  <Button
-                                    variant="default"
-                                    size="sm"
-                                    className="flex-1"
-                                    onClick={() => handleQuickAddToActiveCollection(item.provider, item.id)}
-                                    disabled={addToCollectionMutation.isPending}
-                                  >
-                                    <Plus className="h-4 w-4 mr-1" />
-                                    Add to Collection
-                                  </Button>
-
-                                  {/* Add to other collection dialog - available in collection mode */}
-                                  <Dialog
-                                    open={openDialogItemId === `${item.provider}-${item.id}`}
-                                    onOpenChange={(open) => setOpenDialogItemId(open ? `${item.provider}-${item.id}` : null)}
-                                  >
-                                    <DialogTrigger asChild>
-                                      <Button variant="outline" size="sm" className="flex-1">
-                                        <FolderPlus className="h-4 w-4 mr-1" />
-                                        Other Collection
-                                      </Button>
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                      <DialogHeader>
-                                        <DialogTitle>Add to Collection</DialogTitle>
-                                        <DialogDescription>
-                                          Select a collection to add {item.name} to.
-                                        </DialogDescription>
-                                      </DialogHeader>
-                                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                                        {collectionsData?.collections && collectionsData.collections.length > 0 ? (
-                                          collectionsData.collections.map((collection) => (
-                                            <Button
-                                              key={collection.id}
-                                              variant="outline"
-                                              className="w-full justify-start"
-                                              onClick={() => handleAddToCollection(collection.id, item.provider, item.id)}
-                                            >
-                                              <FolderPlus className="h-4 w-4 mr-2" />
-                                              {collection.name}
-                                              <span className="ml-auto text-xs text-muted-foreground">
-                                                {collection.itemCount} items
-                                              </span>
-                                            </Button>
-                                          ))
-                                        ) : (
-                                          <div className="text-center py-4">
-                                            <p className="text-sm text-muted-foreground mb-3">
-                                              No collections yet. Create one first.
-                                            </p>
-                                            <Link href="/collections">
-                                              <Button variant="outline" size="sm">
-                                                Go to Collections
-                                              </Button>
-                                            </Link>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </DialogContent>
-                                  </Dialog>
-                                </>
-                              ) : (
+                            <div className="flex flex-col sm:flex-row gap-1.5 px-2 py-1.5">
+                              {(
                                 <>
                                   {/* Universal Add Tag dialog */}
                                   <Dialog
@@ -680,7 +634,8 @@ export default function ItemsPage() {
                                 </>
                               )}
                             </div>
-                    </CardContent>
+                          </CardContent>
+                          )}
                         </Card>
                       ))}
                     </div>
@@ -722,7 +677,6 @@ export default function ItemsPage() {
             </CardContent>
           </Card>
         )}
-      </div>
-    </>
+    </div>
   );
 }

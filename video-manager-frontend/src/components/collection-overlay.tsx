@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useCollection } from '@/lib/hooks/useApi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, ExternalLink, Link as LinkIcon, Check } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +15,16 @@ interface CollectionOverlayProps {
 
 export function CollectionOverlay({ activeCollectionId, onClose }: CollectionOverlayProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { data: activeCollection } = useCollection(activeCollectionId || '');
+
+  const copyLink = () => {
+    const url = `${window.location.origin}/items?collection=${activeCollectionId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   if (!activeCollectionId) return null;
 
@@ -46,10 +55,6 @@ export function CollectionOverlay({ activeCollectionId, onClose }: CollectionOve
 
       {/* Dock bar */}
       <div className="flex items-center gap-3 px-4 py-3">
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Collection Mode
-        </span>
-
         <span className="font-medium text-sm truncate flex-1">
           {activeCollection?.name ?? '…'}
         </span>
@@ -57,6 +62,17 @@ export function CollectionOverlay({ activeCollectionId, onClose }: CollectionOve
         <Badge variant="secondary" className="shrink-0 text-xs">
           {activeCollection?.items.length ?? 0} items
         </Badge>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 shrink-0"
+          onClick={copyLink}
+          title="Copy sharable link"
+        >
+          {copied ? <Check className="h-4 w-4 text-green-500" /> : <LinkIcon className="h-4 w-4" />}
+          <span className="hidden sm:inline text-xs">{copied ? 'Copied' : 'Copy link'}</span>
+        </Button>
 
         <Link href={`/collections/${activeCollectionId}`}>
           <Button variant="ghost" size="sm" className="gap-1.5 shrink-0">

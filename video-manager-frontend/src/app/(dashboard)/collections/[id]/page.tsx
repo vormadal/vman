@@ -12,7 +12,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Download, GripVertical, Trash2, FolderPlus, MessageSquare, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
+import { ArrowLeft, Download, GripVertical, Trash2, FolderPlus, MessageSquare, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
@@ -23,18 +23,24 @@ function CollectionItemCard({
   item,
   index,
   collectionId,
+  isDraggingOver,
   onRemove,
   onDragStart,
+  onDragEnd,
   onDragOver,
+  onDragLeave,
   onDrop,
 }: {
   item: { id: string; providerName: string; providerItemId: string; order: number; note?: string | null };
   index: number;
   collectionId: string;
+  isDraggingOver: boolean;
   onRemove: (id: string) => void;
-  onDragStart: (index: number) => void;
+  onDragStart: (e: React.DragEvent, index: number) => void;
+  onDragEnd: () => void;
   onDragOver: (e: React.DragEvent) => void;
-  onDrop: (index: number) => void;
+  onDragLeave: () => void;
+  onDrop: (e: React.DragEvent, index: number) => void;
 }) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteValue, setNoteValue] = useState(item.note ?? '');
@@ -62,16 +68,21 @@ function CollectionItemCard({
   return (
     <Card
       draggable
-      onDragStart={() => onDragStart(index)}
+      onDragStart={(e) => onDragStart(e, index)}
+      onDragEnd={onDragEnd}
       onDragOver={onDragOver}
-      onDrop={() => onDrop(index)}
-      className="overflow-hidden cursor-move hover:shadow-md transition-shadow"
+      onDragLeave={onDragLeave}
+      onDrop={(e) => onDrop(e, index)}
+      className={cn(
+        'overflow-hidden cursor-move transition-all p-0 gap-0',
+        isDraggingOver ? 'ring-2 ring-primary scale-[1.02]' : 'hover:shadow-md',
+      )}
     >
       {/* Thumbnail */}
-      <div className="aspect-video bg-muted relative">
+      <div className="aspect-video bg-muted">
         <AuthenticatedImage
           src={thumbnailUrl}
-          alt={`Item ${index + 1}`}
+          alt={`Collection item ${index + 1}`}
           className="w-full h-full object-cover"
           fallback={
             <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -79,9 +90,6 @@ function CollectionItemCard({
             </div>
           }
         />
-        <span className="absolute top-1.5 left-1.5 bg-black/50 text-white text-xs font-medium px-1.5 py-0.5 rounded">
-          {index + 1}
-        </span>
       </div>
 
       {/* Controls */}
@@ -122,7 +130,6 @@ function CollectionItemCard({
         </div>
       )}
 
-      {/* Show saved note when closed */}
       {!noteOpen && hasNote && (
         <p
           className="px-2 pb-2 text-xs text-muted-foreground italic cursor-pointer line-clamp-2"
@@ -148,7 +155,54 @@ export default function CollectionDetailPage() {
   const reorderMutation = useUpdateCollectionItemOrder();
   const exportMutation = useExportCollectionToShotcut();
 
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  // Ref instead of state: avoids stale-closure issues inside handleDrop
+  const draggedIndexRef = useRef<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    draggedIndexRef.current = index;
+    e.dataTransfer.effectAllowed = 'move';
+    // Required by Firefox to initiate a drag
+    e.dataTransfer.setData('text/plain', String(index));
+  };
+
+  const handleDragEnd = () => {
+    draggedIndexRef.current = null;
+    setDragOverIndex(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    const draggedIndex = draggedIndexRef.current;
+    setDragOverIndex(null);
+    draggedIndexRef.current = null;
+
+    if (draggedIndex === null || draggedIndex === dropIndex || !collection) return;
+
+    const items = [...collection.items];
+    const [draggedItem] = items.splice(draggedIndex, 1);
+    items.splice(dropIndex, 0, draggedItem);
+
+    const reorderedItems = items.map((item, idx) => ({ itemId: item.id, newOrder: idx }));
+
+    try {
+      await reorderMutation.mutateAsync({ collectionId, items: reorderedItems });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to reorder items';
+      console.error('Reorder failed:', err);
+      toast.error(message);
+    }
+  };
 
   const handleRemoveItem = async (itemId: string) => {
     try {
@@ -156,29 +210,6 @@ export default function CollectionDetailPage() {
       toast.success('Item removed from collection');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to remove item');
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = async (dropIndex: number) => {
-    if (draggedIndex === null || !collection) return;
-
-    const items = [...collection.items];
-    const draggedItem = items[draggedIndex];
-
-    items.splice(draggedIndex, 1);
-    items.splice(dropIndex, 0, draggedItem);
-
-    const reorderedItems = items.map((item, idx) => ({ itemId: item.id, newOrder: idx }));
-
-    try {
-      await reorderMutation.mutateAsync({ collectionId, items: reorderedItems });
-      setDraggedIndex(null);
-    } catch {
-      toast.error('Failed to reorder items');
     }
   };
 
@@ -279,9 +310,12 @@ export default function CollectionDetailPage() {
               item={item}
               index={index}
               collectionId={collectionId}
+              isDraggingOver={dragOverIndex === index}
               onRemove={handleRemoveItem}
-              onDragStart={setDraggedIndex}
-              onDragOver={handleDragOver}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             />
           ))}

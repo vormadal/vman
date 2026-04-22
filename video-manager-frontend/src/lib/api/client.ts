@@ -275,7 +275,7 @@ class ApiClient {
       `/api/collections/${collectionId}/items`,
       {
         method: 'POST',
-        body: JSON.stringify({ providerName, providerItemId }),
+        body: JSON.stringify({ collectionId, providerName, providerItemId }),
       }
     );
   }
@@ -327,7 +327,7 @@ class ApiClient {
       `/api/collections/${collectionId}/items/reorder`,
       {
         method: 'PUT',
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ collectionId, items }),
       }
     );
   }

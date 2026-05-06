@@ -122,7 +122,7 @@ public static class DbSeeder
             FirstName = firstName,
             LastName = lastName,
             PasswordHash = passwordHash,
-            Role = UserRole.User,
+            Role = UserRole.Admin,
             IsBlocked = false,
             IsProfileComplete = true,
             CreatedAt = DateTime.UtcNow,

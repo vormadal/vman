@@ -31,7 +31,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string DeviceType { get; set; }
 #endif
         /// <summary>Session duration in seconds</summary>
-        public double? Duration { get; set; }
+        public int? Duration { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.SessionCreateDto"/> and sets the default values.
         /// </summary>
@@ -59,7 +59,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "deviceOS", n => { DeviceOS = n.GetStringValue(); } },
                 { "deviceType", n => { DeviceType = n.GetStringValue(); } },
-                { "duration", n => { Duration = n.GetDoubleValue(); } },
+                { "duration", n => { Duration = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -71,7 +71,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("deviceOS", DeviceOS);
             writer.WriteStringValue("deviceType", DeviceType);
-            writer.WriteDoubleValue("duration", Duration);
+            writer.WriteIntValue("duration", Duration);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

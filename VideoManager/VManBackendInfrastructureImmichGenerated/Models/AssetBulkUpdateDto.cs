@@ -23,7 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string DateTimeOriginal { get; set; }
 #endif
         /// <summary>Relative time offset in seconds</summary>
-        public double? DateTimeRelative { get; set; }
+        public int? DateTimeRelative { get; set; }
         /// <summary>Asset description</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -92,7 +92,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "dateTimeOriginal", n => { DateTimeOriginal = n.GetStringValue(); } },
-                { "dateTimeRelative", n => { DateTimeRelative = n.GetDoubleValue(); } },
+                { "dateTimeRelative", n => { DateTimeRelative = n.GetIntValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "duplicateId", n => { DuplicateId = n.GetStringValue(); } },
                 { "ids", n => { Ids = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
@@ -112,7 +112,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("dateTimeOriginal", DateTimeOriginal);
-            writer.WriteDoubleValue("dateTimeRelative", DateTimeRelative);
+            writer.WriteIntValue("dateTimeRelative", DateTimeRelative);
             writer.WriteStringValue("description", Description);
             writer.WriteStringValue("duplicateId", DuplicateId);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("ids", Ids);

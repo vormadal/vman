@@ -45,7 +45,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ClientSecret { get; set; }
 #endif
         /// <summary>Default storage quota</summary>
-        public double? DefaultStorageQuota { get; set; }
+        public int? DefaultStorageQuota { get; set; }
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
         /// <summary>End session endpoint</summary>
@@ -165,7 +165,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "buttonText", n => { ButtonText = n.GetStringValue(); } },
                 { "clientId", n => { ClientId = n.GetStringValue(); } },
                 { "clientSecret", n => { ClientSecret = n.GetStringValue(); } },
-                { "defaultStorageQuota", n => { DefaultStorageQuota = n.GetDoubleValue(); } },
+                { "defaultStorageQuota", n => { DefaultStorageQuota = n.GetIntValue(); } },
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
                 { "endSessionEndpoint", n => { EndSessionEndpoint = n.GetStringValue(); } },
                 { "issuerUrl", n => { IssuerUrl = n.GetStringValue(); } },
@@ -195,7 +195,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("buttonText", ButtonText);
             writer.WriteStringValue("clientId", ClientId);
             writer.WriteStringValue("clientSecret", ClientSecret);
-            writer.WriteDoubleValue("defaultStorageQuota", DefaultStorageQuota);
+            writer.WriteIntValue("defaultStorageQuota", DefaultStorageQuota);
             writer.WriteBoolValue("enabled", Enabled);
             writer.WriteStringValue("endSessionEndpoint", EndSessionEndpoint);
             writer.WriteStringValue("issuerUrl", IssuerUrl);

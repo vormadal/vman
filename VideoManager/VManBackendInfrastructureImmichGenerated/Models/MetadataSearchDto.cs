@@ -131,7 +131,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string OriginalPath { get; set; }
 #endif
         /// <summary>Page number</summary>
-        public double? Page { get; set; }
+        public int? Page { get; set; }
         /// <summary>Filter by person IDs</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -149,9 +149,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string PreviewPath { get; set; }
 #endif
         /// <summary>Filter by rating [1-5], or null for unrated</summary>
-        public double? Rating { get; set; }
+        public int? Rating { get; set; }
         /// <summary>Number of results to return</summary>
-        public double? Size { get; set; }
+        public int? Size { get; set; }
         /// <summary>Filter by state/province name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -247,11 +247,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "order", n => { Order = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder>(); } },
                 { "originalFileName", n => { OriginalFileName = n.GetStringValue(); } },
                 { "originalPath", n => { OriginalPath = n.GetStringValue(); } },
-                { "page", n => { Page = n.GetDoubleValue(); } },
+                { "page", n => { Page = n.GetIntValue(); } },
                 { "personIds", n => { PersonIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
                 { "previewPath", n => { PreviewPath = n.GetStringValue(); } },
-                { "rating", n => { Rating = n.GetDoubleValue(); } },
-                { "size", n => { Size = n.GetDoubleValue(); } },
+                { "rating", n => { Rating = n.GetIntValue(); } },
+                { "size", n => { Size = n.GetIntValue(); } },
                 { "state", n => { State = n.GetStringValue(); } },
                 { "tagIds", n => { TagIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
                 { "takenAfter", n => { TakenAfter = n.GetDateTimeOffsetValue(); } },
@@ -298,11 +298,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder>("order", Order);
             writer.WriteStringValue("originalFileName", OriginalFileName);
             writer.WriteStringValue("originalPath", OriginalPath);
-            writer.WriteDoubleValue("page", Page);
+            writer.WriteIntValue("page", Page);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("personIds", PersonIds);
             writer.WriteStringValue("previewPath", PreviewPath);
-            writer.WriteDoubleValue("rating", Rating);
-            writer.WriteDoubleValue("size", Size);
+            writer.WriteIntValue("rating", Rating);
+            writer.WriteIntValue("size", Size);
             writer.WriteStringValue("state", State);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("tagIds", TagIds);
             writer.WriteDateTimeOffsetValue("takenAfter", TakenAfter);

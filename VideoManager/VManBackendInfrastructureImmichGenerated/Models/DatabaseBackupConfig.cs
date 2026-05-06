@@ -25,7 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
         /// <summary>Keep last amount</summary>
-        public double? KeepLastAmount { get; set; }
+        public int? KeepLastAmount { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.DatabaseBackupConfig"/> and sets the default values.
         /// </summary>
@@ -53,7 +53,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "cronExpression", n => { CronExpression = n.GetStringValue(); } },
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
-                { "keepLastAmount", n => { KeepLastAmount = n.GetDoubleValue(); } },
+                { "keepLastAmount", n => { KeepLastAmount = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -65,7 +65,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("cronExpression", CronExpression);
             writer.WriteBoolValue("enabled", Enabled);
-            writer.WriteDoubleValue("keepLastAmount", KeepLastAmount);
+            writer.WriteIntValue("keepLastAmount", KeepLastAmount);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -95,9 +95,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public List<Guid?> PersonIds { get; set; }
 #endif
         /// <summary>Filter by rating [1-5], or null for unrated</summary>
-        public double? Rating { get; set; }
+        public int? Rating { get; set; }
         /// <summary>Number of results to return</summary>
-        public double? Size { get; set; }
+        public int? Size { get; set; }
         /// <summary>Filter by state/province name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -179,8 +179,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "model", n => { Model = n.GetStringValue(); } },
                 { "ocr", n => { Ocr = n.GetStringValue(); } },
                 { "personIds", n => { PersonIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
-                { "rating", n => { Rating = n.GetDoubleValue(); } },
-                { "size", n => { Size = n.GetDoubleValue(); } },
+                { "rating", n => { Rating = n.GetIntValue(); } },
+                { "size", n => { Size = n.GetIntValue(); } },
                 { "state", n => { State = n.GetStringValue(); } },
                 { "tagIds", n => { TagIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
                 { "takenAfter", n => { TakenAfter = n.GetDateTimeOffsetValue(); } },
@@ -220,8 +220,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("model", Model);
             writer.WriteStringValue("ocr", Ocr);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("personIds", PersonIds);
-            writer.WriteDoubleValue("rating", Rating);
-            writer.WriteDoubleValue("size", Size);
+            writer.WriteIntValue("rating", Rating);
+            writer.WriteIntValue("size", Size);
             writer.WriteStringValue("state", State);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("tagIds", TagIds);
             writer.WriteDateTimeOffsetValue("takenAfter", TakenAfter);

@@ -195,10 +195,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Search.LargeAssets
 #endif
             /// <summary>Filter by rating [1-5], or null for unrated</summary>
             [QueryParameter("rating")]
-            public double? Rating { get; set; }
+            public int? Rating { get; set; }
             /// <summary>Number of results to return</summary>
             [QueryParameter("size")]
-            public double? Size { get; set; }
+            public int? Size { get; set; }
             /// <summary>Filter by state/province name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable

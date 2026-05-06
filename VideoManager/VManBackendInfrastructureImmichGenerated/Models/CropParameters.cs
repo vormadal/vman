@@ -15,13 +15,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Height of the crop</summary>
-        public double? Height { get; set; }
+        public int? Height { get; set; }
         /// <summary>Width of the crop</summary>
-        public double? Width { get; set; }
+        public int? Width { get; set; }
         /// <summary>Top-Left X coordinate of crop</summary>
-        public double? X { get; set; }
+        public int? X { get; set; }
         /// <summary>Top-Left Y coordinate of crop</summary>
-        public double? Y { get; set; }
+        public int? Y { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.CropParameters"/> and sets the default values.
         /// </summary>
@@ -47,10 +47,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "height", n => { Height = n.GetDoubleValue(); } },
-                { "width", n => { Width = n.GetDoubleValue(); } },
-                { "x", n => { X = n.GetDoubleValue(); } },
-                { "y", n => { Y = n.GetDoubleValue(); } },
+                { "height", n => { Height = n.GetIntValue(); } },
+                { "width", n => { Width = n.GetIntValue(); } },
+                { "x", n => { X = n.GetIntValue(); } },
+                { "y", n => { Y = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -60,10 +60,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteDoubleValue("height", Height);
-            writer.WriteDoubleValue("width", Width);
-            writer.WriteDoubleValue("x", X);
-            writer.WriteDoubleValue("y", Y);
+            writer.WriteIntValue("height", Height);
+            writer.WriteIntValue("width", Width);
+            writer.WriteIntValue("x", X);
+            writer.WriteIntValue("y", Y);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -252,10 +252,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.People
             public Guid? ClosestPersonId { get; set; }
             /// <summary>Page number for pagination</summary>
             [QueryParameter("page")]
-            public double? Page { get; set; }
+            public int? Page { get; set; }
             /// <summary>Number of items per page</summary>
             [QueryParameter("size")]
-            public double? Size { get; set; }
+            public int? Size { get; set; }
             /// <summary>Include hidden people</summary>
             [QueryParameter("withHidden")]
             public bool? WithHidden { get; set; }

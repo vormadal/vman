@@ -15,7 +15,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Number of files in the folder</summary>
-        public double? Files { get; set; }
+        public int? Files { get; set; }
         /// <summary>Storage folder</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.StorageFolder? Folder { get; set; }
         /// <summary>Whether the folder is readable</summary>
@@ -47,7 +47,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "files", n => { Files = n.GetDoubleValue(); } },
+                { "files", n => { Files = n.GetIntValue(); } },
                 { "folder", n => { Folder = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.StorageFolder>(); } },
                 { "readable", n => { Readable = n.GetBoolValue(); } },
                 { "writable", n => { Writable = n.GetBoolValue(); } },
@@ -60,7 +60,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteDoubleValue("files", Files);
+            writer.WriteIntValue("files", Files);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.StorageFolder>("folder", Folder);
             writer.WriteBoolValue("readable", Readable);
             writer.WriteBoolValue("writable", Writable);

@@ -27,7 +27,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Error { get; set; }
 #endif
         /// <summary>The progress property</summary>
-        public double? Progress { get; set; }
+        public int? Progress { get; set; }
         /// <summary>The task property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -64,7 +64,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "action", n => { Action = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.MaintenanceAction>(); } },
                 { "active", n => { Active = n.GetBoolValue(); } },
                 { "error", n => { Error = n.GetStringValue(); } },
-                { "progress", n => { Progress = n.GetDoubleValue(); } },
+                { "progress", n => { Progress = n.GetIntValue(); } },
                 { "task", n => { Task = n.GetStringValue(); } },
             };
         }
@@ -78,7 +78,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.MaintenanceAction>("action", Action);
             writer.WriteBoolValue("active", Active);
             writer.WriteStringValue("error", Error);
-            writer.WriteDoubleValue("progress", Progress);
+            writer.WriteIntValue("progress", Progress);
             writer.WriteStringValue("task", Task);
             writer.WriteAdditionalData(AdditionalData);
         }

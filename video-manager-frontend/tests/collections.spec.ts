@@ -28,7 +28,7 @@ test.describe('Collections', () => {
       // Enter collection mode - redirects to /items with overlay
       await detailPage.enterCollectionMode();
       await expect(page).toHaveURL(/\/items/);
-      await expect(page.getByText('Collection Mode')).toBeVisible();
+      await expect(page.getByRole('button', { name: /exit collection mode/i })).toBeVisible();
       await expect(page.getByText(collectionName)).toBeVisible();
 
       // Go back to collections and delete

@@ -23,7 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Filename { get; set; }
 #endif
         /// <summary>Backup file size</summary>
-        public double? Filesize { get; set; }
+        public int? Filesize { get; set; }
         /// <summary>Backup timezone</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -58,7 +58,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "filename", n => { Filename = n.GetStringValue(); } },
-                { "filesize", n => { Filesize = n.GetDoubleValue(); } },
+                { "filesize", n => { Filesize = n.GetIntValue(); } },
                 { "timezone", n => { Timezone = n.GetStringValue(); } },
             };
         }
@@ -70,7 +70,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("filename", Filename);
-            writer.WriteDoubleValue("filesize", Filesize);
+            writer.WriteIntValue("filesize", Filesize);
             writer.WriteStringValue("timezone", Timezone);
             writer.WriteAdditionalData(AdditionalData);
         }

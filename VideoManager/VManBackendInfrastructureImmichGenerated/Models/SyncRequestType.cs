@@ -27,6 +27,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AlbumAssetsV1,
         #pragma warning restore CS1591
+        [EnumMember(Value = "AlbumAssetsV2")]
+        #pragma warning disable CS1591
+        AlbumAssetsV2,
+        #pragma warning restore CS1591
         [EnumMember(Value = "AlbumAssetExifsV1")]
         #pragma warning disable CS1591
         AlbumAssetExifsV1,
@@ -34,6 +38,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         [EnumMember(Value = "AssetsV1")]
         #pragma warning disable CS1591
         AssetsV1,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "AssetsV2")]
+        #pragma warning disable CS1591
+        AssetsV2,
         #pragma warning restore CS1591
         [EnumMember(Value = "AssetExifsV1")]
         #pragma warning disable CS1591
@@ -66,6 +74,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         [EnumMember(Value = "PartnerAssetsV1")]
         #pragma warning disable CS1591
         PartnerAssetsV1,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "PartnerAssetsV2")]
+        #pragma warning disable CS1591
+        PartnerAssetsV2,
         #pragma warning restore CS1591
         [EnumMember(Value = "PartnerAssetExifsV1")]
         #pragma warning disable CS1591

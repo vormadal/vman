@@ -31,7 +31,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Id { get; set; }
 #endif
         /// <summary>Filter order</summary>
-        public double? Order { get; set; }
+        public int? Order { get; set; }
         /// <summary>Plugin filter ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -75,7 +75,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "filterConfig", n => { FilterConfig = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig.CreateFromDiscriminatorValue); } },
                 { "id", n => { Id = n.GetStringValue(); } },
-                { "order", n => { Order = n.GetDoubleValue(); } },
+                { "order", n => { Order = n.GetIntValue(); } },
                 { "pluginFilterId", n => { PluginFilterId = n.GetStringValue(); } },
                 { "workflowId", n => { WorkflowId = n.GetStringValue(); } },
             };
@@ -89,7 +89,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterConfig>("filterConfig", FilterConfig);
             writer.WriteStringValue("id", Id);
-            writer.WriteDoubleValue("order", Order);
+            writer.WriteIntValue("order", Order);
             writer.WriteStringValue("pluginFilterId", PluginFilterId);
             writer.WriteStringValue("workflowId", WorkflowId);
             writer.WriteAdditionalData(AdditionalData);

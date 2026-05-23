@@ -47,10 +47,8 @@ export default function AcceptInvitePage() {
   useEffect(() => {
     const tokenParam = searchParams.get('token');
     if (!tokenParam) {
-      toast({
-        title: 'Invalid invite link',
+      toast.error('Invalid invite link', {
         description: 'No invite token provided',
-        variant: 'destructive',
       });
       router.push('/login');
     } else {
@@ -84,18 +82,15 @@ export default function AcceptInvitePage() {
       // Set auth state
       setAuth(result.user, result.accessToken, result.refreshToken, false);
 
-      toast({
-        title: 'Account created!',
+      toast('Account created!', {
         description: 'Please complete your profile',
       });
 
       // Redirect to profile completion
       router.push('/complete-profile');
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: error instanceof Error ? error.message : 'Failed to accept invite',
-        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);

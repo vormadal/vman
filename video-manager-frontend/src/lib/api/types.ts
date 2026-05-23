@@ -2,14 +2,16 @@
 export interface UserDto {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  role: 'User' | 'Admin';
 }
 
 export interface AuthResponse {
   user: UserDto;
   accessToken: string;
   refreshToken: string;
+  isProfileComplete?: boolean;
 }
 
 export interface RegisterRequest {
@@ -262,4 +264,3 @@ export interface PeopleResponse {
 export interface PersonDetailResponse {
   person: PersonDto;
 }
-

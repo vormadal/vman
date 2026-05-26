@@ -7,10 +7,11 @@ using System.IO;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>
+    /// People response
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public partial class PeopleResponseDto : IAdditionalDataHolder, IParsable
-    #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
@@ -18,7 +19,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public bool? HasNextPage { get; set; }
         /// <summary>Number of hidden people</summary>
         public int? Hidden { get; set; }
-        /// <summary>List of people</summary>
+        /// <summary>The people property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto>? People { get; set; }

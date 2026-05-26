@@ -33,6 +33,7 @@ RUN dotnet restore VManBackend/VManBackend.csproj
 
 # Build and publish the backend
 WORKDIR /src/VideoManager/VManBackend
+RUN mkdir -p bin/Debug
 RUN dotnet publish VManBackend.csproj -c Release -o /app/backend --no-restore
 
 # Stage 3: Final Runtime Image

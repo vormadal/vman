@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Oauth.Authorize;
+using VManBackend.Infrastructure.Immich.Generated.Oauth.BackchannelLogout;
 using VManBackend.Infrastructure.Immich.Generated.Oauth.Callback;
 using VManBackend.Infrastructure.Immich.Generated.Oauth.Link;
 using VManBackend.Infrastructure.Immich.Generated.Oauth.MobileRedirect;
@@ -23,6 +24,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Oauth
         public global::VManBackend.Infrastructure.Immich.Generated.Oauth.Authorize.AuthorizeRequestBuilder Authorize
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Oauth.Authorize.AuthorizeRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The backchannelLogout property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Oauth.BackchannelLogout.BackchannelLogoutRequestBuilder BackchannelLogout
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Oauth.BackchannelLogout.BackchannelLogoutRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The callback property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Oauth.Callback.CallbackRequestBuilder Callback

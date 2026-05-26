@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
-    /// <summary>Avatar color</summary>
+    /// <summary>User avatar color</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public enum UserAvatarColor
     {

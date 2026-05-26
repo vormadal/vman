@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "vormadal",
+        "projectKey": "vormadal_vman_frontend"
+    }
+}

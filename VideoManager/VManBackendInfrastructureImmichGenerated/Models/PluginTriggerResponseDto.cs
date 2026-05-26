@@ -14,9 +14,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Context type</summary>
+        /// <summary>Plugin context</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginContextType? ContextType { get; set; }
-        /// <summary>Trigger type</summary>
+        /// <summary>Plugin trigger type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTriggerType? Type { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTriggerResponseDto"/> and sets the default values.

@@ -7,10 +7,11 @@ using System.IO;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>
+    /// Activity create
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public partial class ActivityCreateDto : IAdditionalDataHolder, IParsable
-    #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
@@ -26,7 +27,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Comment { get; set; }
 #endif
-        /// <summary>Activity type (like or comment)</summary>
+        /// <summary>Reaction type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.ReactionType? Type { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ActivityCreateDto"/> and sets the default values.

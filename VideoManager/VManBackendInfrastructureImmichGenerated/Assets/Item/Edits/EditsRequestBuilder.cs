@@ -53,40 +53,40 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets.Item.Edits
         /// <summary>
         /// Retrieve a series of edit actions (crop, rotate, mirror) associated with the specified asset.
         /// </summary>
-        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto"/></returns>
+        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
-            return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Apply a series of edit actions (crop, rotate, mirror) to the specified asset.
         /// </summary>
-        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto"/></returns>
+        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto?> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditActionListDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto?> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditActionListDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPutRequestInformation(body, requestConfiguration);
-            return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto>(requestInfo, global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Removes all edit actions (crop, rotate, mirror) associated with the specified asset.
@@ -133,11 +133,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets.Item.Edits
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditActionListDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditActionListDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetEditsCreateDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));

@@ -24,6 +24,10 @@ import type {
   AddItemToCollectionRequest,
   AddItemToCollectionResponse,
   UpdateCollectionItemOrderRequest,
+  BulkAddFilteredItemsParams,
+  BulkAddFilteredItemsResponse,
+  UpdateCollectionItemNoteRequest,
+  UpdateCollectionItemNoteResponse,
   PersonDto,
   PeopleResponse,
   PersonDetailResponse
@@ -271,7 +275,37 @@ class ApiClient {
       `/api/collections/${collectionId}/items`,
       {
         method: 'POST',
-        body: JSON.stringify({ providerName, providerItemId }),
+        body: JSON.stringify({ collectionId, providerName, providerItemId }),
+      }
+    );
+  }
+
+  async bulkAddFilteredItemsToCollection(
+    collectionId: string,
+    params: BulkAddFilteredItemsParams
+  ): Promise<BulkAddFilteredItemsResponse> {
+    const searchParams = new URLSearchParams();
+    if (params.provider) searchParams.append('provider', params.provider);
+    if (params.type) searchParams.append('type', params.type);
+    if (params.tagId) searchParams.append('tagId', params.tagId);
+    if (params.personId) searchParams.append('personId', params.personId);
+
+    return this.request<BulkAddFilteredItemsResponse>(
+      `/api/collections/${collectionId}/items/bulk-by-filter?${searchParams}`,
+      { method: 'POST' }
+    );
+  }
+
+  async updateCollectionItemNote(
+    collectionId: string,
+    itemId: string,
+    note: string | null
+  ): Promise<UpdateCollectionItemNoteResponse> {
+    return this.request<UpdateCollectionItemNoteResponse>(
+      `/api/collections/${collectionId}/items/${itemId}/note`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ collectionId, itemId, note }),
       }
     );
   }
@@ -293,7 +327,7 @@ class ApiClient {
       `/api/collections/${collectionId}/items/reorder`,
       {
         method: 'PUT',
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ collectionId, items }),
       }
     );
   }

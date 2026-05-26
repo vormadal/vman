@@ -17,8 +17,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Total number of photos</summary>
         public int? Photos { get; set; }
         /// <summary>Total storage usage in bytes</summary>
-        public long? Usage { get; set; }
-        /// <summary>The usageByUser property</summary>
+        public int? Usage { get; set; }
+        /// <summary>Array of usage for each user</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.UsageByUserDto>? UsageByUser { get; set; }
@@ -27,9 +27,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.UsageByUserDto> UsageByUser { get; set; }
 #endif
         /// <summary>Storage usage for photos in bytes</summary>
-        public long? UsagePhotos { get; set; }
+        public int? UsagePhotos { get; set; }
         /// <summary>Storage usage for videos in bytes</summary>
-        public long? UsageVideos { get; set; }
+        public int? UsageVideos { get; set; }
         /// <summary>Total number of videos</summary>
         public int? Videos { get; set; }
         /// <summary>
@@ -58,10 +58,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "photos", n => { Photos = n.GetIntValue(); } },
-                { "usage", n => { Usage = n.GetLongValue(); } },
+                { "usage", n => { Usage = n.GetIntValue(); } },
                 { "usageByUser", n => { UsageByUser = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.UsageByUserDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.UsageByUserDto.CreateFromDiscriminatorValue)?.AsList(); } },
-                { "usagePhotos", n => { UsagePhotos = n.GetLongValue(); } },
-                { "usageVideos", n => { UsageVideos = n.GetLongValue(); } },
+                { "usagePhotos", n => { UsagePhotos = n.GetIntValue(); } },
+                { "usageVideos", n => { UsageVideos = n.GetIntValue(); } },
                 { "videos", n => { Videos = n.GetIntValue(); } },
             };
         }
@@ -73,10 +73,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("photos", Photos);
-            writer.WriteLongValue("usage", Usage);
+            writer.WriteIntValue("usage", Usage);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.UsageByUserDto>("usageByUser", UsageByUser);
-            writer.WriteLongValue("usagePhotos", UsagePhotos);
-            writer.WriteLongValue("usageVideos", UsageVideos);
+            writer.WriteIntValue("usagePhotos", UsagePhotos);
+            writer.WriteIntValue("usageVideos", UsageVideos);
             writer.WriteIntValue("videos", Videos);
             writer.WriteAdditionalData(AdditionalData);
         }

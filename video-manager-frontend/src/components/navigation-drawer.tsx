@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Database, FolderOpen, Grid3x3, LogOut, Film, Image as ImageIcon, Tag, Users, Mail } from 'lucide-react';
+import { Menu, Database, FolderOpen, Grid3x3, LogOut, Film, Image as ImageIcon, Tag, Users } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useLogout } from '@/lib/hooks/useAuth';
@@ -54,13 +54,7 @@ const adminItems = [
     title: 'Users',
     href: '/admin/users',
     icon: Users,
-    description: 'Manage users',
-  },
-  {
-    title: 'Invites',
-    href: '/admin/invites',
-    icon: Mail,
-    description: 'Manage invitations',
+    description: 'Manage users & invites',
   },
 ];
 

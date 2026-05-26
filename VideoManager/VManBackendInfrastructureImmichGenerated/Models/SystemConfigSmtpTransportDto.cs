@@ -33,7 +33,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Password { get; set; }
 #endif
         /// <summary>SMTP server port</summary>
-        public double? Port { get; set; }
+        public int? Port { get; set; }
         /// <summary>Whether to use secure connection (TLS/SSL)</summary>
         public bool? Secure { get; set; }
         /// <summary>SMTP username</summary>
@@ -72,7 +72,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "host", n => { Host = n.GetStringValue(); } },
                 { "ignoreCert", n => { IgnoreCert = n.GetBoolValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
-                { "port", n => { Port = n.GetDoubleValue(); } },
+                { "port", n => { Port = n.GetIntValue(); } },
                 { "secure", n => { Secure = n.GetBoolValue(); } },
                 { "username", n => { Username = n.GetStringValue(); } },
             };
@@ -87,7 +87,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("host", Host);
             writer.WriteBoolValue("ignoreCert", IgnoreCert);
             writer.WriteStringValue("password", Password);
-            writer.WriteDoubleValue("port", Port);
+            writer.WriteIntValue("port", Port);
             writer.WriteBoolValue("secure", Secure);
             writer.WriteStringValue("username", Username);
             writer.WriteAdditionalData(AdditionalData);

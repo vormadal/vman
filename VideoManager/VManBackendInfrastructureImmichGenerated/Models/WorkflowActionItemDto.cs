@@ -12,13 +12,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     public partial class WorkflowActionItemDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
-        /// <summary>Action configuration</summary>
+        /// <summary>The actionConfig property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto_actionConfig? ActionConfig { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionConfig? ActionConfig { get; set; }
 #nullable restore
 #else
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto_actionConfig ActionConfig { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionConfig ActionConfig { get; set; }
 #endif
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
@@ -49,7 +49,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "actionConfig", n => { ActionConfig = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto_actionConfig>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto_actionConfig.CreateFromDiscriminatorValue); } },
+                { "actionConfig", n => { ActionConfig = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionConfig>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionConfig.CreateFromDiscriminatorValue); } },
                 { "pluginActionId", n => { PluginActionId = n.GetGuidValue(); } },
             };
         }
@@ -60,7 +60,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto_actionConfig>("actionConfig", ActionConfig);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionConfig>("actionConfig", ActionConfig);
             writer.WriteGuidValue("pluginActionId", PluginActionId);
             writer.WriteAdditionalData(AdditionalData);
         }

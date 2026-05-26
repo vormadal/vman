@@ -150,6 +150,7 @@ export default function TagsPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => openEditDialog(tag)}
+                      aria-label={`Edit tag ${tag.name}`}
                     >
                       <Edit2 className="w-4 h-4" />
                     </Button>
@@ -157,6 +158,7 @@ export default function TagsPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => openDeleteDialog(tag.id)}
+                      aria-label={`Delete tag ${tag.name}`}
                     >
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>

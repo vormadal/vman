@@ -7,10 +7,11 @@ using System.IO;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>
+    /// Shared link response
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public partial class SharedLinkResponseDto : IAdditionalDataHolder, IParsable
-    #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
@@ -80,14 +81,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Slug { get; set; }
 #endif
-        /// <summary>Access token</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Token { get; set; }
-#nullable restore
-#else
-        public string Token { get; set; }
-#endif
         /// <summary>Shared link type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkType? Type { get; set; }
         /// <summary>Owner user ID</summary>
@@ -135,7 +128,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "password", n => { Password = n.GetStringValue(); } },
                 { "showMetadata", n => { ShowMetadata = n.GetBoolValue(); } },
                 { "slug", n => { Slug = n.GetStringValue(); } },
-                { "token", n => { Token = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkType>(); } },
                 { "userId", n => { UserId = n.GetStringValue(); } },
             };
@@ -159,7 +151,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("password", Password);
             writer.WriteBoolValue("showMetadata", ShowMetadata);
             writer.WriteStringValue("slug", Slug);
-            writer.WriteStringValue("token", Token);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkType>("type", Type);
             writer.WriteStringValue("userId", UserId);
             writer.WriteAdditionalData(AdditionalData);

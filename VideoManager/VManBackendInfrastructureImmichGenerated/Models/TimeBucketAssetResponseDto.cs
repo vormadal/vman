@@ -30,13 +30,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public List<string> Country { get; set; }
 #endif
-        /// <summary>Array of video durations in HH:MM:SS format (null for images)</summary>
+        /// <summary>Array of video/gif durations in milliseconds (null for static images)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<string>? Duration { get; set; }
+        public List<int?>? Duration { get; set; }
 #nullable restore
 #else
-        public List<string> Duration { get; set; }
+        public List<int?> Duration { get; set; }
 #endif
         /// <summary>Array of file creation timestamps in UTC</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -185,7 +185,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "city", n => { City = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "country", n => { Country = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
-                { "duration", n => { Duration = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "duration", n => { Duration = n.GetCollectionOfPrimitiveValues<int?>()?.AsList(); } },
                 { "fileCreatedAt", n => { FileCreatedAt = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "id", n => { Id = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "isFavorite", n => { IsFavorite = n.GetCollectionOfPrimitiveValues<bool?>()?.AsList(); } },
@@ -212,7 +212,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfPrimitiveValues<string>("city", City);
             writer.WriteCollectionOfPrimitiveValues<string>("country", Country);
-            writer.WriteCollectionOfPrimitiveValues<string>("duration", Duration);
+            writer.WriteCollectionOfPrimitiveValues<int?>("duration", Duration);
             writer.WriteCollectionOfPrimitiveValues<string>("fileCreatedAt", FileCreatedAt);
             writer.WriteCollectionOfPrimitiveValues<string>("id", Id);
             writer.WriteCollectionOfPrimitiveValues<bool?>("isFavorite", IsFavorite);

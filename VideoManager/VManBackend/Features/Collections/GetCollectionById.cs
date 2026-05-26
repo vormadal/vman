@@ -9,7 +9,7 @@ public static class GetCollectionById
 {
     public record Request(Guid Id) : IRequest<Response>;
     
-    public record CollectionItemDto(Guid Id, string ProviderName, string ProviderItemId, int Order, DateTime CreatedAt);
+    public record CollectionItemDto(Guid Id, string ProviderName, string ProviderItemId, int Order, string? Note, DateTime CreatedAt);
     
     public record Response(Guid Id, string Name, string? Description, List<CollectionItemDto> Items, DateTime CreatedAt, DateTime UpdatedAt);
 
@@ -48,6 +48,7 @@ public static class GetCollectionById
                     ci.ProviderName,
                     ci.ProviderItemId,
                     ci.Order,
+                    ci.Note,
                     ci.CreatedAt
                 ))
                 .ToList();

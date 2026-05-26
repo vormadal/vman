@@ -2,14 +2,16 @@
 export interface UserDto {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  role: 'User' | 'Admin';
 }
 
 export interface AuthResponse {
   user: UserDto;
   accessToken: string;
   refreshToken: string;
+  isProfileComplete?: boolean;
 }
 
 export interface RegisterRequest {
@@ -166,6 +168,7 @@ export interface CollectionItemDto {
   providerName: string;
   providerItemId: string;
   order: number;
+  note?: string | null;
   createdAt: string;
 }
 
@@ -217,6 +220,29 @@ export interface UpdateCollectionItemOrderRequest {
   items: Array<{ itemId: string; newOrder: number }>;
 }
 
+export interface UpdateCollectionItemNoteRequest {
+  collectionId: string;
+  itemId: string;
+  note: string | null;
+}
+
+export interface UpdateCollectionItemNoteResponse {
+  itemId: string;
+  note: string | null;
+}
+
+export interface BulkAddFilteredItemsParams {
+  provider?: string;
+  type?: MediaType;
+  tagId?: string;
+  personId?: string;
+}
+
+export interface BulkAddFilteredItemsResponse {
+  addedCount: number;
+  skippedCount: number;
+}
+
 // People types
 export interface PersonDto {
   id: string;
@@ -238,4 +264,3 @@ export interface PeopleResponse {
 export interface PersonDetailResponse {
   person: PersonDto;
 }
-

@@ -15,7 +15,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Year for on this day memory</summary>
-        public double? Year { get; set; }
+        public int? Year { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.OnThisDayDto"/> and sets the default values.
         /// </summary>
@@ -41,7 +41,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "year", n => { Year = n.GetDoubleValue(); } },
+                { "year", n => { Year = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -51,7 +51,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteDoubleValue("year", Year);
+            writer.WriteIntValue("year", Year);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

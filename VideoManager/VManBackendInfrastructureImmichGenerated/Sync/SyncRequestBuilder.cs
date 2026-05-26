@@ -7,8 +7,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Sync.Ack;
-using VManBackend.Infrastructure.Immich.Generated.Sync.DeltaSync;
-using VManBackend.Infrastructure.Immich.Generated.Sync.FullSync;
 using VManBackend.Infrastructure.Immich.Generated.Sync.StreamNamespace;
 namespace VManBackend.Infrastructure.Immich.Generated.Sync
 {
@@ -22,16 +20,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Sync
         public global::VManBackend.Infrastructure.Immich.Generated.Sync.Ack.AckRequestBuilder Ack
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Sync.Ack.AckRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The deltaSync property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Sync.DeltaSync.DeltaSyncRequestBuilder DeltaSync
-        {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Sync.DeltaSync.DeltaSyncRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The fullSync property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Sync.FullSync.FullSyncRequestBuilder FullSync
-        {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Sync.FullSync.FullSyncRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The stream property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Sync.StreamNamespace.StreamRequestBuilder Stream

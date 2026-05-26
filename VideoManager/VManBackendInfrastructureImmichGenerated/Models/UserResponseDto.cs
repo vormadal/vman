@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Avatar color</summary>
+        /// <summary>User avatar color</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.UserAvatarColor? AvatarColor { get; set; }
         /// <summary>User email</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -25,13 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Email { get; set; }
 #endif
         /// <summary>User ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>User name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -77,7 +71,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "avatarColor", n => { AvatarColor = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserAvatarColor>(); } },
                 { "email", n => { Email = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "profileChangedAt", n => { ProfileChangedAt = n.GetDateTimeOffsetValue(); } },
                 { "profileImagePath", n => { ProfileImagePath = n.GetStringValue(); } },
@@ -92,7 +86,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserAvatarColor>("avatarColor", AvatarColor);
             writer.WriteStringValue("email", Email);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteDateTimeOffsetValue("profileChangedAt", ProfileChangedAt);
             writer.WriteStringValue("profileImagePath", ProfileImagePath);

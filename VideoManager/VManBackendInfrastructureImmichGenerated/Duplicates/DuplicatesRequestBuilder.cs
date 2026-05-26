@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Duplicates.Item;
+using VManBackend.Infrastructure.Immich.Generated.Duplicates.Resolve;
 using VManBackend.Infrastructure.Immich.Generated.Models;
 namespace VManBackend.Infrastructure.Immich.Generated.Duplicates
 {
@@ -18,6 +19,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Duplicates
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class DuplicatesRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The resolve property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Duplicates.Resolve.ResolveRequestBuilder Resolve
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Duplicates.Resolve.ResolveRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the VManBackend.Infrastructure.Immich.Generated.duplicates.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Duplicates.Item.DuplicatesItemRequestBuilder"/></returns>

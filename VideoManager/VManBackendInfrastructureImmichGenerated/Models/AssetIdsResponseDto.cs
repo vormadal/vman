@@ -23,7 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string AssetId { get; set; }
 #endif
         /// <summary>Error reason if failed</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto_error? Error { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdErrorReason? Error { get; set; }
         /// <summary>Whether operation succeeded</summary>
         public bool? Success { get; set; }
         /// <summary>
@@ -52,7 +52,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "assetId", n => { AssetId = n.GetStringValue(); } },
-                { "error", n => { Error = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto_error>(); } },
+                { "error", n => { Error = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdErrorReason>(); } },
                 { "success", n => { Success = n.GetBoolValue(); } },
             };
         }
@@ -64,7 +64,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("assetId", AssetId);
-            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdsResponseDto_error>("error", Error);
+            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetIdErrorReason>("error", Error);
             writer.WriteBoolValue("success", Success);
             writer.WriteAdditionalData(AdditionalData);
         }

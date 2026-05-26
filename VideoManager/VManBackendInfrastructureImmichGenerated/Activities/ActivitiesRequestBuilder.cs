@@ -88,7 +88,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Activities
         /// Create a like or a comment for an album, or an asset in an album.
         /// </summary>
         /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ActivityResponseDto"/></returns>
-        /// <param name="body">The request body</param>
+        /// <param name="body">Activity create</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -127,7 +127,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Activities
         /// Create a like or a comment for an album, or an asset in an album.
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
-        /// <param name="body">The request body</param>
+        /// <param name="body">Activity create</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -166,7 +166,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Activities
             /// <summary>Asset ID (if activity is for an asset)</summary>
             [QueryParameter("assetId")]
             public Guid? AssetId { get; set; }
-            /// <summary>Filter by activity level</summary>
             [Obsolete("This property is deprecated, use LevelAsReactionLevel instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -177,10 +176,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Activities
             [QueryParameter("level")]
             public string Level { get; set; }
 #endif
-            /// <summary>Filter by activity level</summary>
             [QueryParameter("level")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.ReactionLevel? LevelAsReactionLevel { get; set; }
-            /// <summary>Filter by activity type</summary>
             [Obsolete("This property is deprecated, use TypeAsReactionType instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -191,7 +188,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Activities
             [QueryParameter("type")]
             public string Type { get; set; }
 #endif
-            /// <summary>Filter by activity type</summary>
             [QueryParameter("type")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.ReactionType? TypeAsReactionType { get; set; }
             /// <summary>Filter by user ID</summary>

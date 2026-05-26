@@ -169,7 +169,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Memories
             /// <summary>Include trashed memories</summary>
             [QueryParameter("isTrashed")]
             public bool? IsTrashed { get; set; }
-            /// <summary>Sort order</summary>
             [Obsolete("This property is deprecated, use OrderAsMemorySearchOrder instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -180,13 +179,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Memories
             [QueryParameter("order")]
             public string Order { get; set; }
 #endif
-            /// <summary>Sort order</summary>
             [QueryParameter("order")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.MemorySearchOrder? OrderAsMemorySearchOrder { get; set; }
             /// <summary>Number of memories to return</summary>
             [QueryParameter("size")]
             public int? Size { get; set; }
-            /// <summary>Memory type</summary>
             [Obsolete("This property is deprecated, use TypeAsMemoryType instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -197,7 +194,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Memories
             [QueryParameter("type")]
             public string Type { get; set; }
 #endif
-            /// <summary>Memory type</summary>
             [QueryParameter("type")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.MemoryType? TypeAsMemoryType { get; set; }
         }

@@ -15,7 +15,6 @@ using VManBackend.Infrastructure.Immich.Generated.Server.MediaTypes;
 using VManBackend.Infrastructure.Immich.Generated.Server.Ping;
 using VManBackend.Infrastructure.Immich.Generated.Server.Statistics;
 using VManBackend.Infrastructure.Immich.Generated.Server.Storage;
-using VManBackend.Infrastructure.Immich.Generated.Server.Theme;
 using VManBackend.Infrastructure.Immich.Generated.Server.VersionCheck;
 using VManBackend.Infrastructure.Immich.Generated.Server.VersionHistory;
 using VManBackend.Infrastructure.Immich.Generated.Server.VersionNamespace;
@@ -71,11 +70,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Server
         public global::VManBackend.Infrastructure.Immich.Generated.Server.Storage.StorageRequestBuilder Storage
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Server.Storage.StorageRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The theme property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Server.Theme.ThemeRequestBuilder Theme
-        {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Server.Theme.ThemeRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The version property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Server.VersionNamespace.VersionRequestBuilder Version

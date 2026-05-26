@@ -11,6 +11,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         Editor,
         #pragma warning restore CS1591
+        [EnumMember(Value = "owner")]
+        #pragma warning disable CS1591
+        Owner,
+        #pragma warning restore CS1591
         [EnumMember(Value = "viewer")]
         #pragma warning disable CS1591
         Viewer,

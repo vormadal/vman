@@ -61,18 +61,15 @@ export default function CompleteProfilePage() {
       // Update auth state with new token (includes updated name claims)
       setAuth(result.user, result.accessToken, result.refreshToken, true);
 
-      toast({
-        title: 'Profile completed!',
+      toast('Profile completed!', {
         description: 'Welcome to Video Manager',
       });
 
       // Redirect to home
       router.push('/videos');
     } catch (error) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: error instanceof Error ? error.message : 'Failed to complete profile',
-        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);

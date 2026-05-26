@@ -17,13 +17,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Number of photos</summary>
         public int? Photos { get; set; }
         /// <summary>User quota size in bytes (null if unlimited)</summary>
-        public long? QuotaSizeInBytes { get; set; }
+        public int? QuotaSizeInBytes { get; set; }
         /// <summary>Total storage usage in bytes</summary>
-        public long? Usage { get; set; }
+        public int? Usage { get; set; }
         /// <summary>Storage usage for photos in bytes</summary>
-        public long? UsagePhotos { get; set; }
+        public int? UsagePhotos { get; set; }
         /// <summary>Storage usage for videos in bytes</summary>
-        public long? UsageVideos { get; set; }
+        public int? UsageVideos { get; set; }
         /// <summary>User ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -68,10 +68,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "photos", n => { Photos = n.GetIntValue(); } },
-                { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetLongValue(); } },
-                { "usage", n => { Usage = n.GetLongValue(); } },
-                { "usagePhotos", n => { UsagePhotos = n.GetLongValue(); } },
-                { "usageVideos", n => { UsageVideos = n.GetLongValue(); } },
+                { "quotaSizeInBytes", n => { QuotaSizeInBytes = n.GetIntValue(); } },
+                { "usage", n => { Usage = n.GetIntValue(); } },
+                { "usagePhotos", n => { UsagePhotos = n.GetIntValue(); } },
+                { "usageVideos", n => { UsageVideos = n.GetIntValue(); } },
                 { "userId", n => { UserId = n.GetStringValue(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
                 { "videos", n => { Videos = n.GetIntValue(); } },
@@ -85,10 +85,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("photos", Photos);
-            writer.WriteLongValue("quotaSizeInBytes", QuotaSizeInBytes);
-            writer.WriteLongValue("usage", Usage);
-            writer.WriteLongValue("usagePhotos", UsagePhotos);
-            writer.WriteLongValue("usageVideos", UsageVideos);
+            writer.WriteIntValue("quotaSizeInBytes", QuotaSizeInBytes);
+            writer.WriteIntValue("usage", Usage);
+            writer.WriteIntValue("usagePhotos", UsagePhotos);
+            writer.WriteIntValue("usageVideos", UsageVideos);
             writer.WriteStringValue("userId", UserId);
             writer.WriteStringValue("userName", UserName);
             writer.WriteIntValue("videos", Videos);

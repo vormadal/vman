@@ -30,6 +30,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string DuplicateId { get; set; }
 #endif
+        /// <summary>Suggested asset IDs to keep based on file size and EXIF data</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<Guid?>? SuggestedKeepAssetIds { get; set; }
+#nullable restore
+#else
+        public List<Guid?> SuggestedKeepAssetIds { get; set; }
+#endif
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.DuplicateResponseDto"/> and sets the default values.
         /// </summary>
@@ -57,6 +65,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "assets", n => { Assets = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "duplicateId", n => { DuplicateId = n.GetStringValue(); } },
+                { "suggestedKeepAssetIds", n => { SuggestedKeepAssetIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
             };
         }
         /// <summary>
@@ -68,6 +77,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>("assets", Assets);
             writer.WriteStringValue("duplicateId", DuplicateId);
+            writer.WriteCollectionOfPrimitiveValues<Guid?>("suggestedKeepAssetIds", SuggestedKeepAssetIds);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

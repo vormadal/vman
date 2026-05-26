@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Bucket
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BucketRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/bucket?timeBucket={timeBucket}{&albumId*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", pathParameters)
+        public BucketRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/bucket?timeBucket={timeBucket}{&albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Bucket
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BucketRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/bucket?timeBucket={timeBucket}{&albumId*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", rawUrl)
+        public BucketRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/bucket?timeBucket={timeBucket}{&albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", rawUrl)
         {
         }
         /// <summary>
@@ -88,6 +88,16 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Bucket
             /// <summary>Filter assets belonging to a specific album</summary>
             [QueryParameter("albumId")]
             public Guid? AlbumId { get; set; }
+            /// <summary>Bounding box coordinates as west,south,east,north (WGS84)</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("bbox")]
+            public string? Bbox { get; set; }
+#nullable restore
+#else
+            [QueryParameter("bbox")]
+            public string Bbox { get; set; }
+#endif
             /// <summary>Filter by favorite status (true for favorites only, false for non-favorites only)</summary>
             [QueryParameter("isFavorite")]
             public bool? IsFavorite { get; set; }
@@ -132,7 +142,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Bucket
             /// <summary>Filter assets with a specific tag</summary>
             [QueryParameter("tagId")]
             public Guid? TagId { get; set; }
-            /// <summary>Time bucket identifier in YYYY-MM-DD format (e.g., &quot;2024-01-01&quot; for January 2024)</summary>
+            /// <summary>Time bucket identifier in YYYY-MM-DD format</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("timeBucket")]

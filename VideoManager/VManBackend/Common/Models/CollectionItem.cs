@@ -7,6 +7,7 @@ public class CollectionItem
     public required string ProviderName { get; set; }
     public required string ProviderItemId { get; set; }
     public int Order { get; set; }
+    public string? Note { get; set; }
     public DateTime CreatedAt { get; set; }
     
     // Navigation properties

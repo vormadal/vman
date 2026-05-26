@@ -11,10 +11,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         Created,
         #pragma warning restore CS1591
-        [EnumMember(Value = "replaced")]
-        #pragma warning disable CS1591
-        Replaced,
-        #pragma warning restore CS1591
         [EnumMember(Value = "duplicate")]
         #pragma warning disable CS1591
         Duplicate,

@@ -24,22 +24,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>The UTC timestamp when the asset was originally uploaded to Immich.</summary>
         public DateTimeOffset? CreatedAt { get; set; }
-        /// <summary>Device asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DeviceAssetId { get; set; }
-#nullable restore
-#else
-        public string DeviceAssetId { get; set; }
-#endif
-        /// <summary>Device ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DeviceId { get; set; }
-#nullable restore
-#else
-        public string DeviceId { get; set; }
-#endif
         /// <summary>Duplicate group ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -48,15 +32,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string DuplicateId { get; set; }
 #endif
-        /// <summary>Video duration (for videos)</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Duration { get; set; }
-#nullable restore
-#else
-        public string Duration { get; set; }
-#endif
-        /// <summary>The exifInfo property</summary>
+        /// <summary>Video/gif duration in milliseconds (null for static images)</summary>
+        public int? Duration { get; set; }
+        /// <summary>EXIF response</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto? ExifInfo { get; set; }
@@ -71,7 +49,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Whether asset has metadata</summary>
         public bool? HasMetadata { get; set; }
         /// <summary>Asset height</summary>
-        public double? Height { get; set; }
+        public int? Height { get; set; }
         /// <summary>Asset ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -91,7 +69,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Is trashed</summary>
         public bool? IsTrashed { get; set; }
         /// <summary>Library ID</summary>
-        [Obsolete("")]
         public Guid? LibraryId { get; set; }
         /// <summary>Live photo video ID</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -152,7 +129,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonWithFacesResponseDto> People { get; set; }
 #endif
         /// <summary>Is resized</summary>
-        [Obsolete("")]
         public bool? Resized { get; set; }
         /// <summary>The stack property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -170,7 +146,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.TagResponseDto> Tags { get; set; }
 #endif
-        /// <summary>Thumbhash for thumbnail generation</summary>
+        /// <summary>Thumbhash for thumbnail generation (base64) also used as the c query param for thumbnail cache busting.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Thumbhash { get; set; }
@@ -193,7 +169,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Asset visibility</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? Visibility { get; set; }
         /// <summary>Asset width</summary>
-        public double? Width { get; set; }
+        public int? Width { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto"/> and sets the default values.
         /// </summary>
@@ -221,15 +197,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "checksum", n => { Checksum = n.GetStringValue(); } },
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
-                { "deviceAssetId", n => { DeviceAssetId = n.GetStringValue(); } },
-                { "deviceId", n => { DeviceId = n.GetStringValue(); } },
                 { "duplicateId", n => { DuplicateId = n.GetStringValue(); } },
-                { "duration", n => { Duration = n.GetStringValue(); } },
+                { "duration", n => { Duration = n.GetIntValue(); } },
                 { "exifInfo", n => { ExifInfo = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto.CreateFromDiscriminatorValue); } },
                 { "fileCreatedAt", n => { FileCreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "fileModifiedAt", n => { FileModifiedAt = n.GetDateTimeOffsetValue(); } },
                 { "hasMetadata", n => { HasMetadata = n.GetBoolValue(); } },
-                { "height", n => { Height = n.GetDoubleValue(); } },
+                { "height", n => { Height = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "isArchived", n => { IsArchived = n.GetBoolValue(); } },
                 { "isEdited", n => { IsEdited = n.GetBoolValue(); } },
@@ -253,7 +227,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "unassignedFaces", n => { UnassignedFaces = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "updatedAt", n => { UpdatedAt = n.GetDateTimeOffsetValue(); } },
                 { "visibility", n => { Visibility = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>(); } },
-                { "width", n => { Width = n.GetDoubleValue(); } },
+                { "width", n => { Width = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -265,15 +239,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("checksum", Checksum);
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
-            writer.WriteStringValue("deviceAssetId", DeviceAssetId);
-            writer.WriteStringValue("deviceId", DeviceId);
             writer.WriteStringValue("duplicateId", DuplicateId);
-            writer.WriteStringValue("duration", Duration);
+            writer.WriteIntValue("duration", Duration);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto>("exifInfo", ExifInfo);
             writer.WriteDateTimeOffsetValue("fileCreatedAt", FileCreatedAt);
             writer.WriteDateTimeOffsetValue("fileModifiedAt", FileModifiedAt);
             writer.WriteBoolValue("hasMetadata", HasMetadata);
-            writer.WriteDoubleValue("height", Height);
+            writer.WriteIntValue("height", Height);
             writer.WriteStringValue("id", Id);
             writer.WriteBoolValue("isArchived", IsArchived);
             writer.WriteBoolValue("isEdited", IsEdited);
@@ -297,7 +269,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto>("unassignedFaces", UnassignedFaces);
             writer.WriteDateTimeOffsetValue("updatedAt", UpdatedAt);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>("visibility", Visibility);
-            writer.WriteDoubleValue("width", Width);
+            writer.WriteIntValue("width", Width);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

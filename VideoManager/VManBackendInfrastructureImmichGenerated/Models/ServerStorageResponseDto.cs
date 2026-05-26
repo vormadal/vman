@@ -23,7 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string DiskAvailable { get; set; }
 #endif
         /// <summary>Available disk space in bytes</summary>
-        public long? DiskAvailableRaw { get; set; }
+        public int? DiskAvailableRaw { get; set; }
         /// <summary>Total disk size (human-readable format)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -33,7 +33,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string DiskSize { get; set; }
 #endif
         /// <summary>Total disk size in bytes</summary>
-        public long? DiskSizeRaw { get; set; }
+        public int? DiskSizeRaw { get; set; }
         /// <summary>Disk usage percentage (0-100)</summary>
         public double? DiskUsagePercentage { get; set; }
         /// <summary>Used disk space (human-readable format)</summary>
@@ -45,7 +45,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string DiskUse { get; set; }
 #endif
         /// <summary>Used disk space in bytes</summary>
-        public long? DiskUseRaw { get; set; }
+        public int? DiskUseRaw { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ServerStorageResponseDto"/> and sets the default values.
         /// </summary>
@@ -72,12 +72,12 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "diskAvailable", n => { DiskAvailable = n.GetStringValue(); } },
-                { "diskAvailableRaw", n => { DiskAvailableRaw = n.GetLongValue(); } },
+                { "diskAvailableRaw", n => { DiskAvailableRaw = n.GetIntValue(); } },
                 { "diskSize", n => { DiskSize = n.GetStringValue(); } },
-                { "diskSizeRaw", n => { DiskSizeRaw = n.GetLongValue(); } },
+                { "diskSizeRaw", n => { DiskSizeRaw = n.GetIntValue(); } },
                 { "diskUsagePercentage", n => { DiskUsagePercentage = n.GetDoubleValue(); } },
                 { "diskUse", n => { DiskUse = n.GetStringValue(); } },
-                { "diskUseRaw", n => { DiskUseRaw = n.GetLongValue(); } },
+                { "diskUseRaw", n => { DiskUseRaw = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -88,12 +88,12 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("diskAvailable", DiskAvailable);
-            writer.WriteLongValue("diskAvailableRaw", DiskAvailableRaw);
+            writer.WriteIntValue("diskAvailableRaw", DiskAvailableRaw);
             writer.WriteStringValue("diskSize", DiskSize);
-            writer.WriteLongValue("diskSizeRaw", DiskSizeRaw);
+            writer.WriteIntValue("diskSizeRaw", DiskSizeRaw);
             writer.WriteDoubleValue("diskUsagePercentage", DiskUsagePercentage);
             writer.WriteStringValue("diskUse", DiskUse);
-            writer.WriteLongValue("diskUseRaw", DiskUseRaw);
+            writer.WriteIntValue("diskUseRaw", DiskUseRaw);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Me
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public MeRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/me{?key*,password*,slug*,token*}", pathParameters)
+        public MeRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/me{?key*,slug*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Me
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public MeRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/me{?key*,password*,slug*,token*}", rawUrl)
+        public MeRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/shared-links/me{?key*,slug*}", rawUrl)
         {
         }
         /// <summary>
@@ -94,16 +94,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Me
             [QueryParameter("key")]
             public string Key { get; set; }
 #endif
-            /// <summary>Link password</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("password")]
-            public string? Password { get; set; }
-#nullable restore
-#else
-            [QueryParameter("password")]
-            public string Password { get; set; }
-#endif
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("slug")]
@@ -112,16 +102,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.SharedLinks.Me
 #else
             [QueryParameter("slug")]
             public string Slug { get; set; }
-#endif
-            /// <summary>Access token</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-            [QueryParameter("token")]
-            public string? Token { get; set; }
-#nullable restore
-#else
-            [QueryParameter("token")]
-            public string Token { get; set; }
 #endif
         }
         /// <summary>

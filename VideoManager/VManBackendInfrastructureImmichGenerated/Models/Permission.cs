@@ -79,10 +79,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AssetUpload,
         #pragma warning restore CS1591
-        [EnumMember(Value = "asset.replace")]
-        #pragma warning disable CS1591
-        AssetReplace,
-        #pragma warning restore CS1591
         [EnumMember(Value = "asset.copy")]
         #pragma warning disable CS1591
         AssetCopy,

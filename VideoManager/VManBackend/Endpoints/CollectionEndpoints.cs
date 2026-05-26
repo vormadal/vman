@@ -108,6 +108,46 @@ public static class CollectionEndpoints
         })
         .WithName("AddItemToCollection");
 
+        group.MapPatch("/{collectionId:guid}/items/{itemId:guid}/note", async (
+            IMediator mediator,
+            Guid collectionId,
+            Guid itemId,
+            UpdateCollectionItemNote.Request request) =>
+        {
+            if (collectionId != request.CollectionId || itemId != request.ItemId)
+            {
+                return Results.Problem(
+                    detail: "ID mismatch",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Validation Error"
+                );
+            }
+
+            if (!UpdateCollectionItemNote.Validator.Validate(request, out var error))
+            {
+                return Results.Problem(
+                    detail: error,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Validation Error"
+                );
+            }
+
+            try
+            {
+                var response = await mediator.Send(request);
+                return Results.Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Not Found"
+                );
+            }
+        })
+        .WithName("UpdateCollectionItemNote");
+
         group.MapDelete("/{collectionId:guid}/items/{itemId:guid}", async (IMediator mediator, Guid collectionId, Guid itemId) =>
         {
             var request = new RemoveItemFromCollection.Request(collectionId, itemId);
@@ -171,6 +211,46 @@ public static class CollectionEndpoints
             }
         })
         .WithName("UpdateCollectionItemOrder");
+
+        group.MapPost("/{id:guid}/items/bulk-by-filter", async (
+            IMediator mediator,
+            Guid id,
+            [Microsoft.AspNetCore.Mvc.FromQuery] string? provider,
+            [Microsoft.AspNetCore.Mvc.FromQuery] string? type,
+            [Microsoft.AspNetCore.Mvc.FromQuery] Guid? tagId,
+            [Microsoft.AspNetCore.Mvc.FromQuery] Guid? personId) =>
+        {
+            VManBackend.Infrastructure.Providers.MediaType? mediaType = null;
+            if (type != null && Enum.TryParse<VManBackend.Infrastructure.Providers.MediaType>(type, true, out var parsed))
+            {
+                mediaType = parsed;
+            }
+
+            var request = new BulkAddFilteredItemsToCollection.Request(id, provider, mediaType, tagId, personId);
+            if (!BulkAddFilteredItemsToCollection.Validator.Validate(request, out var error))
+            {
+                return Results.Problem(
+                    detail: error,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Validation Error"
+                );
+            }
+
+            try
+            {
+                var response = await mediator.Send(request);
+                return Results.Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(
+                    detail: ex.Message,
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Not Found"
+                );
+            }
+        })
+        .WithName("BulkAddFilteredItemsToCollection");
 
         group.MapDelete("/{id:guid}", async (IMediator mediator, Guid id) =>
         {

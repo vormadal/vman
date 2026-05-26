@@ -23,7 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string DateTimeOriginal { get; set; }
 #endif
         /// <summary>Relative time offset in seconds</summary>
-        public double? DateTimeRelative { get; set; }
+        public int? DateTimeRelative { get; set; }
         /// <summary>Asset description</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -54,8 +54,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public double? Latitude { get; set; }
         /// <summary>Longitude coordinate</summary>
         public double? Longitude { get; set; }
-        /// <summary>Rating</summary>
-        public double? Rating { get; set; }
+        /// <summary>Rating in range [1-5], or null for unrated</summary>
+        public int? Rating { get; set; }
         /// <summary>Time zone (IANA timezone)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -92,14 +92,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "dateTimeOriginal", n => { DateTimeOriginal = n.GetStringValue(); } },
-                { "dateTimeRelative", n => { DateTimeRelative = n.GetDoubleValue(); } },
+                { "dateTimeRelative", n => { DateTimeRelative = n.GetIntValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "duplicateId", n => { DuplicateId = n.GetStringValue(); } },
                 { "ids", n => { Ids = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
                 { "isFavorite", n => { IsFavorite = n.GetBoolValue(); } },
                 { "latitude", n => { Latitude = n.GetDoubleValue(); } },
                 { "longitude", n => { Longitude = n.GetDoubleValue(); } },
-                { "rating", n => { Rating = n.GetDoubleValue(); } },
+                { "rating", n => { Rating = n.GetIntValue(); } },
                 { "timeZone", n => { TimeZone = n.GetStringValue(); } },
                 { "visibility", n => { Visibility = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>(); } },
             };
@@ -112,14 +112,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("dateTimeOriginal", DateTimeOriginal);
-            writer.WriteDoubleValue("dateTimeRelative", DateTimeRelative);
+            writer.WriteIntValue("dateTimeRelative", DateTimeRelative);
             writer.WriteStringValue("description", Description);
             writer.WriteStringValue("duplicateId", DuplicateId);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("ids", Ids);
             writer.WriteBoolValue("isFavorite", IsFavorite);
             writer.WriteDoubleValue("latitude", Latitude);
             writer.WriteDoubleValue("longitude", Longitude);
-            writer.WriteDoubleValue("rating", Rating);
+            writer.WriteIntValue("rating", Rating);
             writer.WriteStringValue("timeZone", TimeZone);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>("visibility", Visibility);
             writer.WriteAdditionalData(AdditionalData);

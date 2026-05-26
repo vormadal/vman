@@ -50,14 +50,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Device ID to filter by</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DeviceId { get; set; }
-#nullable restore
-#else
-        public string DeviceId { get; set; }
-#endif
         /// <summary>Filter by encoded status</summary>
         public bool? IsEncoded { get; set; }
         /// <summary>Filter by favorite status</summary>
@@ -110,8 +102,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public List<Guid?> PersonIds { get; set; }
 #endif
-        /// <summary>Filter by rating</summary>
-        public double? Rating { get; set; }
+        /// <summary>Filter by rating [1-5], or null for unrated</summary>
+        public int? Rating { get; set; }
         /// <summary>Filter by state/province name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -136,13 +128,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public DateTimeOffset? TrashedAfter { get; set; }
         /// <summary>Filter by trash date (before)</summary>
         public DateTimeOffset? TrashedBefore { get; set; }
-        /// <summary>Asset type filter</summary>
+        /// <summary>Asset type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum? Type { get; set; }
         /// <summary>Filter by update date (after)</summary>
         public DateTimeOffset? UpdatedAfter { get; set; }
         /// <summary>Filter by update date (before)</summary>
         public DateTimeOffset? UpdatedBefore { get; set; }
-        /// <summary>Filter by visibility</summary>
+        /// <summary>Asset visibility</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? Visibility { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.StatisticsSearchDto"/> and sets the default values.
@@ -175,7 +167,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "createdAfter", n => { CreatedAfter = n.GetDateTimeOffsetValue(); } },
                 { "createdBefore", n => { CreatedBefore = n.GetDateTimeOffsetValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "deviceId", n => { DeviceId = n.GetStringValue(); } },
                 { "isEncoded", n => { IsEncoded = n.GetBoolValue(); } },
                 { "isFavorite", n => { IsFavorite = n.GetBoolValue(); } },
                 { "isMotion", n => { IsMotion = n.GetBoolValue(); } },
@@ -187,7 +178,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "model", n => { Model = n.GetStringValue(); } },
                 { "ocr", n => { Ocr = n.GetStringValue(); } },
                 { "personIds", n => { PersonIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
-                { "rating", n => { Rating = n.GetDoubleValue(); } },
+                { "rating", n => { Rating = n.GetIntValue(); } },
                 { "state", n => { State = n.GetStringValue(); } },
                 { "tagIds", n => { TagIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
                 { "takenAfter", n => { TakenAfter = n.GetDateTimeOffsetValue(); } },
@@ -213,7 +204,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateTimeOffsetValue("createdAfter", CreatedAfter);
             writer.WriteDateTimeOffsetValue("createdBefore", CreatedBefore);
             writer.WriteStringValue("description", Description);
-            writer.WriteStringValue("deviceId", DeviceId);
             writer.WriteBoolValue("isEncoded", IsEncoded);
             writer.WriteBoolValue("isFavorite", IsFavorite);
             writer.WriteBoolValue("isMotion", IsMotion);
@@ -225,7 +215,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("model", Model);
             writer.WriteStringValue("ocr", Ocr);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("personIds", PersonIds);
-            writer.WriteDoubleValue("rating", Rating);
+            writer.WriteIntValue("rating", Rating);
             writer.WriteStringValue("state", State);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("tagIds", TagIds);
             writer.WriteDateTimeOffsetValue("takenAfter", TakenAfter);

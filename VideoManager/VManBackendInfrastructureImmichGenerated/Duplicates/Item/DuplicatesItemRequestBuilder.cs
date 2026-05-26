@@ -33,7 +33,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Duplicates.Item
         {
         }
         /// <summary>
-        /// Delete a single duplicate asset specified by its ID.
+        /// Dismiss a duplicate group by its ID, unlinking all assets in the group without deleting them.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -50,7 +50,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Duplicates.Item
             await RequestAdapter.SendNoContentAsync(requestInfo, default, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
-        /// Delete a single duplicate asset specified by its ID.
+        /// Dismiss a duplicate group by its ID, unlinking all assets in the group without deleting them.
         /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

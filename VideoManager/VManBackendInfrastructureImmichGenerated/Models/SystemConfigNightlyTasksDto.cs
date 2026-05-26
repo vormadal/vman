@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public bool? GenerateMemories { get; set; }
         /// <summary>Missing thumbnails</summary>
         public bool? MissingThumbnails { get; set; }
-        /// <summary>The startTime property</summary>
+        /// <summary>Start time</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? StartTime { get; set; }

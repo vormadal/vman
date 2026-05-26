@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string AlbumThumbnailAssetId { get; set; }
 #endif
-        /// <summary>The albumUsers property</summary>
+        /// <summary>First entry is always the album owner. Second entry is the auth user, if it differs from the owner. The rest are ordered alphabetically.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto>? AlbumUsers { get; set; }
@@ -40,14 +40,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Number of assets</summary>
         public int? AssetCount { get; set; }
-        /// <summary>The assets property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>? Assets { get; set; }
-#nullable restore
-#else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto> Assets { get; set; }
-#endif
         /// <summary>The contributorCounts property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -84,22 +76,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public DateTimeOffset? LastModifiedAssetTimestamp { get; set; }
         /// <summary>Asset sort order</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder? Order { get; set; }
-        /// <summary>The owner property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto? Owner { get; set; }
-#nullable restore
-#else
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto Owner { get; set; }
-#endif
-        /// <summary>Owner user ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? OwnerId { get; set; }
-#nullable restore
-#else
-        public string OwnerId { get; set; }
-#endif
         /// <summary>Is shared album</summary>
         public bool? Shared { get; set; }
         /// <summary>Start date (earliest asset)</summary>
@@ -135,7 +111,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "albumThumbnailAssetId", n => { AlbumThumbnailAssetId = n.GetStringValue(); } },
                 { "albumUsers", n => { AlbumUsers = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "assetCount", n => { AssetCount = n.GetIntValue(); } },
-                { "assets", n => { Assets = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "contributorCounts", n => { ContributorCounts = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
@@ -145,8 +120,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "isActivityEnabled", n => { IsActivityEnabled = n.GetBoolValue(); } },
                 { "lastModifiedAssetTimestamp", n => { LastModifiedAssetTimestamp = n.GetDateTimeOffsetValue(); } },
                 { "order", n => { Order = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder>(); } },
-                { "owner", n => { Owner = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto.CreateFromDiscriminatorValue); } },
-                { "ownerId", n => { OwnerId = n.GetStringValue(); } },
                 { "shared", n => { Shared = n.GetBoolValue(); } },
                 { "startDate", n => { StartDate = n.GetDateTimeOffsetValue(); } },
                 { "updatedAt", n => { UpdatedAt = n.GetDateTimeOffsetValue(); } },
@@ -163,7 +136,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("albumThumbnailAssetId", AlbumThumbnailAssetId);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto>("albumUsers", AlbumUsers);
             writer.WriteIntValue("assetCount", AssetCount);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>("assets", Assets);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto>("contributorCounts", ContributorCounts);
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteStringValue("description", Description);
@@ -173,8 +145,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteBoolValue("isActivityEnabled", IsActivityEnabled);
             writer.WriteDateTimeOffsetValue("lastModifiedAssetTimestamp", LastModifiedAssetTimestamp);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder>("order", Order);
-            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto>("owner", Owner);
-            writer.WriteStringValue("ownerId", OwnerId);
             writer.WriteBoolValue("shared", Shared);
             writer.WriteDateTimeOffsetValue("startDate", StartDate);
             writer.WriteDateTimeOffsetValue("updatedAt", UpdatedAt);

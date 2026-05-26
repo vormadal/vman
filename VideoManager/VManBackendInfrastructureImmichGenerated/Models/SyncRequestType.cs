@@ -3,13 +3,17 @@ using System.Runtime.Serialization;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
-    /// <summary>Sync request types</summary>
+    /// <summary>Sync request type</summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public enum SyncRequestType
     {
         [EnumMember(Value = "AlbumsV1")]
         #pragma warning disable CS1591
         AlbumsV1,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "AlbumsV2")]
+        #pragma warning disable CS1591
+        AlbumsV2,
         #pragma warning restore CS1591
         [EnumMember(Value = "AlbumUsersV1")]
         #pragma warning disable CS1591
@@ -23,6 +27,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AlbumAssetsV1,
         #pragma warning restore CS1591
+        [EnumMember(Value = "AlbumAssetsV2")]
+        #pragma warning disable CS1591
+        AlbumAssetsV2,
+        #pragma warning restore CS1591
         [EnumMember(Value = "AlbumAssetExifsV1")]
         #pragma warning disable CS1591
         AlbumAssetExifsV1,
@@ -31,9 +39,17 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AssetsV1,
         #pragma warning restore CS1591
+        [EnumMember(Value = "AssetsV2")]
+        #pragma warning disable CS1591
+        AssetsV2,
+        #pragma warning restore CS1591
         [EnumMember(Value = "AssetExifsV1")]
         #pragma warning disable CS1591
         AssetExifsV1,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "AssetEditsV1")]
+        #pragma warning disable CS1591
+        AssetEditsV1,
         #pragma warning restore CS1591
         [EnumMember(Value = "AssetMetadataV1")]
         #pragma warning disable CS1591
@@ -59,6 +75,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         PartnerAssetsV1,
         #pragma warning restore CS1591
+        [EnumMember(Value = "PartnerAssetsV2")]
+        #pragma warning disable CS1591
+        PartnerAssetsV2,
+        #pragma warning restore CS1591
         [EnumMember(Value = "PartnerAssetExifsV1")]
         #pragma warning disable CS1591
         PartnerAssetExifsV1,
@@ -82,6 +102,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         [EnumMember(Value = "AssetFacesV1")]
         #pragma warning disable CS1591
         AssetFacesV1,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "AssetFacesV2")]
+        #pragma warning disable CS1591
+        AssetFacesV2,
         #pragma warning restore CS1591
         [EnumMember(Value = "UserMetadataV1")]
         #pragma warning disable CS1591

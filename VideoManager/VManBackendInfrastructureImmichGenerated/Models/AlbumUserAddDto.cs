@@ -24,7 +24,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public AlbumUserAddDto()
         {
             AdditionalData = new Dictionary<string, object>();
-            Role = global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserRole.Editor;
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value

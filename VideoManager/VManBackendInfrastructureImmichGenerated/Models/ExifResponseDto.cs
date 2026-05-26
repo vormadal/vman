@@ -7,10 +7,11 @@ using System.IO;
 using System;
 namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
+    /// <summary>
+    /// EXIF response
+    /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    #pragma warning disable CS1591
     public partial class ExifResponseDto : IAdditionalDataHolder, IParsable
-    #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
@@ -41,9 +42,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Description { get; set; }
 #endif
         /// <summary>Image height in pixels</summary>
-        public double? ExifImageHeight { get; set; }
+        public int? ExifImageHeight { get; set; }
         /// <summary>Image width in pixels</summary>
-        public double? ExifImageWidth { get; set; }
+        public int? ExifImageWidth { get; set; }
         /// <summary>Exposure time</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -53,13 +54,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ExposureTime { get; set; }
 #endif
         /// <summary>File size in bytes</summary>
-        public long? FileSizeInByte { get; set; }
+        public int? FileSizeInByte { get; set; }
         /// <summary>F-number (aperture)</summary>
         public double? FNumber { get; set; }
         /// <summary>Focal length in mm</summary>
         public double? FocalLength { get; set; }
         /// <summary>ISO sensitivity</summary>
-        public double? Iso { get; set; }
+        public int? Iso { get; set; }
         /// <summary>GPS latitude</summary>
         public double? Latitude { get; set; }
         /// <summary>Lens model</summary>
@@ -107,7 +108,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ProjectionType { get; set; }
 #endif
         /// <summary>Rating</summary>
-        public double? Rating { get; set; }
+        public int? Rating { get; set; }
         /// <summary>State/province name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -153,13 +154,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "country", n => { Country = n.GetStringValue(); } },
                 { "dateTimeOriginal", n => { DateTimeOriginal = n.GetDateTimeOffsetValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "exifImageHeight", n => { ExifImageHeight = n.GetDoubleValue(); } },
-                { "exifImageWidth", n => { ExifImageWidth = n.GetDoubleValue(); } },
+                { "exifImageHeight", n => { ExifImageHeight = n.GetIntValue(); } },
+                { "exifImageWidth", n => { ExifImageWidth = n.GetIntValue(); } },
                 { "exposureTime", n => { ExposureTime = n.GetStringValue(); } },
                 { "fNumber", n => { FNumber = n.GetDoubleValue(); } },
-                { "fileSizeInByte", n => { FileSizeInByte = n.GetLongValue(); } },
+                { "fileSizeInByte", n => { FileSizeInByte = n.GetIntValue(); } },
                 { "focalLength", n => { FocalLength = n.GetDoubleValue(); } },
-                { "iso", n => { Iso = n.GetDoubleValue(); } },
+                { "iso", n => { Iso = n.GetIntValue(); } },
                 { "latitude", n => { Latitude = n.GetDoubleValue(); } },
                 { "lensModel", n => { LensModel = n.GetStringValue(); } },
                 { "longitude", n => { Longitude = n.GetDoubleValue(); } },
@@ -168,7 +169,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "modifyDate", n => { ModifyDate = n.GetDateTimeOffsetValue(); } },
                 { "orientation", n => { Orientation = n.GetStringValue(); } },
                 { "projectionType", n => { ProjectionType = n.GetStringValue(); } },
-                { "rating", n => { Rating = n.GetDoubleValue(); } },
+                { "rating", n => { Rating = n.GetIntValue(); } },
                 { "state", n => { State = n.GetStringValue(); } },
                 { "timeZone", n => { TimeZone = n.GetStringValue(); } },
             };
@@ -184,13 +185,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("country", Country);
             writer.WriteDateTimeOffsetValue("dateTimeOriginal", DateTimeOriginal);
             writer.WriteStringValue("description", Description);
-            writer.WriteDoubleValue("exifImageHeight", ExifImageHeight);
-            writer.WriteDoubleValue("exifImageWidth", ExifImageWidth);
+            writer.WriteIntValue("exifImageHeight", ExifImageHeight);
+            writer.WriteIntValue("exifImageWidth", ExifImageWidth);
             writer.WriteStringValue("exposureTime", ExposureTime);
-            writer.WriteLongValue("fileSizeInByte", FileSizeInByte);
+            writer.WriteIntValue("fileSizeInByte", FileSizeInByte);
             writer.WriteDoubleValue("fNumber", FNumber);
             writer.WriteDoubleValue("focalLength", FocalLength);
-            writer.WriteDoubleValue("iso", Iso);
+            writer.WriteIntValue("iso", Iso);
             writer.WriteDoubleValue("latitude", Latitude);
             writer.WriteStringValue("lensModel", LensModel);
             writer.WriteDoubleValue("longitude", Longitude);
@@ -199,7 +200,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateTimeOffsetValue("modifyDate", ModifyDate);
             writer.WriteStringValue("orientation", Orientation);
             writer.WriteStringValue("projectionType", ProjectionType);
-            writer.WriteDoubleValue("rating", Rating);
+            writer.WriteIntValue("rating", Rating);
             writer.WriteStringValue("state", State);
             writer.WriteStringValue("timeZone", TimeZone);
             writer.WriteAdditionalData(AdditionalData);

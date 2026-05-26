@@ -17,9 +17,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
         /// <summary>The interval property</summary>
-        public double? Interval { get; set; }
+        public int? Interval { get; set; }
         /// <summary>The timeout property</summary>
-        public double? Timeout { get; set; }
+        public int? Timeout { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.MachineLearningAvailabilityChecksDto"/> and sets the default values.
         /// </summary>
@@ -46,8 +46,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
-                { "interval", n => { Interval = n.GetDoubleValue(); } },
-                { "timeout", n => { Timeout = n.GetDoubleValue(); } },
+                { "interval", n => { Interval = n.GetIntValue(); } },
+                { "timeout", n => { Timeout = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -58,8 +58,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("enabled", Enabled);
-            writer.WriteDoubleValue("interval", Interval);
-            writer.WriteDoubleValue("timeout", Timeout);
+            writer.WriteIntValue("interval", Interval);
+            writer.WriteIntValue("timeout", Timeout);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

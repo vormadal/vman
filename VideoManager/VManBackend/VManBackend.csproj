@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0" />
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.2.3" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.2" NoWarn="NU1605" />
@@ -29,8 +29,9 @@
     <ProjectReference Include="..\VideoManager.ServiceDefaults\VideoManager.ServiceDefaults.csproj" />
   </ItemGroup>
 
-  <!-- Workaround for .NET SDK 10.0.102 bug with glob pattern resource files -->
+  <!-- Workaround for .NET SDK 10.0.102 bug with glob pattern expansion -->
   <ItemGroup>
+    <Content Remove="**/*.razor;**/*.cshtml" />
     <EmbeddedResource Remove="**/*.resx" />
   </ItemGroup>
 

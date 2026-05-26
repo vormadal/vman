@@ -14,7 +14,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Avatar color</summary>
+        /// <summary>User avatar color</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.UserAvatarColor? Color { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AvatarUpdate"/> and sets the default values.

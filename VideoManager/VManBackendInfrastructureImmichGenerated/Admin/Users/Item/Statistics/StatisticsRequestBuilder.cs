@@ -91,7 +91,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.Statistic
             /// <summary>Filter by trash status</summary>
             [QueryParameter("isTrashed")]
             public bool? IsTrashed { get; set; }
-            /// <summary>Filter by visibility</summary>
             [Obsolete("This property is deprecated, use VisibilityAsAssetVisibility instead")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -102,7 +101,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.Statistic
             [QueryParameter("visibility")]
             public string Visibility { get; set; }
 #endif
-            /// <summary>Filter by visibility</summary>
             [QueryParameter("visibility")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? VisibilityAsAssetVisibility { get; set; }
         }

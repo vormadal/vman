@@ -38,8 +38,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public Guid? LivePhotoVideoId { get; set; }
         /// <summary>Longitude coordinate</summary>
         public double? Longitude { get; set; }
-        /// <summary>Rating</summary>
-        public double? Rating { get; set; }
+        /// <summary>Rating in range [1-5], or null for unrated</summary>
+        public int? Rating { get; set; }
         /// <summary>Asset visibility</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? Visibility { get; set; }
         /// <summary>
@@ -73,7 +73,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "latitude", n => { Latitude = n.GetDoubleValue(); } },
                 { "livePhotoVideoId", n => { LivePhotoVideoId = n.GetGuidValue(); } },
                 { "longitude", n => { Longitude = n.GetDoubleValue(); } },
-                { "rating", n => { Rating = n.GetDoubleValue(); } },
+                { "rating", n => { Rating = n.GetIntValue(); } },
                 { "visibility", n => { Visibility = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>(); } },
             };
         }
@@ -90,7 +90,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDoubleValue("latitude", Latitude);
             writer.WriteGuidValue("livePhotoVideoId", LivePhotoVideoId);
             writer.WriteDoubleValue("longitude", Longitude);
-            writer.WriteDoubleValue("rating", Rating);
+            writer.WriteIntValue("rating", Rating);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>("visibility", Visibility);
             writer.WriteAdditionalData(AdditionalData);
         }

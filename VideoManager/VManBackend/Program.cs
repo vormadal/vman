@@ -12,7 +12,6 @@ using VManBackend.Infrastructure.Providers;
 using VManBackend.Infrastructure.Data;
 using VManBackend.Mediator;
 using VManBackend.Endpoints;
-// using VManBackend.Features.Assets; // Temporarily disabled
 using VManBackend.Features.Authentication;
 using VManBackend.Features.Admin;
 using VManBackend.Features.Tags;
@@ -72,10 +71,6 @@ builder.Services.AddHttpContextAccessor(); // Required for getting current user 
 
 // Add Mediator and Handlers
 builder.Services.AddMediator();
-// Asset handlers - disabled
-// builder.Services.AddRequestHandler<GetAssets.Handler, GetAssets.Request, GetAssets.Response>();
-// builder.Services.AddRequestHandler<GetAssetById.Handler, GetAssetById.Request, GetAssetById.Response?>();
-// builder.Services.AddRequestHandler<GetAssetStatistics.Handler, GetAssetStatistics.Request, GetAssetStatistics.Response>();
 
 // Authentication handlers
 builder.Services.AddRequestHandler<Register.Handler, Register.Request, Register.Response?>();
@@ -226,32 +221,16 @@ if (!app.Environment.IsDevelopment())
     app.MapFallbackToFile("index.html");
 }
 
-// Apply migrations on startup (development only)
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
-    db.Database.Migrate();
-}
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-// Seed admin user (runs in all environments)
-{
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    
-    await DbSeeder.SeedAdminUserAsync(db, config);
-}
+await db.Database.MigrateAsync();
+await DbSeeder.SeedAdminUserAsync(db, config);
 
-// Seed test user (development only)
 if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    
+{   
     await DbSeeder.SeedTestUserAsync(db, config);
 }
 
-app.Run();
+await app.RunAsync();

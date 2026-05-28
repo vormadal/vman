@@ -15,7 +15,10 @@ const nextConfig: NextConfig = {
   env: {
     // Aspire will inject service URLs via environment variables
     // e.g., services__apiservice__http__0 or services__apiservice__https__0
-    NEXT_PUBLIC_API_URL: process.env.services__apiservice__http__0 || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+    // Aspire dev: injected via services__apiservice__http__0
+    // Standalone dev: set NEXT_PUBLIC_API_URL in .env (e.g. http://localhost:5001)
+    // Production (pre-built image pulled by Coolify): empty string → relative URLs, nginx routes /api/*
+    NEXT_PUBLIC_API_URL: process.env.services__apiservice__http__0 || process.env.NEXT_PUBLIC_API_URL || '',
   },
 
   // Enable standalone output for Docker deployments

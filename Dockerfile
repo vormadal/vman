@@ -11,13 +11,6 @@ RUN npm ci
 
 COPY video-manager-frontend/ ./
 
-# NEXT_PUBLIC_API_URL must be provided at build time (it gets inlined by Next.js).
-# Pass the public-facing URL of this deployment, e.g.:
-#   docker build --build-arg NEXT_PUBLIC_API_URL=https://myapp.example.com .
-# In Coolify, set this as a build argument in the service settings.
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-
 RUN npm run build
 
 # ── Stage 2: Build .NET backend ───────────────────────────────────────────────

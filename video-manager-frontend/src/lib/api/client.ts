@@ -33,7 +33,9 @@ import type {
   PersonDetailResponse
 } from './types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+// In production (unified container), NEXT_PUBLIC_API_URL is unset so requests are relative —
+// nginx routes /api/* to the backend. In dev, set via .env to http://localhost:5001.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 class ApiClient {
   private baseUrl: string;

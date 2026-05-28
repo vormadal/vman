@@ -35,7 +35,8 @@
     <EmbeddedResource Remove="**/*.resx" />
   </ItemGroup>
 
-  <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+  <!-- Skip generation in Docker (DOTNET_RUNNING_IN_CONTAINER=true) — committed files are used instead -->
+  <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">
     <Exec Command="dotnet tool restore" WorkingDirectory="$(ProjectDir)..\" />
     <Exec Command="dotnet tool run kiota generate -l CSharp -c ImmichClient -n VManBackend.Infrastructure.Immich.Generated -o VManBackend\Infrastructure\Immich\Generated -d https://raw.githubusercontent.com/immich-app/immich/master/open-api/immich-openapi-specs.json" WorkingDirectory="$(ProjectDir)..\" />
   </Target>

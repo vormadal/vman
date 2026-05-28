@@ -34,156 +34,67 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Copy, Plus } from 'lucide-react';
-
-interface User {
-  id: string;
-  email: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  role: string;
-  isBlocked: boolean;
-  isProfileComplete: boolean;
-  createdAt: string;
-  lastLoginAt?: string | null;
-}
-
-interface Invite {
-  id: string;
-  email: string;
-  token: string;
-  createdAt: string;
-  usedAt?: string | null;
-  expiresAt: string;
-  isExpired: boolean;
-  isUsed: boolean;
-}
+import {
+  useAdminUsers,
+  useAdminInvites,
+  useBlockUser,
+  useChangeUserRole,
+  useCreateInvite,
+} from '@/lib/hooks/useAdmin';
 
 export default function AdminUsersPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { isAdmin, accessToken } = useAuthStore();
-  const [users, setUsers] = useState<User[]>([]);
-  const [invites, setInvites] = useState<Invite[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isAdmin } = useAuthStore();
   const [email, setEmail] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { data: usersData, isLoading: usersLoading } = useAdminUsers();
+  const { data: invitesData, isLoading: invitesLoading } = useAdminInvites();
+  const blockUser = useBlockUser();
+  const changeUserRole = useChangeUserRole();
+  const createInvite = useCreateInvite();
 
   useEffect(() => {
     if (!isAdmin()) {
       router.push('/videos');
-      return;
     }
-
-    fetchUsers();
-    fetchInvites();
   }, [isAdmin, router]);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/users`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch users');
-
-      const data = await response.json();
-      setUsers(data.users);
-    } catch {
-      toast.error('Failed to load users');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchInvites = async () => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/invites`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch invites');
-
-      const data = await response.json();
-      setInvites(data.invites);
-    } catch {
-      toast.error('Failed to load invites');
-    }
-  };
-
-  const handleBlockUser = async (userId: string, block: boolean) => {
-    try {
-      const endpoint = block ? 'block' : 'unblock';
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}/${endpoint}`,
-        {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-
-      if (!response.ok) throw new Error(`Failed to ${block ? 'block' : 'unblock'} user`);
-
-      toast.success(`User ${block ? 'blocked' : 'unblocked'} successfully`);
-      fetchUsers();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Operation failed');
-    }
-  };
-
-  const handleChangeRole = async (userId: string, role: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/users/${userId}/role`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({ userId, role }),
-        }
-      );
-
-      if (!response.ok) throw new Error('Failed to change user role');
-
-      toast.success('User role updated successfully');
-      fetchUsers();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Operation failed');
-    }
-  };
-
-  const handleCreateInvite = async () => {
-    setIsCreating(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/invites`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to create invite');
+  const handleBlockUser = (userId: string, block: boolean) => {
+    blockUser.mutate(
+      { userId, block },
+      {
+        onSuccess: () => toast.success(`User ${block ? 'blocked' : 'unblocked'} successfully`),
+        onError: (error) =>
+          toast.error(error instanceof Error ? error.message : 'Operation failed'),
       }
+    );
+  };
 
-      const result = await response.json();
-      const inviteLink = `${window.location.origin}${result.inviteUrl}`;
-      await navigator.clipboard.writeText(inviteLink);
+  const handleChangeRole = (userId: string, role: string) => {
+    changeUserRole.mutate(
+      { userId, role },
+      {
+        onSuccess: () => toast.success('User role updated successfully'),
+        onError: (error) =>
+          toast.error(error instanceof Error ? error.message : 'Operation failed'),
+      }
+    );
+  };
 
-      toast.success('Invite created!', { description: 'Invite link copied to clipboard' });
-      setEmail('');
-      setDialogOpen(false);
-      fetchInvites();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create invite');
-    } finally {
-      setIsCreating(false);
-    }
+  const handleCreateInvite = () => {
+    createInvite.mutate(email, {
+      onSuccess: (result) => {
+        const inviteLink = `${window.location.origin}${result.inviteUrl}`;
+        navigator.clipboard.writeText(inviteLink);
+        toast.success('Invite created!', { description: 'Invite link copied to clipboard' });
+        setEmail('');
+        setDialogOpen(false);
+      },
+      onError: (error) =>
+        toast.error(error instanceof Error ? error.message : 'Failed to create invite'),
+    });
   };
 
   const copyInviteLink = async (token: string) => {
@@ -192,9 +103,14 @@ export default function AdminUsersPage() {
     toast.success('Copied!', { description: 'Invite link copied to clipboard' });
   };
 
-  if (loading) {
+  if (!isAdmin()) return null;
+
+  if (usersLoading || invitesLoading) {
     return <div>Loading...</div>;
   }
+
+  const users = usersData?.users ?? [];
+  const invites = invitesData?.invites ?? [];
 
   return (
     <div className="container mx-auto py-8 space-y-8">
@@ -304,8 +220,8 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleCreateInvite} disabled={!email || isCreating}>
-                    {isCreating ? 'Creating...' : 'Create & Copy Link'}
+                  <Button onClick={handleCreateInvite} disabled={!email || createInvite.isPending}>
+                    {createInvite.isPending ? 'Creating...' : 'Create & Copy Link'}
                   </Button>
                 </DialogFooter>
               </DialogContent>

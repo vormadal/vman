@@ -16,7 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useAuthStore } from '@/lib/store/authStore';
+import { useAcceptInvite } from '@/lib/hooks/useAuth';
 
 const acceptInviteSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -32,8 +32,7 @@ export default function AcceptInvitePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const [isLoading, setIsLoading] = useState(false);
+  const acceptInvite = useAcceptInvite();
   const [token, setToken] = useState<string | null>(null);
 
   const {
@@ -56,45 +55,17 @@ export default function AcceptInvitePage() {
     }
   }, [searchParams, router, toast]);
 
-  const onSubmit = async (data: AcceptInviteForm) => {
+  const onSubmit = (data: AcceptInviteForm) => {
     if (!token) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/accept-invite`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token,
-          password: data.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to accept invite');
+    acceptInvite.mutate(
+      { token, password: data.password },
+      {
+        onError: (error) =>
+          toast.error('Error', {
+            description: error instanceof Error ? error.message : 'Failed to accept invite',
+          }),
       }
-
-      const result = await response.json();
-      
-      // Set auth state
-      setAuth(result.user, result.accessToken, result.refreshToken, false);
-
-      toast('Account created!', {
-        description: 'Please complete your profile',
-      });
-
-      // Redirect to profile completion
-      router.push('/complete-profile');
-    } catch (error) {
-      toast.error('Error', {
-        description: error instanceof Error ? error.message : 'Failed to accept invite',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   if (!token) {
@@ -140,8 +111,8 @@ export default function AcceptInvitePage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create Account'}
+            <Button type="submit" className="w-full" disabled={acceptInvite.isPending}>
+              {acceptInvite.isPending ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
         </CardContent>

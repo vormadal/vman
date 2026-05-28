@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/authStore';
 import { apiClient } from '@/lib/api/client';
-import type { LoginRequest, RegisterRequest } from '@/lib/api/types';
+import type { LoginRequest, RegisterRequest, CompleteProfileRequest } from '@/lib/api/types';
 
 export function useLogin() {
   const router = useRouter();
@@ -54,4 +54,31 @@ export function useLogout() {
     clearAuth();
     router.push('/login');
   };
+}
+
+export function useAcceptInvite() {
+  const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  return useMutation({
+    mutationFn: ({ token, password }: { token: string; password: string }) =>
+      apiClient.acceptInvite(token, password),
+    onSuccess: (data) => {
+      setAuth(data.user, data.accessToken, data.refreshToken, false);
+      router.push('/complete-profile');
+    },
+  });
+}
+
+export function useCompleteProfile() {
+  const router = useRouter();
+  const { setAuth } = useAuthStore();
+
+  return useMutation({
+    mutationFn: (data: CompleteProfileRequest) => apiClient.completeProfile(data),
+    onSuccess: (data) => {
+      setAuth(data.user, data.accessToken, data.refreshToken, true);
+      router.push('/videos');
+    },
+  });
 }

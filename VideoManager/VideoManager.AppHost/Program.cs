@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using Aspire.Hosting;
-
+﻿
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Test user credentials (shared between backend and frontend)
@@ -36,4 +34,4 @@ var frontend = builder.AddJavaScriptApp("frontend", "../../video-manager-fronten
     .WithEnvironment("TEST_USER_PASSWORD", testUserPassword)
     .WithReference(apiService);
 
-builder.Build().Run();
+await builder.Build().RunAsync();

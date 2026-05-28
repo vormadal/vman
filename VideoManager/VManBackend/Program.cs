@@ -225,17 +225,9 @@ using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-// Apply migrations on startup (development only)
-if (app.Environment.IsDevelopment())
-{    
-    await db.Database.MigrateAsync();
-}
-
-// Seed admin user (runs in all environments)
+await db.Database.MigrateAsync();
 await DbSeeder.SeedAdminUserAsync(db, config);
 
-
-// Seed test user (development only)
 if (app.Environment.IsDevelopment())
 {   
     await DbSeeder.SeedTestUserAsync(db, config);

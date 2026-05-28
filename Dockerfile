@@ -1,59 +1,67 @@
-# Unified Dockerfile for Video Manager - Frontend + Backend
-# This Dockerfile builds both the Next.js frontend and .NET backend into a single container
+# Unified Dockerfile: Next.js frontend + .NET backend in a single container
+# nginx routes /api/* -> dotnet:8080, everything else -> node:3000
+# supervisord manages all three processes
 
-# Stage 1: Build Next.js Frontend
+# ── Stage 1: Build Next.js frontend ──────────────────────────────────────────
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
-# Copy frontend package files
 COPY video-manager-frontend/package*.json ./
-
-# Install dependencies
 RUN npm ci
 
-# Copy frontend source code
 COPY video-manager-frontend/ ./
 
-# Build the Next.js application (standalone mode)
+# NEXT_PUBLIC_API_URL must be provided at build time (it gets inlined by Next.js).
+# Pass the public-facing URL of this deployment, e.g.:
+#   docker build --build-arg NEXT_PUBLIC_API_URL=https://myapp.example.com .
+# In Coolify, set this as a build argument in the service settings.
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 RUN npm run build
 
-# Stage 2: Build .NET Backend
+# ── Stage 2: Build .NET backend ───────────────────────────────────────────────
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend-build
 WORKDIR /src
 
-# Copy all VideoManager content including tools config
 COPY VideoManager/ VideoManager/
 
-# Restore tools and dependencies
 WORKDIR /src/VideoManager
 RUN dotnet tool restore
 
-# Restore project dependencies
 RUN dotnet restore VManBackend/VManBackend.csproj
 
-# Build and publish the backend
 WORKDIR /src/VideoManager/VManBackend
-RUN mkdir -p bin/Debug
 RUN dotnet publish VManBackend.csproj -c Release -o /app/backend --no-restore
 
-# Stage 3: Final Runtime Image
+# ── Stage 3: Runtime image ────────────────────────────────────────────────────
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
-WORKDIR /app
 
-# Copy backend published files
-COPY --from=backend-build /app/backend ./
+# Install Node.js, nginx, and supervisord
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nginx \
+    supervisor \
+    curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy Next.js standalone build to wwwroot
-COPY --from=frontend-build /app/frontend/.next/standalone ./wwwroot/
-COPY --from=frontend-build /app/frontend/.next/static ./wwwroot/.next/static
-COPY --from=frontend-build /app/frontend/public ./wwwroot/public
+# Copy backend
+COPY --from=backend-build /app/backend /app/backend
 
-# Expose port (Caprover uses 80 by default)
-EXPOSE 8080
+# Copy Next.js standalone server
+COPY --from=frontend-build /app/frontend/.next/standalone /app/frontend
+COPY --from=frontend-build /app/frontend/.next/static /app/frontend/.next/static
+COPY --from=frontend-build /app/frontend/public /app/frontend/public
 
-# Set environment variables
+# Copy nginx and supervisord config
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Backend config
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Run the backend (which now serves the frontend)
-ENTRYPOINT ["dotnet", "VManBackend.dll"]
+EXPOSE 80
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

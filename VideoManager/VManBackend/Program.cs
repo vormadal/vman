@@ -53,12 +53,15 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin"));
 });
 
-// Add CORS - Allow HTTP for development
+// CORS: allow the configured origin (or localhost for dev)
+var allowedOrigins = (builder.Configuration["AllowedOrigins"] ?? "http://localhost:3000")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -196,9 +199,6 @@ app.UseStatusCodePages();
 // For production, HTTPS redirection is handled by reverse proxy/hosting
 // app.UseHttpsRedirection();
 
-// Serve static files from wwwroot (frontend build)
-app.UseStaticFiles();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -214,12 +214,7 @@ app.MapProviderEndpoints();
 app.MapCollectionEndpoints();
 app.MapPeopleEndpoints();
 
-// Serve frontend (SPA fallback for Next.js)
-// In production, serve the Next.js app for non-API routes
-if (!app.Environment.IsDevelopment())
-{
-    app.MapFallbackToFile("index.html");
-}
+// Frontend is served by the Next.js Node process (via nginx proxy in production)
 
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

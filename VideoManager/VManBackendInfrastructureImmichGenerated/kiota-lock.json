@@ -1,8 +1,8 @@
 {
-  "descriptionHash": "807984D49E315AD071368F39842D79CACDD2414D5087FBA7393CEC4E3600A90A41CB88390C30E20566C98E7737167E23EA4B3CC6EB2D2E7A4635E67B90E8455A",
+  "descriptionHash": "1CED638CA00B45E78EA6E894CF50AB06CA56693B64B0004C7056CD6DADBB5DEE8D0F4EB83F1293D6776D03D02BD5E91445282A2ABA7E27DCAEA30B940CB81B57",
   "descriptionLocation": "https://raw.githubusercontent.com/immich-app/immich/master/open-api/immich-openapi-specs.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.30.0",
+  "kiotaVersion": "1.31.1",
   "clientClassName": "ImmichClient",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "VManBackend.Infrastructure.Immich.Generated",

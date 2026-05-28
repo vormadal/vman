@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Models;
+using VManBackend.Infrastructure.Immich.Generated.Workflows.Item.Share;
 namespace VManBackend.Infrastructure.Immich.Generated.Workflows.Item
 {
     /// <summary>
@@ -17,6 +18,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows.Item
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WorkflowsItemRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The share property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Workflows.Item.Share.ShareRequestBuilder Share
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Workflows.Item.Share.ShareRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Workflows.Item.WorkflowsItemRequestBuilder"/> and sets the default values.
         /// </summary>

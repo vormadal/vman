@@ -10,33 +10,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.2.3" />
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.2" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
+    <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.3.5" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.8" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Identity.Web" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Kiota.Bundle" Version="1.21.2" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.10.0" />
+    <PackageReference Include="Microsoft.Kiota.Bundle" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\VideoManager.ServiceDefaults\VideoManager.ServiceDefaults.csproj" />
   </ItemGroup>
 
-  <!-- Workaround for .NET SDK 10.0.102 bug with glob pattern expansion -->
-  <ItemGroup>
-    <Content Remove="**/*.razor;**/*.cshtml" />
-    <EmbeddedResource Remove="**/*.resx" />
-  </ItemGroup>
-
-  <!-- Skip generation in Docker (DOTNET_RUNNING_IN_CONTAINER=true); running Kiota mid-build
-       triggers the .NET SDK 10.0.102 **/*.cs glob expansion bug (see ItemGroup workaround above) -->
+  <!-- Skip generation in Docker: generated code is committed, so no network fetch needed at image build time -->
   <Target Name="GenerateKiotaClient" BeforeTargets="BeforeBuild" Condition="'$(DesignTimeBuild)' != 'true' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">
     <Exec Command="dotnet tool restore" WorkingDirectory="$(ProjectDir)..\" />
     <Exec Command="dotnet tool run kiota generate -l CSharp -c ImmichClient -n VManBackend.Infrastructure.Immich.Generated -o VManBackend\Infrastructure\Immich\Generated -d https://raw.githubusercontent.com/immich-app/immich/master/open-api/immich-openapi-specs.json" WorkingDirectory="$(ProjectDir)..\" />

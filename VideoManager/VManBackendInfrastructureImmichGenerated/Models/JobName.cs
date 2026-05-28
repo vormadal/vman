@@ -223,9 +223,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         Ocr,
         #pragma warning restore CS1591
-        [EnumMember(Value = "WorkflowRun")]
+        [EnumMember(Value = "WorkflowAssetTrigger")]
         #pragma warning disable CS1591
-        WorkflowRun,
+        WorkflowAssetTrigger,
         #pragma warning restore CS1591
     }
 }

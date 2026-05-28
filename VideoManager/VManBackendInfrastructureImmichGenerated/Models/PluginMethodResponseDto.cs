@@ -9,28 +9,12 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class PluginResponseDto : IAdditionalDataHolder, IParsable
+    public partial class PluginMethodResponseDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Plugin author</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Author { get; set; }
-#nullable restore
-#else
-        public string Author { get; set; }
-#endif
-        /// <summary>Creation date</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? CreatedAt { get; set; }
-#nullable restore
-#else
-        public string CreatedAt { get; set; }
-#endif
-        /// <summary>Plugin description</summary>
+        /// <summary>Description</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Description { get; set; }
@@ -38,23 +22,17 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Plugin ID</summary>
+        /// <summary>The hostFunctions property</summary>
+        public bool? HostFunctions { get; set; }
+        /// <summary>Key</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Id { get; set; }
+        public string? Key { get; set; }
 #nullable restore
 #else
-        public string Id { get; set; }
+        public string Key { get; set; }
 #endif
-        /// <summary>Plugin methods</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto>? Methods { get; set; }
-#nullable restore
-#else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto> Methods { get; set; }
-#endif
-        /// <summary>Plugin name</summary>
+        /// <summary>Name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Name { get; set; }
@@ -62,7 +40,15 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Name { get; set; }
 #endif
-        /// <summary>Plugin title</summary>
+        /// <summary>The schema property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto_schema? Schema { get; set; }
+#nullable restore
+#else
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto_schema Schema { get; set; }
+#endif
+        /// <summary>Title</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Title { get; set; }
@@ -70,38 +56,38 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Title { get; set; }
 #endif
-        /// <summary>Last update date</summary>
+        /// <summary>Workflow types</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? UpdatedAt { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowType?>? Types { get; set; }
 #nullable restore
 #else
-        public string UpdatedAt { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowType?> Types { get; set; }
 #endif
-        /// <summary>Plugin version</summary>
+        /// <summary>Ui hints</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Version { get; set; }
+        public List<string>? UiHints { get; set; }
 #nullable restore
 #else
-        public string Version { get; set; }
+        public List<string> UiHints { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto"/> and sets the default values.
+        /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto"/> and sets the default values.
         /// </summary>
-        public PluginResponseDto()
+        public PluginMethodResponseDto()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto"/></returns>
+        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto();
+            return new global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -111,15 +97,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "author", n => { Author = n.GetStringValue(); } },
-                { "createdAt", n => { CreatedAt = n.GetStringValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
-                { "methods", n => { Methods = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "hostFunctions", n => { HostFunctions = n.GetBoolValue(); } },
+                { "key", n => { Key = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
+                { "schema", n => { Schema = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto_schema>(global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto_schema.CreateFromDiscriminatorValue); } },
                 { "title", n => { Title = n.GetStringValue(); } },
-                { "updatedAt", n => { UpdatedAt = n.GetStringValue(); } },
-                { "version", n => { Version = n.GetStringValue(); } },
+                { "types", n => { Types = n.GetCollectionOfEnumValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowType>()?.AsList(); } },
+                { "uiHints", n => { UiHints = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
         }
         /// <summary>
@@ -129,15 +114,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("author", Author);
-            writer.WriteStringValue("createdAt", CreatedAt);
             writer.WriteStringValue("description", Description);
-            writer.WriteStringValue("id", Id);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto>("methods", Methods);
+            writer.WriteBoolValue("hostFunctions", HostFunctions);
+            writer.WriteStringValue("key", Key);
             writer.WriteStringValue("name", Name);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto_schema>("schema", Schema);
             writer.WriteStringValue("title", Title);
-            writer.WriteStringValue("updatedAt", UpdatedAt);
-            writer.WriteStringValue("version", Version);
+            writer.WriteCollectionOfEnumValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowType>("types", Types);
+            writer.WriteCollectionOfPrimitiveValues<string>("uiHints", UiHints);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

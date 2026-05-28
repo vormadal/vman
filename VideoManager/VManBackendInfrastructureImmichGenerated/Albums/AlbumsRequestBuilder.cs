@@ -60,7 +60,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AlbumsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums{?assetId*,shared*}", pathParameters)
+        public AlbumsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums{?assetId*,id*,isOwned*,isShared*,name*}", pathParameters)
         {
         }
         /// <summary>
@@ -68,7 +68,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AlbumsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums{?assetId*,shared*}", rawUrl)
+        public AlbumsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/albums{?assetId*,id*,isOwned*,isShared*,name*}", rawUrl)
         {
         }
         /// <summary>
@@ -166,12 +166,28 @@ namespace VManBackend.Infrastructure.Immich.Generated.Albums
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         public partial class AlbumsRequestBuilderGetQueryParameters 
         {
-            /// <summary>Filter albums containing this asset ID (ignores shared parameter)</summary>
+            /// <summary>Filter albums containing this asset ID (ignores other parameters)</summary>
             [QueryParameter("assetId")]
             public Guid? AssetId { get; set; }
-            /// <summary>Filter by shared status: true = only shared, false = not shared, undefined = all owned albums</summary>
-            [QueryParameter("shared")]
-            public bool? Shared { get; set; }
+            /// <summary>Album ID</summary>
+            [QueryParameter("id")]
+            public Guid? Id { get; set; }
+            /// <summary>Filter by ownership: true = only owned, false = only shared-with-me, undefined = no filter</summary>
+            [QueryParameter("isOwned")]
+            public bool? IsOwned { get; set; }
+            /// <summary>Filter by shared status: true = only shared, false = not shared, undefined = no filter</summary>
+            [QueryParameter("isShared")]
+            public bool? IsShared { get; set; }
+            /// <summary>Album name (exact match)</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("name")]
+            public string? Name { get; set; }
+#nullable restore
+#else
+            [QueryParameter("name")]
+            public string Name { get; set; }
+#endif
         }
         /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.

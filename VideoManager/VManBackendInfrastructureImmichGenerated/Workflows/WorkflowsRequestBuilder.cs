@@ -10,6 +10,7 @@ using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Models;
 using VManBackend.Infrastructure.Immich.Generated.Workflows.Item;
+using VManBackend.Infrastructure.Immich.Generated.Workflows.Triggers;
 namespace VManBackend.Infrastructure.Immich.Generated.Workflows
 {
     /// <summary>
@@ -18,6 +19,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WorkflowsRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The triggers property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Workflows.Triggers.TriggersRequestBuilder Triggers
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Workflows.Triggers.TriggersRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the VManBackend.Infrastructure.Immich.Generated.workflows.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Workflows.Item.WorkflowsItemRequestBuilder"/></returns>
@@ -48,7 +54,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WorkflowsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/workflows", pathParameters)
+        public WorkflowsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/workflows{?description*,enabled*,id*,name*,trigger*}", pathParameters)
         {
         }
         /// <summary>
@@ -56,7 +62,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WorkflowsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/workflows", rawUrl)
+        public WorkflowsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/workflows{?description*,enabled*,id*,name*,trigger*}", rawUrl)
         {
         }
         /// <summary>
@@ -67,11 +73,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowResponseDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowResponseDto>?> GetAsync(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Workflows.WorkflowsRequestBuilder.WorkflowsRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowResponseDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowResponseDto>> GetAsync(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Workflows.WorkflowsRequestBuilder.WorkflowsRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -105,11 +111,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Workflows.WorkflowsRequestBuilder.WorkflowsRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Workflows.WorkflowsRequestBuilder.WorkflowsRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -149,11 +155,58 @@ namespace VManBackend.Infrastructure.Immich.Generated.Workflows
             return new global::VManBackend.Infrastructure.Immich.Generated.Workflows.WorkflowsRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
+        /// Retrieve a list of workflows available to the authenticated user.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        public partial class WorkflowsRequestBuilderGetQueryParameters 
+        {
+            /// <summary>Workflow description</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("description")]
+            public string? Description { get; set; }
+#nullable restore
+#else
+            [QueryParameter("description")]
+            public string Description { get; set; }
+#endif
+            /// <summary>Workflow enabled</summary>
+            [QueryParameter("enabled")]
+            public bool? Enabled { get; set; }
+            /// <summary>Workflow ID</summary>
+            [QueryParameter("id")]
+            public Guid? Id { get; set; }
+            /// <summary>Workflow name</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("name")]
+            public string? Name { get; set; }
+#nullable restore
+#else
+            [QueryParameter("name")]
+            public string Name { get; set; }
+#endif
+            /// <summary>Workflow trigger type</summary>
+            [Obsolete("This property is deprecated, use TriggerAsWorkflowTrigger instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("trigger")]
+            public string? Trigger { get; set; }
+#nullable restore
+#else
+            [QueryParameter("trigger")]
+            public string Trigger { get; set; }
+#endif
+            /// <summary>Workflow trigger type</summary>
+            [QueryParameter("trigger")]
+            public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger? TriggerAsWorkflowTrigger { get; set; }
+        }
+        /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class WorkflowsRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class WorkflowsRequestBuilderGetRequestConfiguration : RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Workflows.WorkflowsRequestBuilder.WorkflowsRequestBuilderGetQueryParameters>
         {
         }
         /// <summary>

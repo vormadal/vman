@@ -123,10 +123,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>The people property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonWithFacesResponseDto>? People { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto>? People { get; set; }
 #nullable restore
 #else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonWithFacesResponseDto> People { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto> People { get; set; }
 #endif
         /// <summary>Is resized</summary>
         public bool? Resized { get; set; }
@@ -156,14 +156,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Asset type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum? Type { get; set; }
-        /// <summary>The unassignedFaces property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto>? UnassignedFaces { get; set; }
-#nullable restore
-#else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto> UnassignedFaces { get; set; }
-#endif
         /// <summary>The UTC timestamp when the asset record was last updated in the database. This is automatically maintained by the database and reflects when any field in the asset was last modified.</summary>
         public DateTimeOffset? UpdatedAt { get; set; }
         /// <summary>Asset visibility</summary>
@@ -218,13 +210,12 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "originalPath", n => { OriginalPath = n.GetStringValue(); } },
                 { "owner", n => { Owner = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto.CreateFromDiscriminatorValue); } },
                 { "ownerId", n => { OwnerId = n.GetStringValue(); } },
-                { "people", n => { People = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonWithFacesResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.PersonWithFacesResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "people", n => { People = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "resized", n => { Resized = n.GetBoolValue(); } },
                 { "stack", n => { Stack = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto.CreateFromDiscriminatorValue); } },
                 { "tags", n => { Tags = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.TagResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.TagResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "thumbhash", n => { Thumbhash = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum>(); } },
-                { "unassignedFaces", n => { UnassignedFaces = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "updatedAt", n => { UpdatedAt = n.GetDateTimeOffsetValue(); } },
                 { "visibility", n => { Visibility = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>(); } },
                 { "width", n => { Width = n.GetIntValue(); } },
@@ -260,13 +251,12 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("originalPath", OriginalPath);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto>("owner", Owner);
             writer.WriteStringValue("ownerId", OwnerId);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonWithFacesResponseDto>("people", People);
+            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto>("people", People);
             writer.WriteBoolValue("resized", Resized);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto>("stack", Stack);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.TagResponseDto>("tags", Tags);
             writer.WriteStringValue("thumbhash", Thumbhash);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetTypeEnum>("type", Type);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetFaceWithoutPersonResponseDto>("unassignedFaces", UnassignedFaces);
             writer.WriteDateTimeOffsetValue("updatedAt", UpdatedAt);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility>("visibility", Visibility);
             writer.WriteIntValue("width", Width);

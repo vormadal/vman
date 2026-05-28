@@ -12,14 +12,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     public partial class WorkflowUpdateDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
-        /// <summary>Workflow actions</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto>? Actions { get; set; }
-#nullable restore
-#else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto> Actions { get; set; }
-#endif
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Workflow description</summary>
@@ -32,14 +24,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #endif
         /// <summary>Workflow enabled</summary>
         public bool? Enabled { get; set; }
-        /// <summary>Workflow filters</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterItemDto>? Filters { get; set; }
-#nullable restore
-#else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterItemDto> Filters { get; set; }
-#endif
         /// <summary>Workflow name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -48,8 +32,16 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Name { get; set; }
 #endif
+        /// <summary>The steps property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>? Steps { get; set; }
+#nullable restore
+#else
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto> Steps { get; set; }
+#endif
         /// <summary>Plugin trigger type</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTriggerType? TriggerType { get; set; }
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger? Trigger { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowUpdateDto"/> and sets the default values.
         /// </summary>
@@ -75,12 +67,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "actions", n => { Actions = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
-                { "filters", n => { Filters = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterItemDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterItemDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "triggerType", n => { TriggerType = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTriggerType>(); } },
+                { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "trigger", n => { Trigger = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>(); } },
             };
         }
         /// <summary>
@@ -90,12 +81,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowActionItemDto>("actions", Actions);
             writer.WriteStringValue("description", Description);
             writer.WriteBoolValue("enabled", Enabled);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowFilterItemDto>("filters", Filters);
             writer.WriteStringValue("name", Name);
-            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTriggerType>("triggerType", TriggerType);
+            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>("steps", Steps);
+            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>("trigger", Trigger);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

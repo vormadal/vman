@@ -53,20 +53,23 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin"));
 });
 
-// CORS: allow the configured origin (or localhost for dev)
-var allowedOrigins = (builder.Configuration["AllowedOrigins"] ?? "http://localhost:3000")
-    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-builder.Services.AddCors(options =>
+// CORS: development only — in production, everything is same-origin via nginx
+if (builder.Environment.IsDevelopment())
 {
-    options.AddDefaultPolicy(policy =>
+    var allowedOrigins = (builder.Configuration["AllowedOrigins"] ?? "http://localhost:3000")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    builder.Services.AddCors(options =>
     {
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
     });
-});
+}
 
 // Add Services
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -190,7 +193,10 @@ if (app.Environment.IsDevelopment())
 }
 
 // Apply middleware
-app.UseCors();
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors();
+}
 
 // Add ProblemDetails middleware for exception handling
 app.UseExceptionHandler();

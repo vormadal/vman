@@ -64,7 +64,7 @@ export default function CompleteProfilePage() {
               <Input
                 id="firstName"
                 {...register('firstName')}
-                disabled={isLoading}
+                disabled={completeProfile.isPending}
               />
               {errors.firstName && (
                 <p className="text-sm text-destructive">{errors.firstName.message}</p>
@@ -76,7 +76,7 @@ export default function CompleteProfilePage() {
               <Input
                 id="lastName"
                 {...register('lastName')}
-                disabled={isLoading}
+                disabled={completeProfile.isPending}
               />
               {errors.lastName && (
                 <p className="text-sm text-destructive">{errors.lastName.message}</p>

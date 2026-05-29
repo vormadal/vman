@@ -93,7 +93,7 @@ export default function AcceptInvitePage() {
                 id="password"
                 type="password"
                 {...register('password')}
-                disabled={isLoading}
+                disabled={acceptInvite.isPending}
               />
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
@@ -106,7 +106,7 @@ export default function AcceptInvitePage() {
                 id="confirmPassword"
                 type="password"
                 {...register('confirmPassword')}
-                disabled={isLoading}
+                disabled={acceptInvite.isPending}
               />
               {errors.confirmPassword && (
                 <p className="text-sm text-destructive">

@@ -37,6 +37,10 @@ export default function CompleteProfilePage() {
 
   const onSubmit = (data: CompleteProfileForm) => {
     completeProfile.mutate(data, {
+      onSuccess: () =>
+        toast.success('Profile completed!', {
+          description: 'Welcome to Video Manager',
+        }),
       onError: (error) =>
         toast.error('Error', {
           description: error instanceof Error ? error.message : 'Failed to complete profile',

@@ -7,17 +7,19 @@ export const adminKeys = {
   invites: () => [...adminKeys.all, 'invites'] as const,
 };
 
-export function useAdminUsers() {
+export function useAdminUsers(enabled = true) {
   return useQuery({
     queryKey: adminKeys.users(),
     queryFn: () => apiClient.getAdminUsers(),
+    enabled,
   });
 }
 
-export function useAdminInvites() {
+export function useAdminInvites(enabled = true) {
   return useQuery({
     queryKey: adminKeys.invites(),
     queryFn: () => apiClient.getAdminInvites(),
+    enabled,
   });
 }
 

@@ -49,8 +49,8 @@ export default function AdminUsersPage() {
   const [email, setEmail] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { data: usersData, isLoading: usersLoading } = useAdminUsers();
-  const { data: invitesData, isLoading: invitesLoading } = useAdminInvites();
+  const { data: usersData, isLoading: usersLoading } = useAdminUsers(isAdmin());
+  const { data: invitesData, isLoading: invitesLoading } = useAdminInvites(isAdmin());
   const blockUser = useBlockUser();
   const changeUserRole = useChangeUserRole();
   const createInvite = useCreateInvite();
@@ -85,10 +85,14 @@ export default function AdminUsersPage() {
 
   const handleCreateInvite = () => {
     createInvite.mutate(email, {
-      onSuccess: (result) => {
+      onSuccess: async (result) => {
         const inviteLink = `${window.location.origin}${result.inviteUrl}`;
-        navigator.clipboard.writeText(inviteLink);
-        toast.success('Invite created!', { description: 'Invite link copied to clipboard' });
+        try {
+          await navigator.clipboard.writeText(inviteLink);
+          toast.success('Invite created!', { description: 'Invite link copied to clipboard' });
+        } catch {
+          toast.success('Invite created!', { description: `Copy this link: ${inviteLink}` });
+        }
         setEmail('');
         setDialogOpen(false);
       },

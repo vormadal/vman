@@ -60,6 +60,10 @@ export default function AcceptInvitePage() {
     acceptInvite.mutate(
       { token, password: data.password },
       {
+        onSuccess: () =>
+          toast.success('Account created!', {
+            description: 'Please complete your profile',
+          }),
         onError: (error) =>
           toast.error('Error', {
             description: error instanceof Error ? error.message : 'Failed to accept invite',

@@ -1,5 +1,12 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+
+// NextResponse.redirect requires an absolute URL, which breaks behind a reverse
+// proxy because request.url resolves to the internal Node address (localhost:3000).
+// A relative Location header is valid HTTP — the browser resolves it against the
+// URL it already has, so this works correctly regardless of how the app is hosted.
+function relativeRedirect(path: string) {
+  return new Response(null, { status: 307, headers: { Location: path } });
+}
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = ['/login', '/accept-invite'];
@@ -18,7 +25,7 @@ export function middleware(request: NextRequest) {
   // Since middleware runs on edge, we need to check via cookie or header
   // Let's use a cookie approach
   const authCookie = request.cookies.get('auth-storage');
-  
+
   let isAuthenticated = false;
   let isProfileComplete = true;
   if (authCookie) {
@@ -34,19 +41,17 @@ export function middleware(request: NextRequest) {
 
   // Redirect to login if accessing protected route without auth
   if (!isPublicRoute && !isAuthenticated) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
+    return relativeRedirect(`/login?redirect=${encodeURIComponent(pathname)}`);
   }
 
   // Redirect to profile completion if authenticated but profile incomplete
   if (isAuthenticated && !isProfileComplete && !isProfileExempt) {
-    return NextResponse.redirect(new URL('/complete-profile', request.url));
+    return relativeRedirect('/complete-profile');
   }
 
   // Redirect to home if accessing auth pages while logged in with complete profile
   if (isPublicRoute && isAuthenticated && isProfileComplete) {
-    return NextResponse.redirect(new URL('/videos', request.url));
+    return relativeRedirect('/videos');
   }
 
   return NextResponse.next();

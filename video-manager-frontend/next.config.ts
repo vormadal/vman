@@ -23,11 +23,6 @@ const nextConfig: NextConfig = {
 
   // Enable standalone output for Docker deployments
   output: 'standalone',
-
-  // Trust X-Forwarded-Host / X-Forwarded-Proto headers from the reverse proxy
-  // (nginx in Docker, Coolify in production) so that request.url in middleware
-  // reflects the real external host instead of the internal Node address.
-  trustHost: true,
 };
 
 export default nextConfig;

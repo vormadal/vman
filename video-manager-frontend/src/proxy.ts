@@ -15,7 +15,7 @@ function relativeRedirect(path: string) {
   return new Response(null, { status: 307, headers: { Location: path } });
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if route is public

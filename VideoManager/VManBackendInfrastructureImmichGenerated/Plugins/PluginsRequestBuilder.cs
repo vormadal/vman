@@ -10,7 +10,8 @@ using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Models;
 using VManBackend.Infrastructure.Immich.Generated.Plugins.Item;
-using VManBackend.Infrastructure.Immich.Generated.Plugins.Triggers;
+using VManBackend.Infrastructure.Immich.Generated.Plugins.Methods;
+using VManBackend.Infrastructure.Immich.Generated.Plugins.Templates;
 namespace VManBackend.Infrastructure.Immich.Generated.Plugins
 {
     /// <summary>
@@ -19,10 +20,15 @@ namespace VManBackend.Infrastructure.Immich.Generated.Plugins
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PluginsRequestBuilder : BaseRequestBuilder
     {
-        /// <summary>The triggers property</summary>
-        public global::VManBackend.Infrastructure.Immich.Generated.Plugins.Triggers.TriggersRequestBuilder Triggers
+        /// <summary>The methods property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Plugins.Methods.MethodsRequestBuilder Methods
         {
-            get => new global::VManBackend.Infrastructure.Immich.Generated.Plugins.Triggers.TriggersRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Plugins.Methods.MethodsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The templates property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Plugins.Templates.TemplatesRequestBuilder Templates
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Plugins.Templates.TemplatesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the VManBackend.Infrastructure.Immich.Generated.plugins.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
@@ -54,7 +60,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Plugins
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PluginsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/plugins", pathParameters)
+        public PluginsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/plugins{?description*,enabled*,id*,name*,title*,version*}", pathParameters)
         {
         }
         /// <summary>
@@ -62,7 +68,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Plugins
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PluginsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/plugins", rawUrl)
+        public PluginsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/plugins{?description*,enabled*,id*,name*,title*,version*}", rawUrl)
         {
         }
         /// <summary>
@@ -73,11 +79,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Plugins
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto>?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto>?> GetAsync(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Plugins.PluginsRequestBuilder.PluginsRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto>> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginResponseDto>> GetAsync(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Plugins.PluginsRequestBuilder.PluginsRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -91,11 +97,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Plugins
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Plugins.PluginsRequestBuilder.PluginsRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Plugins.PluginsRequestBuilder.PluginsRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -113,11 +119,60 @@ namespace VManBackend.Infrastructure.Immich.Generated.Plugins
             return new global::VManBackend.Infrastructure.Immich.Generated.Plugins.PluginsRequestBuilder(rawUrl, RequestAdapter);
         }
         /// <summary>
+        /// Retrieve a list of plugins available to the authenticated user.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
+        public partial class PluginsRequestBuilderGetQueryParameters 
+        {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("description")]
+            public string? Description { get; set; }
+#nullable restore
+#else
+            [QueryParameter("description")]
+            public string Description { get; set; }
+#endif
+            /// <summary>Whether the plugin is enabled</summary>
+            [QueryParameter("enabled")]
+            public bool? Enabled { get; set; }
+            /// <summary>Plugin ID</summary>
+            [QueryParameter("id")]
+            public Guid? Id { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("name")]
+            public string? Name { get; set; }
+#nullable restore
+#else
+            [QueryParameter("name")]
+            public string Name { get; set; }
+#endif
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("title")]
+            public string? Title { get; set; }
+#nullable restore
+#else
+            [QueryParameter("title")]
+            public string Title { get; set; }
+#endif
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("version")]
+            public string? Version { get; set; }
+#nullable restore
+#else
+            [QueryParameter("version")]
+            public string Version { get; set; }
+#endif
+        }
+        /// <summary>
         /// Configuration for the request such as headers, query parameters, and middleware options.
         /// </summary>
         [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        public partial class PluginsRequestBuilderGetRequestConfiguration : RequestConfiguration<DefaultQueryParameters>
+        public partial class PluginsRequestBuilderGetRequestConfiguration : RequestConfiguration<global::VManBackend.Infrastructure.Immich.Generated.Plugins.PluginsRequestBuilder.PluginsRequestBuilderGetQueryParameters>
         {
         }
     }

@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useAuthStore } from '@/lib/store/authStore';
+import { useCompleteProfile } from '@/lib/hooks/useAuth';
 
 const completeProfileSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(100),
@@ -26,10 +24,8 @@ const completeProfileSchema = z.object({
 type CompleteProfileForm = z.infer<typeof completeProfileSchema>;
 
 export default function CompleteProfilePage() {
-  const router = useRouter();
   const { toast } = useToast();
-  const { accessToken, setAuth } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const completeProfile = useCompleteProfile();
 
   const {
     register,
@@ -39,41 +35,17 @@ export default function CompleteProfilePage() {
     resolver: zodResolver(completeProfileSchema),
   });
 
-  const onSubmit = async (data: CompleteProfileForm) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/complete-profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Failed to complete profile');
-      }
-
-      const result = await response.json();
-      
-      // Update auth state with new token (includes updated name claims)
-      setAuth(result.user, result.accessToken, result.refreshToken, true);
-
-      toast('Profile completed!', {
-        description: 'Welcome to Video Manager',
-      });
-
-      // Redirect to home
-      router.push('/videos');
-    } catch (error) {
-      toast.error('Error', {
-        description: error instanceof Error ? error.message : 'Failed to complete profile',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmit = (data: CompleteProfileForm) => {
+    completeProfile.mutate(data, {
+      onSuccess: () =>
+        toast.success('Profile completed!', {
+          description: 'Welcome to Video Manager',
+        }),
+      onError: (error) =>
+        toast.error('Error', {
+          description: error instanceof Error ? error.message : 'Failed to complete profile',
+        }),
+    });
   };
 
   return (
@@ -92,7 +64,7 @@ export default function CompleteProfilePage() {
               <Input
                 id="firstName"
                 {...register('firstName')}
-                disabled={isLoading}
+                disabled={completeProfile.isPending}
               />
               {errors.firstName && (
                 <p className="text-sm text-destructive">{errors.firstName.message}</p>
@@ -104,15 +76,15 @@ export default function CompleteProfilePage() {
               <Input
                 id="lastName"
                 {...register('lastName')}
-                disabled={isLoading}
+                disabled={completeProfile.isPending}
               />
               {errors.lastName && (
                 <p className="text-sm text-destructive">{errors.lastName.message}</p>
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Complete Profile'}
+            <Button type="submit" className="w-full" disabled={completeProfile.isPending}>
+              {completeProfile.isPending ? 'Saving...' : 'Complete Profile'}
             </Button>
           </form>
         </CardContent>

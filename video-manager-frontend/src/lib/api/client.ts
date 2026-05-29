@@ -2,6 +2,7 @@ import type {
   AuthResponse,
   LoginRequest,
   RegisterRequest,
+  CompleteProfileRequest,
   TagDto,
   TagsResponse,
   CreateTagRequest,
@@ -30,10 +31,15 @@ import type {
   UpdateCollectionItemNoteResponse,
   PersonDto,
   PeopleResponse,
-  PersonDetailResponse
+  PersonDetailResponse,
+  AdminUsersResponse,
+  AdminInvitesResponse,
+  CreateInviteResponse,
 } from './types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+// In production (unified container), NEXT_PUBLIC_API_URL is unset so requests are relative —
+// nginx routes /api/* to the backend. In dev, set via .env to http://localhost:5001.
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 class ApiClient {
   private baseUrl: string;
@@ -131,6 +137,55 @@ class ApiClient {
     return this.request<AuthResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async acceptInvite(token: string, password: string): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/api/auth/accept-invite', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    });
+  }
+
+  async completeProfile(data: CompleteProfileRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/api/auth/complete-profile', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Admin methods
+  async getAdminUsers(): Promise<AdminUsersResponse> {
+    return this.request<AdminUsersResponse>('/api/admin/users');
+  }
+
+  async getAdminInvites(): Promise<AdminInvitesResponse> {
+    return this.request<AdminInvitesResponse>('/api/admin/invites');
+  }
+
+  async blockUser(userId: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(`/api/admin/users/${userId}/block`, {
+      method: 'POST',
+    });
+  }
+
+  async unblockUser(userId: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(`/api/admin/users/${userId}/unblock`, {
+      method: 'POST',
+    });
+  }
+
+  async changeUserRole(userId: string, role: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(`/api/admin/users/${userId}/role`, {
+      method: 'PUT',
+      body: JSON.stringify({ userId, role }),
+    });
+  }
+
+  async createInvite(email: string): Promise<CreateInviteResponse> {
+    return this.request<CreateInviteResponse>('/api/admin/invites', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
     });
   }
 

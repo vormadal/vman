@@ -9,7 +9,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class WorkflowCreateDto : IAdditionalDataHolder, IParsable
+    public partial class WorkflowShareResponseDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
@@ -22,8 +22,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Workflow enabled</summary>
-        public bool? Enabled { get; set; }
         /// <summary>Workflow name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -32,32 +30,32 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Name { get; set; }
 #endif
-        /// <summary>The steps property</summary>
+        /// <summary>Workflow steps</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>? Steps { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareStepDto>? Steps { get; set; }
 #nullable restore
 #else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto> Steps { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareStepDto> Steps { get; set; }
 #endif
         /// <summary>Plugin trigger type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger? Trigger { get; set; }
         /// <summary>
-        /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto"/> and sets the default values.
+        /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareResponseDto"/> and sets the default values.
         /// </summary>
-        public WorkflowCreateDto()
+        public WorkflowShareResponseDto()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto"/></returns>
+        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareResponseDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareResponseDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto();
+            return new global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareResponseDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -68,9 +66,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "enabled", n => { Enabled = n.GetBoolValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareStepDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareStepDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "trigger", n => { Trigger = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>(); } },
             };
         }
@@ -82,9 +79,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("description", Description);
-            writer.WriteBoolValue("enabled", Enabled);
             writer.WriteStringValue("name", Name);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>("steps", Steps);
+            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowShareStepDto>("steps", Steps);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>("trigger", Trigger);
             writer.WriteAdditionalData(AdditionalData);
         }

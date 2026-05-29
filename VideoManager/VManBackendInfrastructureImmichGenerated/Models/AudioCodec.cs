@@ -15,10 +15,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         Aac,
         #pragma warning restore CS1591
-        [EnumMember(Value = "libopus")]
-        #pragma warning disable CS1591
-        Libopus,
-        #pragma warning restore CS1591
         [EnumMember(Value = "opus")]
         #pragma warning disable CS1591
         Opus,

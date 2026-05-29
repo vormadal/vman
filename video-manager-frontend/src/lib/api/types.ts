@@ -243,6 +243,56 @@ export interface BulkAddFilteredItemsResponse {
   skippedCount: number;
 }
 
+// Admin types
+export interface AdminUserDto {
+  id: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  role: string;
+  isBlocked: boolean;
+  isProfileComplete: boolean;
+  createdAt: string;
+  lastLoginAt?: string | null;
+}
+
+export interface AdminUsersResponse {
+  users: AdminUserDto[];
+}
+
+export interface AdminInviteDto {
+  id: string;
+  email: string;
+  token: string;
+  createdAt: string;
+  usedAt?: string | null;
+  expiresAt: string;
+  isExpired: boolean;
+  isUsed: boolean;
+}
+
+export interface AdminInvitesResponse {
+  invites: AdminInviteDto[];
+}
+
+export interface CreateInviteRequest {
+  email: string;
+}
+
+export interface CreateInviteResponse {
+  inviteUrl: string;
+}
+
+export interface AcceptInviteRequest {
+  token: string;
+  password: string;
+}
+
+export interface CompleteProfileRequest {
+  firstName: string;
+  lastName: string;
+}
+
 // People types
 export interface PersonDto {
   id: string;

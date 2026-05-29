@@ -9,12 +9,12 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class WorkflowCreateDto : IAdditionalDataHolder, IParsable
+    public partial class PluginTemplateResponseDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>Workflow description</summary>
+        /// <summary>Template description</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Description { get; set; }
@@ -22,42 +22,56 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Description { get; set; }
 #endif
-        /// <summary>Workflow enabled</summary>
-        public bool? Enabled { get; set; }
-        /// <summary>Workflow name</summary>
+        /// <summary>Template key (unique across all templates)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Name { get; set; }
+        public string? Key { get; set; }
 #nullable restore
 #else
-        public string Name { get; set; }
+        public string Key { get; set; }
 #endif
-        /// <summary>The steps property</summary>
+        /// <summary>Workflow steps</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>? Steps { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateStepResponseDto>? Steps { get; set; }
 #nullable restore
 #else
-        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto> Steps { get; set; }
+        public List<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateStepResponseDto> Steps { get; set; }
+#endif
+        /// <summary>Template title</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Title { get; set; }
+#nullable restore
+#else
+        public string Title { get; set; }
 #endif
         /// <summary>Plugin trigger type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger? Trigger { get; set; }
+        /// <summary>Ui hints, for example &quot;smart-album&quot;</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<string>? UiHints { get; set; }
+#nullable restore
+#else
+        public List<string> UiHints { get; set; }
+#endif
         /// <summary>
-        /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto"/> and sets the default values.
+        /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateResponseDto"/> and sets the default values.
         /// </summary>
-        public WorkflowCreateDto()
+        public PluginTemplateResponseDto()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto"/></returns>
+        /// <returns>A <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateResponseDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateResponseDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowCreateDto();
+            return new global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateResponseDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -68,10 +82,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "enabled", n => { Enabled = n.GetBoolValue(); } },
-                { "name", n => { Name = n.GetStringValue(); } },
-                { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "key", n => { Key = n.GetStringValue(); } },
+                { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateStepResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateStepResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "title", n => { Title = n.GetStringValue(); } },
                 { "trigger", n => { Trigger = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>(); } },
+                { "uiHints", n => { UiHints = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
         }
         /// <summary>
@@ -82,10 +97,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("description", Description);
-            writer.WriteBoolValue("enabled", Enabled);
-            writer.WriteStringValue("name", Name);
-            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>("steps", Steps);
+            writer.WriteStringValue("key", Key);
+            writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginTemplateStepResponseDto>("steps", Steps);
+            writer.WriteStringValue("title", Title);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>("trigger", Trigger);
+            writer.WriteCollectionOfPrimitiveValues<string>("uiHints", UiHints);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -30,6 +30,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public List<string> Country { get; set; }
 #endif
+        /// <summary>Array of UTC timestamps when each asset was originally uploaded to Immich</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<string>? CreatedAt { get; set; }
+#nullable restore
+#else
+        public List<string> CreatedAt { get; set; }
+#endif
         /// <summary>Array of video/gif durations in milliseconds (null for static images)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -185,6 +193,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "city", n => { City = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "country", n => { Country = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "createdAt", n => { CreatedAt = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "duration", n => { Duration = n.GetCollectionOfPrimitiveValues<int?>()?.AsList(); } },
                 { "fileCreatedAt", n => { FileCreatedAt = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "id", n => { Id = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
@@ -212,6 +221,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfPrimitiveValues<string>("city", City);
             writer.WriteCollectionOfPrimitiveValues<string>("country", Country);
+            writer.WriteCollectionOfPrimitiveValues<string>("createdAt", CreatedAt);
             writer.WriteCollectionOfPrimitiveValues<int?>("duration", Duration);
             writer.WriteCollectionOfPrimitiveValues<string>("fileCreatedAt", FileCreatedAt);
             writer.WriteCollectionOfPrimitiveValues<string>("id", Id);

@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Buckets
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BucketsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", pathParameters)
+        public BucketsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,orderBy*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Buckets
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public BucketsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", rawUrl)
+        public BucketsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/timeline/buckets{?albumId*,bbox*,isFavorite*,isTrashed*,key*,order*,orderBy*,personId*,slug*,tagId*,userId*,visibility*,withCoordinates*,withPartners*,withStacked*}", rawUrl)
         {
         }
         /// <summary>
@@ -128,6 +128,20 @@ namespace VManBackend.Infrastructure.Immich.Generated.Timeline.Buckets
             /// <summary>Sort order for assets within time buckets (ASC for oldest first, DESC for newest first)</summary>
             [QueryParameter("order")]
             public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder? OrderAsAssetOrder { get; set; }
+            /// <summary>Date to group and order assets by (takenAt for date taken, createdAt for date added to Immich)</summary>
+            [Obsolete("This property is deprecated, use OrderByAsAssetOrderBy instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("orderBy")]
+            public string? OrderBy { get; set; }
+#nullable restore
+#else
+            [QueryParameter("orderBy")]
+            public string OrderBy { get; set; }
+#endif
+            /// <summary>Date to group and order assets by (takenAt for date taken, createdAt for date added to Immich)</summary>
+            [QueryParameter("orderBy")]
+            public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrderBy? OrderByAsAssetOrderBy { get; set; }
             /// <summary>Filter assets containing a specific person (face recognition)</summary>
             [QueryParameter("personId")]
             public Guid? PersonId { get; set; }

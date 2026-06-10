@@ -7,12 +7,16 @@ const PUBLIC_ROUTES = ['/login', '/accept-invite'];
 // Routes that don't require profile completion
 const PROFILE_EXEMPT_ROUTES = ['/complete-profile'];
 
-// NextResponse.redirect requires an absolute URL, which breaks behind a reverse
-// proxy because request.url resolves to the internal Node address (localhost:3000).
-// A relative Location header is valid HTTP — the browser resolves it against the
-// URL it already has, so this works correctly regardless of how the app is hosted.
-function relativeRedirect(path: string) {
-  return new Response(null, { status: 307, headers: { Location: path } });
+// In standalone (Node runtime) behind a reverse proxy, request.url resolves to the
+// internal listen address (e.g. http://localhost:3000) and is not a usable public base,
+// so new URL(path, request.url) sends the browser to localhost or throws ERR_INVALID_URL.
+// Next.js also re-parses the response's Location through new URL(), so a relative Location
+// throws too. Build an absolute URL from the proxy's forwarded headers, which carry the
+// real public origin (nginx sets X-Forwarded-Host / X-Forwarded-Proto).
+function redirect(request: NextRequest, path: string) {
+  const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host');
+  const proto = request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol.replace(':', '');
+  return NextResponse.redirect(`${proto}://${host}${path}`);
 }
 
 export function proxy(request: NextRequest) {
@@ -42,17 +46,17 @@ export function proxy(request: NextRequest) {
 
   // Redirect to login if accessing protected route without auth
   if (!isPublicRoute && !isAuthenticated) {
-    return relativeRedirect(`/login?redirect=${encodeURIComponent(pathname)}`);
+    return redirect(request, `/login?redirect=${encodeURIComponent(pathname)}`);
   }
 
   // Redirect to profile completion if authenticated but profile incomplete
   if (isAuthenticated && !isProfileComplete && !isProfileExempt) {
-    return relativeRedirect('/complete-profile');
+    return redirect(request, '/complete-profile');
   }
 
   // Redirect to home if accessing auth pages while logged in with complete profile
   if (isPublicRoute && isAuthenticated && isProfileComplete) {
-    return relativeRedirect('/videos');
+    return redirect(request, '/videos');
   }
 
   return NextResponse.next();

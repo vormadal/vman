@@ -35,15 +35,16 @@ public static class RemoveItemFromCollection
     {
         public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
         {
-            // Use a transaction to ensure atomic removal and reordering
-            await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-            
-            try
+            var strategy = db.Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
             {
+                await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+
                 var collectionItem = await db.CollectionItems
-                    .FirstOrDefaultAsync(ci => 
-                        ci.CollectionId == request.CollectionId && 
-                        ci.Id == request.ItemId, 
+                    .FirstOrDefaultAsync(ci =>
+                        ci.CollectionId == request.CollectionId &&
+                        ci.Id == request.ItemId,
                         cancellationToken);
 
                 if (collectionItem == null)
@@ -55,7 +56,6 @@ public static class RemoveItemFromCollection
 
                 db.CollectionItems.Remove(collectionItem);
 
-                // Reorder remaining items to fill the gap
                 var itemsToReorder = await db.CollectionItems
                     .Where(ci => ci.CollectionId == request.CollectionId && ci.Order > removedOrder)
                     .ToListAsync(cancellationToken);
@@ -65,23 +65,17 @@ public static class RemoveItemFromCollection
                     item.Order--;
                 }
 
-                // Update collection's UpdatedAt timestamp
                 var collection = await db.Collections.FindAsync([request.CollectionId], cancellationToken);
                 if (collection != null)
                 {
-                    collection.UpdatedAt = DateTime.UtcNow;
+                    collection.UpdatedAt = DateTimeOffset.UtcNow;
                 }
 
                 await db.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
 
                 return new Response(true);
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                throw;
-            }
+            });
         }
     }
 }

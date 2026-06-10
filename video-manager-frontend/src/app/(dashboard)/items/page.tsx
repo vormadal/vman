@@ -256,13 +256,22 @@ export default function ItemsPage() {
         </div>
 
         {/* Filter bar */}
-        <div className="mb-6" ref={filterContainerRef}>
+        <div
+          className="mb-6"
+          ref={filterContainerRef}
+          onBlurCapture={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+              setFilterDropdownOpen(false);
+              setFilterSearch('');
+            }
+          }}
+        >
           <div className="flex flex-wrap items-center gap-2">
             {/* Active filter badges */}
             {selectedMediaType && (
               <Badge className="gap-1 pl-2 pr-1 h-7">
                 {getMediaTypeIcon(selectedMediaType)}
-                <span className="ml-1">{selectedMediaType}</span>
+                <span className="ml-1">{MEDIA_TYPE_OPTIONS.find(o => o.type === selectedMediaType)?.label ?? selectedMediaType}</span>
                 <button
                   onClick={() => setSelectedMediaType(undefined)}
                   className="ml-1 hover:opacity-70"

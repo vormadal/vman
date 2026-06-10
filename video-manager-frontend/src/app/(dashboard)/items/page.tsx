@@ -83,7 +83,8 @@ export default function ItemsPage() {
   const filteredPeople = (peopleData?.people ?? [])
     .filter(p => !p.isHidden)
     .filter(p => !filterSearch || (p.name ?? '').toLowerCase().includes(filterSearch.toLowerCase()))
-    .slice(0, 3);
+    .sort((a, b) => b.itemCount - a.itemCount)
+    .slice(0, filterSearch ? 10 : 3);
 
   const handleBulkAddFiltered = async () => {
     if (!activeCollectionId) return;

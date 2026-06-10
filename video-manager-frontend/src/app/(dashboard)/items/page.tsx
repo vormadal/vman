@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useInfiniteItems, useTags, useRemoveTagFromItem, useCreateTag, useAddItemToCollection, useBulkAddFilteredItemsToCollection, usePeople } from '@/lib/hooks/useApi';
 import { MediaType } from '@/lib/api/types';
@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, User as UserIcon, Tags } from 'lucide-react';
+import { Plus, X, Tag as TagIcon, Image as ImageIcon, Video as VideoIcon, Music as MusicIcon, File as FileIcon, FolderPlus, User as UserIcon, Tags, Search, Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { AuthenticatedImage } from '@/components/ui/authenticated-image';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { useToast } from '@/hooks/use-toast';
@@ -19,12 +20,22 @@ import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
 
 const MAX_DISPLAYED_BADGES = 10;
 
+const MEDIA_TYPE_OPTIONS = [
+  { type: MediaType.Image, label: 'Images' },
+  { type: MediaType.Video, label: 'Videos' },
+  { type: MediaType.Audio, label: 'Audio' },
+];
+
 export default function ItemsPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<MediaType | undefined>();
   const [selectedTagId, setSelectedTagId] = useState<string | undefined>();
   const [selectedPersonId, setSelectedPersonId] = useState<string | undefined>();
   const [newTagName, setNewTagName] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
+  const [filterSearch, setFilterSearch] = useState('');
+  const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
+  const filterInputRef = useRef<HTMLInputElement>(null);
+  const filterContainerRef = useRef<HTMLDivElement>(null);
 
   const { isActive: collectionModeActive, activeCollectionId, enterCollectionMode, exitCollectionMode } = useCollectionModeStore();
   const searchParams = useSearchParams();
@@ -59,6 +70,19 @@ export default function ItemsPage() {
   const { toast } = useToast();
 
   const hasActiveFilter = !!(selectedMediaType || selectedTagId || selectedPersonId);
+
+  const filteredMediaTypes = MEDIA_TYPE_OPTIONS.filter(opt =>
+    !filterSearch || opt.label.toLowerCase().includes(filterSearch.toLowerCase())
+  );
+
+  const filteredTags = (tagsData?.tags ?? [])
+    .filter(tag => !filterSearch || tag.name.toLowerCase().includes(filterSearch.toLowerCase()))
+    .slice(0, 3);
+
+  const filteredPeople = (peopleData?.people ?? [])
+    .filter(p => !p.isHidden)
+    .filter(p => !filterSearch || (p.name ?? '').toLowerCase().includes(filterSearch.toLowerCase()))
+    .slice(0, 3);
 
   const handleBulkAddFiltered = async () => {
     if (!activeCollectionId) return;
@@ -132,7 +156,6 @@ export default function ItemsPage() {
   const handleCreateTag = () => {
     if (!newTagName.trim()) return;
 
-    // Check for exact match (case insensitive) in all tags
     const exactMatch = tagsData?.tags.find(
       tag => tag.name.toLowerCase() === newTagName.trim().toLowerCase()
     );
@@ -230,110 +253,188 @@ export default function ItemsPage() {
           </div>
         </div>
 
-        {/* Media Type Filter */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <FileIcon className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-sm font-semibold text-muted-foreground">Media Type</h2>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge
-              variant={selectedMediaType === undefined ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedMediaType(undefined)}
-            >
-              All
-            </Badge>
-            <Badge
-              variant={selectedMediaType === MediaType.Image ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedMediaType(selectedMediaType === MediaType.Image ? undefined : MediaType.Image)}
-            >
-              <ImageIcon className="h-3 w-3 mr-1" />
-              Images
-            </Badge>
-            <Badge
-              variant={selectedMediaType === MediaType.Video ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedMediaType(selectedMediaType === MediaType.Video ? undefined : MediaType.Video)}
-            >
-              <VideoIcon className="h-3 w-3 mr-1" />
-              Videos
-            </Badge>
-            <Badge
-              variant={selectedMediaType === MediaType.Audio ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedMediaType(selectedMediaType === MediaType.Audio ? undefined : MediaType.Audio)}
-            >
-              <MusicIcon className="h-3 w-3 mr-1" />
-              Audio
-            </Badge>
-          </div>
-        </div>
-
-        {/* Tag Filter */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <TagIcon className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-sm font-semibold text-muted-foreground">Filter by Tag</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsAddingTag(true)}
-              className="ml-auto"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              New Tag
-            </Button>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge
-              variant={selectedTagId === undefined ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedTagId(undefined)}
-            >
-              All
-            </Badge>
-            {tagsData?.tags?.map((tag) => (
-              <Badge
-                key={tag.id}
-                variant={selectedTagId === tag.id ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => setSelectedTagId(selectedTagId === tag.id ? undefined : tag.id)}
-              >
-                {tag.name} ({tag.itemCount})
+        {/* Filter bar */}
+        <div className="mb-6" ref={filterContainerRef}>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Active filter badges */}
+            {selectedMediaType && (
+              <Badge className="gap-1 pl-2 pr-1 h-7">
+                {getMediaTypeIcon(selectedMediaType)}
+                <span className="ml-1">{selectedMediaType}</span>
+                <button
+                  onClick={() => setSelectedMediaType(undefined)}
+                  className="ml-1 hover:opacity-70"
+                  aria-label="Remove media type filter"
+                >
+                  <X className="h-3 w-3" />
+                </button>
               </Badge>
-            ))}
-          </div>
-        </div>
+            )}
+            {selectedTagId && (() => {
+              const tag = tagsData?.tags.find(t => t.id === selectedTagId);
+              return tag ? (
+                <Badge className="gap-1 pl-2 pr-1 h-7">
+                  <TagIcon className="h-3 w-3" />
+                  <span className="ml-1">{tag.name}</span>
+                  <button
+                    onClick={() => setSelectedTagId(undefined)}
+                    className="ml-1 hover:opacity-70"
+                    aria-label="Remove tag filter"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ) : null;
+            })()}
+            {selectedPersonId && (() => {
+              const person = peopleData?.people?.find(p => p.id === selectedPersonId);
+              return person ? (
+                <Badge className="gap-1 pl-2 pr-1 h-7">
+                  <UserIcon className="h-3 w-3" />
+                  <span className="ml-1">{person.name}</span>
+                  <button
+                    onClick={() => setSelectedPersonId(undefined)}
+                    className="ml-1 hover:opacity-70"
+                    aria-label="Remove person filter"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ) : null;
+            })()}
 
-        {/* People Filter */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <UserIcon className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-sm font-semibold text-muted-foreground">Filter by Person</h2>
-          </div>
+            {/* Search input with suggestions dropdown */}
+            <div className="relative">
+              <div className="relative flex items-center">
+                <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                <Input
+                  ref={filterInputRef}
+                  value={filterSearch}
+                  onChange={(e) => setFilterSearch(e.target.value)}
+                  onFocus={() => setFilterDropdownOpen(true)}
+                  onBlur={(e) => {
+                    if (!filterContainerRef.current?.contains(e.relatedTarget as Node)) {
+                      setFilterDropdownOpen(false);
+                      setFilterSearch('');
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setFilterDropdownOpen(false);
+                      setFilterSearch('');
+                      filterInputRef.current?.blur();
+                    }
+                  }}
+                  placeholder="Add filter..."
+                  className="pl-8 h-7 w-44 text-sm"
+                />
+              </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Badge
-              variant={selectedPersonId === undefined ? 'default' : 'outline'}
-              className="cursor-pointer"
-              onClick={() => setSelectedPersonId(undefined)}
-            >
-              All
-            </Badge>
-            {peopleData?.people?.filter(p => !p.isHidden).map((person) => (
-              <Badge
-                key={person.id}
-                variant={selectedPersonId === person.id ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => setSelectedPersonId(selectedPersonId === person.id ? undefined : person.id)}
-              >
-                {person.name} ({person.itemCount})
-              </Badge>
-            ))}
+              {/* Suggestions dropdown */}
+              {filterDropdownOpen && (
+                <div className="absolute top-full left-0 mt-1 w-64 bg-popover border rounded-md shadow-md z-50 py-1 text-popover-foreground">
+                  {filteredMediaTypes.length > 0 && (
+                    <>
+                      <p className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Media Type</p>
+                      {filteredMediaTypes.map(opt => (
+                        <button
+                          key={opt.type}
+                          className={cn(
+                            'w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
+                            selectedMediaType === opt.type && 'bg-accent text-accent-foreground'
+                          )}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setSelectedMediaType(selectedMediaType === opt.type ? undefined : opt.type);
+                            setFilterSearch('');
+                            setFilterDropdownOpen(false);
+                          }}
+                        >
+                          {getMediaTypeIcon(opt.type)}
+                          <span>{opt.label}</span>
+                          {selectedMediaType === opt.type && <Check className="h-3 w-3 ml-auto" />}
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {filteredTags.length > 0 && (
+                    <>
+                      <p className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Tags</p>
+                      {filteredTags.map(tag => (
+                        <button
+                          key={tag.id}
+                          className={cn(
+                            'w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
+                            selectedTagId === tag.id && 'bg-accent text-accent-foreground'
+                          )}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setSelectedTagId(selectedTagId === tag.id ? undefined : tag.id);
+                            setFilterSearch('');
+                            setFilterDropdownOpen(false);
+                          }}
+                        >
+                          <TagIcon className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{tag.name}</span>
+                          <span className="ml-auto text-xs text-muted-foreground shrink-0">{tag.itemCount}</span>
+                          {selectedTagId === tag.id && <Check className="h-3 w-3 shrink-0" />}
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {filteredPeople.length > 0 && (
+                    <>
+                      <p className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">People</p>
+                      {filteredPeople.map(person => (
+                        <button
+                          key={person.id}
+                          className={cn(
+                            'w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
+                            selectedPersonId === person.id && 'bg-accent text-accent-foreground'
+                          )}
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setSelectedPersonId(selectedPersonId === person.id ? undefined : person.id);
+                            setFilterSearch('');
+                            setFilterDropdownOpen(false);
+                          }}
+                        >
+                          <UserIcon className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{person.name}</span>
+                          <span className="ml-auto text-xs text-muted-foreground shrink-0">{person.itemCount}</span>
+                          {selectedPersonId === person.id && <Check className="h-3 w-3 shrink-0" />}
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {filteredMediaTypes.length === 0 && filteredTags.length === 0 && filteredPeople.length === 0 && (
+                    <p className="px-3 py-2 text-sm text-muted-foreground">No filters found</p>
+                  )}
+
+                  {filterSearch.trim() && !tagsData?.tags.some(t => t.name.toLowerCase() === filterSearch.trim().toLowerCase()) && (
+                    <>
+                      <div className="border-t my-1" />
+                      <button
+                        className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          setNewTagName(filterSearch.trim());
+                          setIsAddingTag(true);
+                          setFilterSearch('');
+                          setFilterDropdownOpen(false);
+                        }}
+                      >
+                        <Plus className="h-3 w-3" />
+                        <span>Create tag &quot;{filterSearch.trim()}&quot;</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -543,13 +644,14 @@ export default function ItemsPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground mb-4">
-                {selectedMediaType || selectedTagId ? 'No items found with the selected filters' : 'No items found'}
+                {hasActiveFilter ? 'No items found with the selected filters' : 'No items found'}
               </p>
-              {(selectedMediaType || selectedTagId) && (
+              {hasActiveFilter && (
                 <Button
                   onClick={() => {
                     setSelectedMediaType(undefined);
                     setSelectedTagId(undefined);
+                    setSelectedPersonId(undefined);
                   }}
                   variant="outline"
                 >

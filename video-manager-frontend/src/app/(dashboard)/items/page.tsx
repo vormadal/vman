@@ -77,7 +77,8 @@ export default function ItemsPage() {
 
   const filteredTags = (tagsData?.tags ?? [])
     .filter(tag => !filterSearch || tag.name.toLowerCase().includes(filterSearch.toLowerCase()))
-    .slice(0, 3);
+    .sort((a, b) => b.itemCount - a.itemCount)
+    .slice(0, filterSearch ? 10 : 3);
 
   const filteredPeople = (peopleData?.people ?? [])
     .filter(p => !p.isHidden)

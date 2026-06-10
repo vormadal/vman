@@ -68,7 +68,7 @@ public static class RemoveItemFromCollection
                 var collection = await db.Collections.FindAsync([request.CollectionId], cancellationToken);
                 if (collection != null)
                 {
-                    collection.UpdatedAt = DateTimeOffset.UtcNow;
+                    collection.UpdatedAt = DateTimeOffset.UtcNow.UtcDateTime;
                 }
 
                 await db.SaveChangesAsync(cancellationToken);

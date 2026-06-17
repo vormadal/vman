@@ -359,6 +359,7 @@ export default function ItemsPage() {
                             setSelectedMediaType(selectedMediaType === opt.type ? undefined : opt.type);
                             setFilterSearch('');
                             setFilterDropdownOpen(false);
+                            filterInputRef.current?.blur();
                           }}
                         >
                           {getMediaTypeIcon(opt.type)}
@@ -384,6 +385,7 @@ export default function ItemsPage() {
                             setSelectedTagId(selectedTagId === tag.id ? undefined : tag.id);
                             setFilterSearch('');
                             setFilterDropdownOpen(false);
+                            filterInputRef.current?.blur();
                           }}
                         >
                           <TagIcon className="h-3 w-3 shrink-0" />
@@ -410,6 +412,7 @@ export default function ItemsPage() {
                             setSelectedPersonId(selectedPersonId === person.id ? undefined : person.id);
                             setFilterSearch('');
                             setFilterDropdownOpen(false);
+                            filterInputRef.current?.blur();
                           }}
                         >
                           <UserIcon className="h-3 w-3 shrink-0" />
@@ -425,7 +428,7 @@ export default function ItemsPage() {
                     <p className="px-3 py-2 text-sm text-muted-foreground">No filters found</p>
                   )}
 
-                  {filterSearch.trim() && !tagsData?.tags.some(t => t.name.toLowerCase() === filterSearch.trim().toLowerCase()) && (
+                  {filterSearch.trim() && tagsData && !tagsData.tags.some(t => t.name.toLowerCase() === filterSearch.trim().toLowerCase()) && (
                     <>
                       <div className="border-t my-1" />
                       <button
@@ -436,6 +439,7 @@ export default function ItemsPage() {
                           setIsAddingTag(true);
                           setFilterSearch('');
                           setFilterDropdownOpen(false);
+                          filterInputRef.current?.blur();
                         }}
                       >
                         <Plus className="h-3 w-3" />

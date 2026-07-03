@@ -9,6 +9,9 @@ paths:
 
 - `IImmichService` / `ImmichService`: Interface and implementation for Immich API
 - `StubImmichService`: Mock implementation for development (enabled via `USE_STUB_IMMICH=true`)
+- `ImmichBootstrapper`: Bootstraps an Immich API key via admin-sign-up/login/api-keys when
+  `IMMICH_API_KEY` isn't supplied -- runs once at startup in `Program.cs`, not through the
+  generated client (keeps it dependency-free and easy to reason about)
 - `Generated/`: Kiota-generated client from Immich OpenAPI spec -- do NOT edit manually
 
 ## Media Providers (`Infrastructure/Providers/`)

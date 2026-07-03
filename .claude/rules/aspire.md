@@ -22,7 +22,11 @@ This starts all services:
 ## Configuration
 
 - `USE_STUB_IMMICH`: Set to `"true"` for mock Immich (no real Immich server needed)
-- `IMMICH_API_KEY`: Immich API key (stored as Aspire secret parameter)
+- `IMMICH_API_KEY`: Optional. If left empty, the backend bootstraps one itself against
+  `Immich:BaseUrl` via admin-sign-up/login/api-key calls -- see `ImmichBootstrapper`. Requires
+  `IMMICH_ADMIN_PASSWORD` when bootstrapping.
+- `IMMICH_ADMIN_PASSWORD`: Password for the Immich bootstrap admin account (only needed when
+  `IMMICH_API_KEY` isn't supplied and `USE_STUB_IMMICH` is `"false"`)
 - `TestUser:Email` / `TestUser:Password`: Auto-injected test credentials for both API and frontend
 
 ## Rules

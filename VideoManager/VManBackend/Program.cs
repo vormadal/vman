@@ -156,20 +156,10 @@ builder.Services.AddOpenApi(options =>
 });
 
 // Add Immich client
-var useStubImmich = Environment.GetEnvironmentVariable("USE_STUB_IMMICH") == "true";
 builder.Services.AddImmichClient(options =>
 {
-    if (!useStubImmich)
-    {
-        options.BaseUrl = builder.Configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl is not configured");
-        options.ApiKey = Environment.GetEnvironmentVariable("IMMICH_API_KEY") ?? throw new InvalidOperationException("IMMICH_API_KEY environment variable is required");
-    }
-    else
-    {
-        // Stub mode: API key and BaseUrl not required
-        options.BaseUrl = "http://stub";
-        options.ApiKey = "stub-key";
-    }
+    options.BaseUrl = builder.Configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl is not configured");
+    options.ApiKey = Environment.GetEnvironmentVariable("IMMICH_API_KEY") ?? throw new InvalidOperationException("IMMICH_API_KEY environment variable is required");
 });
 
 // Add Media Providers
@@ -230,8 +220,32 @@ await db.Database.MigrateAsync();
 await DbSeeder.SeedAdminUserAsync(db, config);
 
 if (app.Environment.IsDevelopment())
-{   
+{
     await DbSeeder.SeedTestUserAsync(db, config);
+}
+
+if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("IMMICH_API_KEY")))
+{
+    var adminPassword = Environment.GetEnvironmentVariable("IMMICH_ADMIN_PASSWORD");
+    if (string.IsNullOrWhiteSpace(adminPassword))
+    {
+        throw new InvalidOperationException(
+            "No IMMICH_API_KEY was supplied and IMMICH_ADMIN_PASSWORD is not set, so an Immich " +
+            "API key can't be bootstrapped automatically. Set one of the two.");
+    }
+
+    var bootstrapOptions = new ImmichBootstrapOptions
+    {
+        BaseUrl = config["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl is not configured"),
+        AdminEmail = config["Immich:Bootstrap:AdminEmail"] ?? "vman-bootstrap@example.com",
+        AdminPassword = adminPassword,
+        AdminName = config["Immich:Bootstrap:AdminName"] ?? "VMan Bootstrap Admin",
+        ApiKeyName = config["Immich:Bootstrap:ApiKeyName"] ?? "vman-backend",
+        CacheFilePath = Path.Combine(app.Environment.ContentRootPath, config["Immich:Bootstrap:ApiKeyCacheFile"] ?? ".immich-bootstrap/api-key")
+    };
+
+    var immichApiKey = await ImmichBootstrapper.EnsureApiKeyAsync(bootstrapOptions);
+    Environment.SetEnvironmentVariable("IMMICH_API_KEY", immichApiKey);
 }
 
 await app.RunAsync();

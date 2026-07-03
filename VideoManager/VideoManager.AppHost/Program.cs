@@ -8,7 +8,14 @@ var testUserEmail = builder.Configuration["TestUser:Email"]
 var testUserPassword = builder.Configuration["TestUser:Password"] 
     ?? builder.Configuration["TEST_USER_PASSWORD"] 
     ?? string.Empty;
-var immichApiKey = builder.AddParameter("immich-api-key", secret: true);
+// If IMMICH_API_KEY is left empty, the backend bootstraps one itself via Immich's admin
+// sign-up/login/api-key endpoints (see ImmichBootstrapper), using IMMICH_ADMIN_PASSWORD.
+var immichApiKey = builder.Configuration["Immich:ApiKey"]
+    ?? builder.Configuration["IMMICH_API_KEY"]
+    ?? string.Empty;
+var immichAdminPassword = builder.Configuration["Immich:AdminPassword"]
+    ?? builder.Configuration["IMMICH_ADMIN_PASSWORD"]
+    ?? string.Empty;
 
 var postgres = builder.AddPostgres("postgres")
     .WithDataVolume(isReadOnly: false)
@@ -16,14 +23,12 @@ var postgres = builder.AddPostgres("postgres")
     .WithEndpoint(port: 5432, targetPort: 5432, name: "postgres")
     .AddDatabase("videomanager");
 
-var useStubImmich = builder.Configuration["USE_STUB_IMMICH"] ?? "false";
-
 var apiService = builder.AddProject<Projects.VManBackend>("apiservice", launchProfileName: "http")
     .WithReference(postgres)
     .WithEnvironment("TEST_USER_EMAIL", testUserEmail)
     .WithEnvironment("TEST_USER_PASSWORD", testUserPassword)
-    .WithEnvironment("USE_STUB_IMMICH", useStubImmich)
     .WithEnvironment("IMMICH_API_KEY", immichApiKey)
+    .WithEnvironment("IMMICH_ADMIN_PASSWORD", immichAdminPassword)
     .WaitFor(postgres);
 
 // Add Next.js frontend

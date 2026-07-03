@@ -3,3 +3,4 @@ obj/
 bin/
 TestOutput/
 appsettings.Development.json
+.immich-bootstrap/

@@ -23,13 +23,10 @@ var postgres = builder.AddPostgres("postgres")
     .WithEndpoint(port: 5432, targetPort: 5432, name: "postgres")
     .AddDatabase("videomanager");
 
-var useStubImmich = builder.Configuration["USE_STUB_IMMICH"] ?? "false";
-
 var apiService = builder.AddProject<Projects.VManBackend>("apiservice", launchProfileName: "http")
     .WithReference(postgres)
     .WithEnvironment("TEST_USER_EMAIL", testUserEmail)
     .WithEnvironment("TEST_USER_PASSWORD", testUserPassword)
-    .WithEnvironment("USE_STUB_IMMICH", useStubImmich)
     .WithEnvironment("IMMICH_API_KEY", immichApiKey)
     .WithEnvironment("IMMICH_ADMIN_PASSWORD", immichAdminPassword)
     .WaitFor(postgres);

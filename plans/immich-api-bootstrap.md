@@ -27,14 +27,13 @@ database (fragile — would have to match Immich's internal key hashing and brea
   the flow above (no dependency on the generated Kiota client — keeps this isolated and easy
   to reason about). Idempotent: reuses the cached key file if present, tolerates a
   pre-existing admin account.
-- `Program.cs`: when not using the stub and no `IMMICH_API_KEY` is supplied, run the
-  bootstrapper once at startup (same place `DbSeeder` runs) and populate the env var that
-  `AddImmichClient` already reads.
+- `Program.cs`: when no `IMMICH_API_KEY` is supplied, run the bootstrapper once at startup
+  (same place `DbSeeder` runs) and populate the env var that `AddImmichClient` already reads.
 - `appsettings.json`: add non-secret bootstrap defaults (`Immich:Bootstrap:AdminEmail`,
   `AdminName`, `ApiKeyName`, `ApiKeyCacheFile`). The bootstrap admin password comes from
   `IMMICH_ADMIN_PASSWORD` only — never checked in.
 - `VideoManager.AppHost/Program.cs`: stop demanding an `immich-api-key` secret parameter up
   front; pass through `IMMICH_API_KEY`/`IMMICH_ADMIN_PASSWORD` if configured, otherwise leave
   empty so the backend bootstraps itself.
-- `StubImmichService` is unchanged — it's still the fast, no-Immich-required dev/test mode via
-  `USE_STUB_IMMICH=true`. This work only replaces how the *real* mode obtains its API key.
+- `StubImmichService` and the `USE_STUB_IMMICH` flag are removed entirely — the app now always
+  talks to a real Immich instance, obtaining its API key via the bootstrap flow above.

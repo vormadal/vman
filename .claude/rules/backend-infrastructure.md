@@ -7,8 +7,8 @@ paths:
 
 ## Immich Integration (`Infrastructure/Immich/`)
 
-- `IImmichService` / `ImmichService`: Interface and implementation for Immich API
-- `StubImmichService`: Mock implementation for development (enabled via `USE_STUB_IMMICH=true`)
+- `IImmichService` / `ImmichService`: Interface and implementation for Immich API. Always
+  talks to a real Immich instance -- there is no mock/stub implementation
 - `ImmichBootstrapper`: Bootstraps an Immich API key via admin-sign-up/login/api-keys when
   `IMMICH_API_KEY` isn't supplied -- runs once at startup in `Program.cs`, not through the
   generated client (keeps it dependency-free and easy to reason about)

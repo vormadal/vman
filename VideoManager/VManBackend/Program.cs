@@ -156,20 +156,10 @@ builder.Services.AddOpenApi(options =>
 });
 
 // Add Immich client
-var useStubImmich = Environment.GetEnvironmentVariable("USE_STUB_IMMICH") == "true";
 builder.Services.AddImmichClient(options =>
 {
-    if (!useStubImmich)
-    {
-        options.BaseUrl = builder.Configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl is not configured");
-        options.ApiKey = Environment.GetEnvironmentVariable("IMMICH_API_KEY") ?? throw new InvalidOperationException("IMMICH_API_KEY environment variable is required");
-    }
-    else
-    {
-        // Stub mode: API key and BaseUrl not required
-        options.BaseUrl = "http://stub";
-        options.ApiKey = "stub-key";
-    }
+    options.BaseUrl = builder.Configuration["Immich:BaseUrl"] ?? throw new InvalidOperationException("Immich BaseUrl is not configured");
+    options.ApiKey = Environment.GetEnvironmentVariable("IMMICH_API_KEY") ?? throw new InvalidOperationException("IMMICH_API_KEY environment variable is required");
 });
 
 // Add Media Providers
@@ -234,7 +224,7 @@ if (app.Environment.IsDevelopment())
     await DbSeeder.SeedTestUserAsync(db, config);
 }
 
-if (!useStubImmich && string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("IMMICH_API_KEY")))
+if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("IMMICH_API_KEY")))
 {
     var adminPassword = Environment.GetEnvironmentVariable("IMMICH_ADMIN_PASSWORD");
     if (string.IsNullOrWhiteSpace(adminPassword))

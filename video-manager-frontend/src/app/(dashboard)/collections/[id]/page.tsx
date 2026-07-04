@@ -48,6 +48,8 @@ function CollectionItemCard({
   const noteMutation = useUpdateCollectionItemNote();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Adjusting state during render (React's documented alternative to an effect
+  // for syncing state to a changing value): https://react.dev/reference/react/useState#storing-information-from-previous-renders
   if ((item.note ?? '') !== trackedNote) {
     setTrackedNote(item.note ?? '');
     setNoteValue(item.note ?? '');

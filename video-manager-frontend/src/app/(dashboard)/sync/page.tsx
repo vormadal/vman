@@ -73,7 +73,8 @@ export default function SyncPage() {
   const triggerSync = useTriggerSync();
   const cancelSync = useCancelSync();
 
-  // Adopt the job id reported by the status query when none is active yet
+  // Adjusting state during render (React's documented alternative to an effect
+  // for syncing state to a changing value): https://react.dev/reference/react/useState#storing-information-from-previous-renders
   if (syncStatus?.jobId !== trackedJobId) {
     setTrackedJobId(syncStatus?.jobId);
     if (syncStatus?.jobId && !activeJobId) {

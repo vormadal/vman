@@ -2,4 +2,5 @@
   <Project Path="VideoManager.AppHost/VideoManager.AppHost.csproj" />
   <Project Path="VideoManager.ServiceDefaults/VideoManager.ServiceDefaults.csproj" />
   <Project Path="VManBackend/VManBackend.csproj" />
+  <Project Path="VManBackend.Tests/VManBackend.Tests.csproj" />
 </Solution>

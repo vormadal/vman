@@ -44,12 +44,14 @@ function CollectionItemCard({
 }) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteValue, setNoteValue] = useState(item.note ?? '');
+  const [trackedNote, setTrackedNote] = useState(item.note ?? '');
   const noteMutation = useUpdateCollectionItemNote();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
+  if ((item.note ?? '') !== trackedNote) {
+    setTrackedNote(item.note ?? '');
     setNoteValue(item.note ?? '');
-  }, [item.note]);
+  }
 
   useEffect(() => {
     if (noteOpen) textareaRef.current?.focus();

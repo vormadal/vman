@@ -7,19 +7,17 @@ import { useAuthStore } from '@/lib/store/authStore';
  * before it's been loaded from localStorage.
  */
 export function useHydration() {
-  const [hydrated, setHydrated] = useState(false);
+  const [hydrated, setHydrated] = useState(() => useAuthStore.getState()._hasHydrated);
 
   useEffect(() => {
-    // Check if already hydrated
-    if (useAuthStore.getState()._hasHydrated) {
-      setHydrated(true);
+    if (hydrated) {
       return;
     }
 
     // Subscribe to state changes
     const unsubscribe = useAuthStore.subscribe(
       (state) => {
-        if (state._hasHydrated && !hydrated) {
+        if (state._hasHydrated) {
           setHydrated(true);
         }
       }

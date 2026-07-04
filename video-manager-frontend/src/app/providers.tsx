@@ -17,19 +17,17 @@ export function Providers({ children }: { children: ReactNode }) {
       })
   );
 
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(() => useAuthStore.getState()._hasHydrated);
 
   useEffect(() => {
-    // Check if already hydrated
-    if (useAuthStore.getState()._hasHydrated) {
-      setIsHydrated(true);
+    if (isHydrated) {
       return;
     }
 
     // Subscribe to hydration state changes
     const unsubscribe = useAuthStore.subscribe(
       (state) => {
-        if (state._hasHydrated && !isHydrated) {
+        if (state._hasHydrated) {
           setIsHydrated(true);
         }
       }

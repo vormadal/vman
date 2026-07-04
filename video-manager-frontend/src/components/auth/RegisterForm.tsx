@@ -27,8 +27,8 @@ export function RegisterForm() {
         password: data.password,
       },
       {
-        onError: (error: any) => {
-          toast.error(error?.message || 'Registration failed. Please try again.');
+        onError: (error: Error) => {
+          toast.error(error.message || 'Registration failed. Please try again.');
         },
       }
     );

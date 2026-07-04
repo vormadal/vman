@@ -60,6 +60,7 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function SyncPage() {
   const [activeJobId, setActiveJobId] = useState<string | undefined>();
+  const [trackedJobId, setTrackedJobId] = useState<string | undefined>();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -72,12 +73,13 @@ export default function SyncPage() {
   const triggerSync = useTriggerSync();
   const cancelSync = useCancelSync();
 
-  // Update activeJobId when a new sync is triggered
-  useEffect(() => {
+  // Adopt the job id reported by the status query when none is active yet
+  if (syncStatus?.jobId !== trackedJobId) {
+    setTrackedJobId(syncStatus?.jobId);
     if (syncStatus?.jobId && !activeJobId) {
       setActiveJobId(syncStatus.jobId);
     }
-  }, [syncStatus?.jobId, activeJobId]);
+  }
 
   // Invalidate items when sync completes
   useEffect(() => {

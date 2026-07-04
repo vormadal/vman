@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
 
 /**
@@ -7,24 +7,9 @@ import { useAuthStore } from '@/lib/store/authStore';
  * before it's been loaded from localStorage.
  */
 export function useHydration() {
-  const [hydrated, setHydrated] = useState(() => useAuthStore.getState()._hasHydrated);
-
-  useEffect(() => {
-    if (hydrated) {
-      return;
-    }
-
-    // Subscribe to state changes
-    const unsubscribe = useAuthStore.subscribe(
-      (state) => {
-        if (state._hasHydrated) {
-          setHydrated(true);
-        }
-      }
-    );
-
-    return () => unsubscribe();
-  }, [hydrated]);
-
-  return hydrated;
+  return useSyncExternalStore(
+    useAuthStore.subscribe,
+    () => useAuthStore.getState()._hasHydrated,
+    () => false
+  );
 }

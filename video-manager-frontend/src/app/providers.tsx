@@ -1,7 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useSyncExternalStore } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export function Providers({ children }: { children: ReactNode }) {
@@ -17,24 +17,11 @@ export function Providers({ children }: { children: ReactNode }) {
       })
   );
 
-  const [isHydrated, setIsHydrated] = useState(() => useAuthStore.getState()._hasHydrated);
-
-  useEffect(() => {
-    if (isHydrated) {
-      return;
-    }
-
-    // Subscribe to hydration state changes
-    const unsubscribe = useAuthStore.subscribe(
-      (state) => {
-        if (state._hasHydrated) {
-          setIsHydrated(true);
-        }
-      }
-    );
-
-    return () => unsubscribe();
-  }, [isHydrated]);
+  const isHydrated = useSyncExternalStore(
+    useAuthStore.subscribe,
+    () => useAuthStore.getState()._hasHydrated,
+    () => false
+  );
 
   // Show nothing until store is hydrated to prevent flash of wrong state
   if (!isHydrated) {

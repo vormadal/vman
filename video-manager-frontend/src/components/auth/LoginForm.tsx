@@ -19,8 +19,8 @@ export function LoginForm() {
 
   const onSubmit = (data: LoginInput) => {
     loginMutation.mutate(data, {
-      onError: (error: any) => {
-        toast.error(error?.message || 'Login failed. Please check your credentials.');
+      onError: (error: unknown) => {
+        toast.error(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
       },
     });
   };

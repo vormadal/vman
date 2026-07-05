@@ -21,7 +21,12 @@ public class JwtService : IJwtService
 
     public JwtService(IConfiguration configuration)
     {
-        _secretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured");
+        var secretKey = configuration["Jwt:SecretKey"];
+        if (string.IsNullOrWhiteSpace(secretKey))
+        {
+            throw new InvalidOperationException("JWT SecretKey is not configured");
+        }
+        _secretKey = secretKey;
         _issuer = configuration["Jwt:Issuer"] ?? "VManBackend";
         _audience = configuration["Jwt:Audience"] ?? "VManBackend";
         _expirationMinutes = int.TryParse(configuration["Jwt:ExpirationMinutes"], out var minutes) ? minutes : 60;

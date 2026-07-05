@@ -94,4 +94,19 @@ public class JwtServiceTests
 
         act.Should().Throw<InvalidOperationException>();
     }
+
+    [Fact]
+    public void Constructor_Throws_WhenSecretKeyBlank()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:SecretKey"] = "   "
+            })
+            .Build();
+
+        var act = () => new JwtService(config);
+
+        act.Should().Throw<InvalidOperationException>();
+    }
 }

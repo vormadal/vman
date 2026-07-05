@@ -26,3 +26,10 @@ Create a single Dockerfile that builds and runs both the Next.js frontend and .N
 2. Modify backend to serve static files from frontend build
 3. Create unified Dockerfile in repository root
 4. Test the build locally
+
+## Required Production Environment Variables
+
+See `.env.example` at the repository root for the full list (`Jwt__SecretKey`,
+`ConnectionStrings__videomanager`, `IMMICH_API_KEY`/`IMMICH_ADMIN_PASSWORD`).
+None of these have real-looking defaults in `appsettings.json` -- the app
+throws a startup error if `Jwt:SecretKey` is missing.

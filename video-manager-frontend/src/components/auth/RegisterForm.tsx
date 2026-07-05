@@ -9,12 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useRegister } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterInput } from '@/lib/validations/auth';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export function RegisterForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   });
+
+  const { toast } = useToast();
 
   const registerMutation = useRegister();
 

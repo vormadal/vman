@@ -8,12 +8,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLogin } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginInput } from '@/lib/validations/auth';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
+
+  const { toast } = useToast();
 
   const loginMutation = useLogin();
 

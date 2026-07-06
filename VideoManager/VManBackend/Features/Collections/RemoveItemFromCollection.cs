@@ -54,10 +54,11 @@ public static class RemoveItemFromCollection
 
                 var removedOrder = collectionItem.Order;
 
-                db.CollectionItems.Remove(collectionItem);
+                collectionItem.IsRemoved = true;
+                collectionItem.RemovedAt = DateTime.UtcNow;
 
                 var itemsToReorder = await db.CollectionItems
-                    .Where(ci => ci.CollectionId == request.CollectionId && ci.Order > removedOrder)
+                    .Where(ci => ci.CollectionId == request.CollectionId && ci.Order > removedOrder && !ci.IsRemoved)
                     .ToListAsync(cancellationToken);
 
                 foreach (var item in itemsToReorder)

@@ -108,7 +108,11 @@ export default function ItemsPage() {
           personId: selectedPersonId,
         },
       });
-      toast.success(`Added ${result.addedCount} item${result.addedCount !== 1 ? 's' : ''} to collection${result.skippedCount > 0 ? ` (${result.skippedCount} already present)` : ''}`);
+      const notes = [
+        result.skippedCount > 0 ? `${result.skippedCount} already present` : null,
+        result.skippedRemovedCount > 0 ? `${result.skippedRemovedCount} previously removed` : null,
+      ].filter(Boolean).join(', ');
+      toast.success(`Added ${result.addedCount} item${result.addedCount !== 1 ? 's' : ''} to collection${notes ? ` (${notes})` : ''}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to add items to collection');
     }

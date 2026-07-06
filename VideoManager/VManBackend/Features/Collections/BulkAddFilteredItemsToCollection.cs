@@ -16,7 +16,7 @@ public static class BulkAddFilteredItemsToCollection
         Guid? PersonId = null
     ) : IRequest<Response>;
 
-    public record Response(int AddedCount, int SkippedCount);
+    public record Response(int AddedCount, int SkippedCount, int SkippedRemovedCount);
 
     public class Validator
     {
@@ -80,18 +80,25 @@ public static class BulkAddFilteredItemsToCollection
                 .Select(i => new { i.ProviderName, i.ProviderItemId })
                 .ToListAsync(cancellationToken);
 
-            var existingItemIds = await db.CollectionItems
+            var existingItems = await db.CollectionItems
                 .Where(ci => ci.CollectionId == request.CollectionId && ci.ProviderName == providerName)
-                .Select(ci => ci.ProviderItemId)
-                .ToHashSetAsync(cancellationToken);
+                .Select(ci => new { ci.ProviderItemId, ci.IsRemoved })
+                .ToListAsync(cancellationToken);
+
+            var existingItemIds = existingItems.Select(ci => ci.ProviderItemId).ToHashSet();
+            var removedItemIds = existingItems.Where(ci => ci.IsRemoved).Select(ci => ci.ProviderItemId).ToHashSet();
 
             var maxOrder = await db.CollectionItems
-                .Where(ci => ci.CollectionId == request.CollectionId)
+                .Where(ci => ci.CollectionId == request.CollectionId && !ci.IsRemoved)
                 .MaxAsync(ci => (int?)ci.Order, cancellationToken) ?? -1;
 
+            // Previously-removed items are excluded here too: bulk-add-by-filter should never
+            // silently resurrect an item the user deliberately removed from the collection.
             var newItems = filteredItems
                 .Where(i => !existingItemIds.Contains(i.ProviderItemId))
                 .ToList();
+
+            var skippedRemovedCount = filteredItems.Count(i => removedItemIds.Contains(i.ProviderItemId));
 
             var order = maxOrder + 1;
             foreach (var item in newItems)
@@ -113,7 +120,9 @@ public static class BulkAddFilteredItemsToCollection
                 await db.SaveChangesAsync(cancellationToken);
             }
 
-            return new Response(newItems.Count, filteredItems.Count - newItems.Count);
+            var skippedCount = filteredItems.Count - newItems.Count - skippedRemovedCount;
+
+            return new Response(newItems.Count, skippedCount, skippedRemovedCount);
         }
     }
 }

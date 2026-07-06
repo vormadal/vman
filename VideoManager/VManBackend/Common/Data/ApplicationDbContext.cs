@@ -150,6 +150,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ProviderName).HasMaxLength(50).IsRequired();
             entity.Property(e => e.ProviderItemId).HasMaxLength(500).IsRequired();
             entity.Property(e => e.Order).IsRequired();
+            entity.Property(e => e.IsRemoved).IsRequired().HasDefaultValue(false);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
 
             // NOTE: CollectionItems reference Items table by ProviderName and ProviderItemId strings

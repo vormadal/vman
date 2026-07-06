@@ -9,7 +9,7 @@ public static class GetCollectionById
 {
     public record Request(Guid Id) : IRequest<Response>;
     
-    public record CollectionItemDto(Guid Id, string ProviderName, string ProviderItemId, int Order, string? Note, DateTime CreatedAt);
+    public record CollectionItemDto(Guid Id, string ProviderName, string ProviderItemId, int Order, string? Note, bool IsRemoved, DateTime? RemovedAt, DateTime CreatedAt);
     
     public record Response(Guid Id, string Name, string? Description, List<CollectionItemDto> Items, DateTime CreatedAt, DateTime UpdatedAt);
 
@@ -42,13 +42,17 @@ public static class GetCollectionById
             }
 
             var items = collection.CollectionItems
-                .OrderBy(ci => ci.Order)
+                .OrderBy(ci => ci.IsRemoved)
+                .ThenBy(ci => ci.IsRemoved ? 0 : ci.Order)
+                .ThenByDescending(ci => ci.IsRemoved ? ci.RemovedAt : null)
                 .Select(ci => new CollectionItemDto(
                     ci.Id,
                     ci.ProviderName,
                     ci.ProviderItemId,
                     ci.Order,
                     ci.Note,
+                    ci.IsRemoved,
+                    ci.RemovedAt,
                     ci.CreatedAt
                 ))
                 .ToList();

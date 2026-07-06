@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VManBackend.Common.Data;
@@ -11,9 +12,11 @@ using VManBackend.Common.Data;
 namespace VManBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260706202607_AddIsRemovedToCollectionItem")]
+    partial class AddIsRemovedToCollectionItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -291,42 +294,6 @@ namespace VManBackend.Migrations
                     b.ToTable("People");
                 });
 
-            modelBuilder.Entity("VManBackend.Common.Models.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TokenHash")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TokenHash")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("IX_RefreshTokens_UserId");
-
-                    b.ToTable("RefreshTokens");
-                });
-
             modelBuilder.Entity("VManBackend.Common.Models.SyncJob", b =>
                 {
                     b.Property<Guid>("Id")
@@ -533,17 +500,6 @@ namespace VManBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("VManBackend.Common.Models.RefreshToken", b =>
-                {
-                    b.HasOne("VManBackend.Common.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VManBackend.Common.Models.UserInvite", b =>

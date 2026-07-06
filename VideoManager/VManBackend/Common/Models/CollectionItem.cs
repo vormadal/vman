@@ -8,6 +8,8 @@ public class CollectionItem
     public required string ProviderItemId { get; set; }
     public int Order { get; set; }
     public string? Note { get; set; }
+    public bool IsRemoved { get; set; }
+    public DateTime? RemovedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     
     // Navigation properties

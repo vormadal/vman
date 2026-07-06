@@ -77,6 +77,7 @@ if (builder.Environment.IsDevelopment())
 
 // Add Services
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddHttpContextAccessor(); // Required for getting current user in handlers
 
 // Add Mediator and Handlers
@@ -87,6 +88,8 @@ builder.Services.AddRequestHandler<Register.Handler, Register.Request, Register.
 builder.Services.AddRequestHandler<Login.Handler, Login.Request, Login.Response?>();
 builder.Services.AddRequestHandler<AcceptInvite.Handler, AcceptInvite.Request, AcceptInvite.Response?>();
 builder.Services.AddRequestHandler<CompleteProfile.Handler, CompleteProfile.Request, CompleteProfile.Response?>();
+builder.Services.AddRequestHandler<RefreshTokens.Handler, RefreshTokens.Request, RefreshTokens.Response?>();
+builder.Services.AddRequestHandler<Logout.Handler, Logout.Request, bool>();
 
 // Admin handlers
 builder.Services.AddRequestHandler<CreateInvite.Handler, CreateInvite.Request, CreateInvite.Response?>();

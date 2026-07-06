@@ -79,8 +79,8 @@ public static class AuthEndpoints
             }
 
             var response = await mediator.Send(request);
-            return response != null 
-                ? Results.Ok(response) 
+            return response != null
+                ? Results.Ok(response)
                 : Results.Problem(
                     detail: "Invalid email or password",
                     statusCode: StatusCodes.Status401Unauthorized,
@@ -88,6 +88,35 @@ public static class AuthEndpoints
                 );
         })
         .WithName("Login");
+
+        group.MapPost("/refresh", async (RefreshTokens.Request request, IMediator mediator) =>
+        {
+            if (string.IsNullOrWhiteSpace(request.RefreshToken))
+            {
+                return Results.Problem(
+                    detail: "Refresh token is required",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Validation Error"
+                );
+            }
+
+            var response = await mediator.Send(request);
+            return response != null
+                ? Results.Ok(response)
+                : Results.Problem(
+                    detail: "Invalid or expired refresh token",
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    title: "Token Refresh Failed"
+                );
+        })
+        .WithName("RefreshToken");
+
+        group.MapPost("/logout", async (Logout.Request request, IMediator mediator) =>
+        {
+            await mediator.Send(request);
+            return Results.Ok();
+        })
+        .WithName("Logout");
 
         return group;
     }

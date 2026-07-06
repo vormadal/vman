@@ -48,45 +48,29 @@ public static class Login
         }
     }
 
-    public class Handler(ApplicationDbContext db, IJwtService jwtService) : IRequestHandler<Request, Response?>
+    public class Handler(ApplicationDbContext db, IJwtService jwtService, IRefreshTokenService refreshTokenService) : IRequestHandler<Request, Response?>
     {
         public async Task<Response?> Handle(Request request, CancellationToken cancellationToken)
         {
-            // Find user by email
             var user = await db.Users
                 .FirstOrDefaultAsync(u => u.Email == request.Email.ToLower(), cancellationToken);
 
-            if (user == null)
-            {
-                return null; // User not found
-            }
+            if (user == null || user.IsBlocked)
+                return null;
 
-            // Check if user is blocked
-            if (user.IsBlocked)
-            {
-                return null; // User is blocked
-            }
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                return null;
 
-            // Verify password
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-
-            if (!isPasswordValid)
-            {
-                return null; // Invalid password
-            }
-
-            // Update last login timestamp
             user.LastLoginAt = DateTime.UtcNow;
             await db.SaveChangesAsync(cancellationToken);
 
-            // Generate JWT token
-            var token = jwtService.GenerateToken(user);
+            var accessToken = jwtService.GenerateToken(user);
+            var refreshToken = await refreshTokenService.CreateRefreshTokenAsync(user.Id, cancellationToken);
 
-            // Return user and token
             return new Response(
                 new UserDto(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString()),
-                token,
-                token, // Using same token as refresh for now
+                accessToken,
+                refreshToken,
                 user.IsProfileComplete
             );
         }

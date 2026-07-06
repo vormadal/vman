@@ -60,49 +60,39 @@ public static class CompleteProfile
         }
     }
 
-    public class Handler(ApplicationDbContext db, IJwtService jwtService, IHttpContextAccessor httpContextAccessor) : IRequestHandler<Request, Response?>
+    public class Handler(ApplicationDbContext db, IJwtService jwtService, IRefreshTokenService refreshTokenService, IHttpContextAccessor httpContextAccessor) : IRequestHandler<Request, Response?>
     {
         public async Task<Response?> Handle(Request request, CancellationToken cancellationToken)
         {
-            // Get user ID from JWT claims
             var httpContext = httpContextAccessor.HttpContext;
             if (httpContext?.User?.Identity?.IsAuthenticated != true)
-            {
-                return null; // Not authenticated
-            }
+                return null;
 
-            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier) 
+            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)
                 ?? httpContext.User.FindFirst("sub");
-            
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                return null; // Invalid user ID
-            }
 
-            // Find user
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+                return null;
+
             var user = await db.Users
                 .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
             if (user == null)
-            {
-                return null; // User not found
-            }
+                return null;
 
-            // Update profile
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.IsProfileComplete = true;
 
             await db.SaveChangesAsync(cancellationToken);
 
-            // Generate new JWT token with updated info
-            var token = jwtService.GenerateToken(user);
+            var accessToken = jwtService.GenerateToken(user);
+            var refreshToken = await refreshTokenService.CreateRefreshTokenAsync(user.Id, cancellationToken);
 
-            // Return updated user and token
             return new Response(
                 new UserDto(user.Id, user.Email, user.FirstName, user.LastName, user.Role.ToString()),
-                token,
-                token // Using same token as refresh for now
+                accessToken,
+                refreshToken
             );
         }
     }

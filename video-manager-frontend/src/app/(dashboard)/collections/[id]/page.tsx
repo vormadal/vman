@@ -1,9 +1,10 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   useCollection,
+  useAddItemToCollection,
   useRemoveItemFromCollection,
   useUpdateCollectionItemOrder,
   useUpdateCollectionItemNote,
@@ -12,7 +13,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Download, GripVertical, Trash2, FolderPlus, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Download, GripVertical, Trash2, RotateCcw, FolderPlus, MessageSquare, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useCollectionModeStore } from '@/lib/store/collectionModeStore';
@@ -147,6 +148,49 @@ function CollectionItemCard({
   );
 }
 
+function RemovedCollectionItemCard({
+  item,
+  onRestore,
+}: {
+  item: { id: string; providerName: string; providerItemId: string; removedAt?: string | null };
+  onRestore: (providerName: string, providerItemId: string) => void;
+}) {
+  const thumbnailUrl = `/api/providers/${item.providerName}/items/${item.providerItemId}/thumbnail`;
+
+  return (
+    <Card className="overflow-hidden p-0 gap-0 opacity-75 hover:opacity-100 transition-opacity">
+      <div className="aspect-video bg-muted">
+        <AuthenticatedImage
+          src={thumbnailUrl}
+          alt="Removed collection item"
+          className="w-full h-full object-cover grayscale"
+          fallback={
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+              <ImageIcon className="h-8 w-8" />
+            </div>
+          }
+        />
+      </div>
+      <div className="flex items-center gap-1 px-2 py-1.5 border-t">
+        <p className="flex-1 text-xs text-muted-foreground truncate">
+          {item.removedAt
+            ? `Removed ${new Date(item.removedAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
+            : 'Removed'}
+        </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0"
+          onClick={() => onRestore(item.providerName, item.providerItemId)}
+          title="Restore to collection"
+        >
+          <RotateCcw className="h-3.5 w-3.5 text-primary" />
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
 export default function CollectionDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -155,13 +199,19 @@ export default function CollectionDetailPage() {
   const { enterCollectionMode } = useCollectionModeStore();
 
   const { data: collection, isLoading, error } = useCollection(collectionId);
+  const addMutation = useAddItemToCollection();
   const removeMutation = useRemoveItemFromCollection();
   const reorderMutation = useUpdateCollectionItemOrder();
   const exportMutation = useExportCollectionToShotcut();
 
+  const [view, setView] = useState<'active' | 'removed'>('active');
+
   // Ref instead of state: avoids stale-closure issues inside handleDrop
   const draggedIndexRef = useRef<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const activeItems = useMemo(() => collection?.items.filter(i => !i.isRemoved) ?? [], [collection]);
+  const removedItems = useMemo(() => collection?.items.filter(i => i.isRemoved) ?? [], [collection]);
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     draggedIndexRef.current = index;
@@ -193,7 +243,7 @@ export default function CollectionDetailPage() {
 
     if (draggedIndex === null || draggedIndex === dropIndex || !collection) return;
 
-    const items = [...collection.items];
+    const items = [...activeItems];
     const [draggedItem] = items.splice(draggedIndex, 1);
     items.splice(dropIndex, 0, draggedItem);
 
@@ -214,6 +264,15 @@ export default function CollectionDetailPage() {
       toast.success('Item removed from collection');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to remove item');
+    }
+  };
+
+  const handleRestoreItem = async (providerName: string, providerItemId: string) => {
+    try {
+      await addMutation.mutateAsync({ collectionId, providerName, providerItemId });
+      toast.success('Item restored to collection');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to restore item');
     }
   };
 
@@ -275,7 +334,7 @@ export default function CollectionDetailPage() {
             <p className="text-muted-foreground mt-2">{collection.description}</p>
           )}
           <p className="text-sm text-muted-foreground mt-2">
-            {collection.items.length} item{collection.items.length !== 1 ? 's' : ''}
+            {activeItems.length} item{activeItems.length !== 1 ? 's' : ''}
           </p>
         </div>
 
@@ -286,7 +345,7 @@ export default function CollectionDetailPage() {
           </Button>
           <Button
             onClick={handleExport}
-            disabled={collection.items.length === 0 || exportMutation.isPending}
+            disabled={activeItems.length === 0 || exportMutation.isPending}
           >
             <Download className="mr-2 h-4 w-4" />
             {exportMutation.isPending ? 'Exporting...' : 'Export to Shotcut'}
@@ -294,36 +353,84 @@ export default function CollectionDetailPage() {
         </div>
       </div>
 
-      {collection.items.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <p className="text-lg font-medium mb-2">No items in collection</p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Go to the items page and add videos or images to this collection
-            </p>
-            <Link href="/items">
-              <Button>Browse Items</Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="flex gap-2 mb-6 border-b">
+        <button
+          onClick={() => setView('active')}
+          className={cn(
+            'px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
+            view === 'active'
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
+          )}
+        >
+          Items ({activeItems.length})
+        </button>
+        <button
+          onClick={() => setView('removed')}
+          className={cn(
+            'px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
+            view === 'removed'
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
+          )}
+        >
+          Removed ({removedItems.length})
+        </button>
+      </div>
+
+      {view === 'active' ? (
+        activeItems.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <p className="text-lg font-medium mb-2">No items in collection</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Go to the items page and add videos or images to this collection
+              </p>
+              <Link href="/items">
+                <Button>Browse Items</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {activeItems.map((item, index) => (
+              <CollectionItemCard
+                key={item.id}
+                item={item}
+                index={index}
+                collectionId={collectionId}
+                isDraggingOver={dragOverIndex === index}
+                onRemove={handleRemoveItem}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              />
+            ))}
+          </div>
+        )
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-          {collection.items.map((item, index) => (
-            <CollectionItemCard
-              key={item.id}
-              item={item}
-              index={index}
-              collectionId={collectionId}
-              isDraggingOver={dragOverIndex === index}
-              onRemove={handleRemoveItem}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            />
-          ))}
-        </div>
+        removedItems.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <p className="text-lg font-medium mb-2">No removed items</p>
+              <p className="text-sm text-muted-foreground">
+                Items you remove from this collection will show up here so you can restore them later
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {removedItems.map((item) => (
+              <RemovedCollectionItemCard
+                key={item.id}
+                item={item}
+                onRestore={handleRestoreItem}
+              />
+            ))}
+          </div>
+        )
       )}
     </div>
   );

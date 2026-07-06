@@ -169,6 +169,8 @@ export interface CollectionItemDto {
   providerItemId: string;
   order: number;
   note?: string | null;
+  isRemoved: boolean;
+  removedAt?: string | null;
   createdAt: string;
 }
 
@@ -241,6 +243,7 @@ export interface BulkAddFilteredItemsParams {
 export interface BulkAddFilteredItemsResponse {
   addedCount: number;
   skippedCount: number;
+  skippedRemovedCount: number;
 }
 
 // Admin types

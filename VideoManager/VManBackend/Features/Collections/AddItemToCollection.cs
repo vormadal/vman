@@ -49,39 +49,50 @@ public static class AddItemToCollection
                 throw new InvalidOperationException($"Collection with ID {request.CollectionId} not found");
             }
 
-            // Check if item already exists in collection
+            // Check if item already exists in collection (including previously-removed rows)
             var existingItem = await db.CollectionItems
-                .FirstOrDefaultAsync(ci => 
-                    ci.CollectionId == request.CollectionId && 
-                    ci.ProviderName == request.ProviderName && 
-                    ci.ProviderItemId == request.ProviderItemId, 
+                .FirstOrDefaultAsync(ci =>
+                    ci.CollectionId == request.CollectionId &&
+                    ci.ProviderName == request.ProviderName &&
+                    ci.ProviderItemId == request.ProviderItemId,
                     cancellationToken);
 
-            if (existingItem != null)
+            if (existingItem != null && !existingItem.IsRemoved)
             {
                 throw new InvalidOperationException("Item already exists in collection");
             }
 
             // Get the next order number (append to end)
             var maxOrder = await db.CollectionItems
-                .Where(ci => ci.CollectionId == request.CollectionId)
+                .Where(ci => ci.CollectionId == request.CollectionId && !ci.IsRemoved)
                 .MaxAsync(ci => (int?)ci.Order, cancellationToken) ?? -1;
 
-            var collectionItem = new CollectionItem
+            CollectionItem collectionItem;
+            if (existingItem != null)
             {
-                Id = Guid.NewGuid(),
-                CollectionId = request.CollectionId,
-                ProviderName = request.ProviderName,
-                ProviderItemId = request.ProviderItemId,
-                Order = maxOrder + 1,
-                CreatedAt = DateTime.UtcNow
-            };
+                // Reactivate a previously-removed item instead of inserting a duplicate row
+                existingItem.IsRemoved = false;
+                existingItem.RemovedAt = null;
+                existingItem.Order = maxOrder + 1;
+                collectionItem = existingItem;
+            }
+            else
+            {
+                collectionItem = new CollectionItem
+                {
+                    Id = Guid.NewGuid(),
+                    CollectionId = request.CollectionId,
+                    ProviderName = request.ProviderName,
+                    ProviderItemId = request.ProviderItemId,
+                    Order = maxOrder + 1,
+                    CreatedAt = DateTime.UtcNow
+                };
+                db.CollectionItems.Add(collectionItem);
+            }
 
-            db.CollectionItems.Add(collectionItem);
-            
             // Update collection's UpdatedAt timestamp
             collection.UpdatedAt = DateTime.UtcNow;
-            
+
             await db.SaveChangesAsync(cancellationToken);
 
             return new Response(

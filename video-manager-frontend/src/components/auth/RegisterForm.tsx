@@ -9,12 +9,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useRegister } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterInput } from '@/lib/validations/auth';
 import Link from 'next/link';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export function RegisterForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   });
+
+  const { toast } = useToast();
 
   const registerMutation = useRegister();
 
@@ -27,8 +29,8 @@ export function RegisterForm() {
         password: data.password,
       },
       {
-        onError: (error: any) => {
-          toast.error(error?.message || 'Registration failed. Please try again.');
+        onError: (error: unknown) => {
+          toast.error(error instanceof Error ? error.message : 'Registration failed. Please try again.');
         },
       }
     );

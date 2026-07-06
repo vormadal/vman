@@ -8,19 +8,21 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLogin } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginInput } from '@/lib/validations/auth';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 export function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
+  const { toast } = useToast();
+
   const loginMutation = useLogin();
 
   const onSubmit = (data: LoginInput) => {
     loginMutation.mutate(data, {
-      onError: (error: any) => {
-        toast.error(error?.message || 'Login failed. Please check your credentials.');
+      onError: (error: unknown) => {
+        toast.error(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
       },
     });
   };

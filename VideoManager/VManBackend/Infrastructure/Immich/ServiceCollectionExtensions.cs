@@ -12,17 +12,6 @@ public static class ServiceCollectionExtensions
     {
         services.Configure(configureOptions);
 
-        // Check if we should use the stub implementation for testing
-        var useStub = Environment.GetEnvironmentVariable("USE_STUB_IMMICH") == "true";
-
-        if (useStub)
-        {
-            // Register stub implementation for E2E testing
-            services.AddScoped<IImmichService, StubImmichService>();
-            return services;
-        }
-
-        // Register real Immich implementation for production
         services.AddScoped<IImmichService>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<ImmichOptions>>().Value;

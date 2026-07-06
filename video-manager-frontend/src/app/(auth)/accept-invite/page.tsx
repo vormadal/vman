@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,11 +29,19 @@ const acceptInviteSchema = z.object({
 type AcceptInviteForm = z.infer<typeof acceptInviteSchema>;
 
 export default function AcceptInvitePage() {
+  return (
+    <Suspense fallback={null}>
+      <AcceptInviteContent />
+    </Suspense>
+  );
+}
+
+function AcceptInviteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const acceptInvite = useAcceptInvite();
-  const [token, setToken] = useState<string | null>(null);
+  const token = searchParams.get('token');
 
   const {
     register,
@@ -44,16 +52,13 @@ export default function AcceptInvitePage() {
   });
 
   useEffect(() => {
-    const tokenParam = searchParams.get('token');
-    if (!tokenParam) {
+    if (!token) {
       toast.error('Invalid invite link', {
         description: 'No invite token provided',
       });
       router.push('/login');
-    } else {
-      setToken(tokenParam);
     }
-  }, [searchParams, router, toast]);
+  }, [token, router, toast]);
 
   const onSubmit = (data: AcceptInviteForm) => {
     if (!token) return;

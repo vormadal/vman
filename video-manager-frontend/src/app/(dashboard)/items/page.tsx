@@ -71,20 +71,31 @@ export default function ItemsPage() {
 
   const hasActiveFilter = !!(selectedMediaType || selectedTagId || selectedPersonId);
 
-  const filteredMediaTypes = MEDIA_TYPE_OPTIONS.filter(opt =>
-    !filterSearch || opt.label.toLowerCase().includes(filterSearch.toLowerCase())
+  const normalizedFilterSearch = filterSearch.trim().toLowerCase();
+
+  const filteredMediaTypes = useMemo(
+    () => MEDIA_TYPE_OPTIONS.filter(opt =>
+      !normalizedFilterSearch || opt.label.toLowerCase().includes(normalizedFilterSearch)
+    ),
+    [normalizedFilterSearch]
   );
 
-  const filteredTags = (tagsData?.tags ?? [])
-    .filter(tag => !filterSearch || tag.name.toLowerCase().includes(filterSearch.toLowerCase()))
-    .sort((a, b) => b.itemCount - a.itemCount)
-    .slice(0, filterSearch ? 10 : 3);
+  const filteredTags = useMemo(
+    () => (tagsData?.tags ?? [])
+      .filter(tag => !normalizedFilterSearch || tag.name.toLowerCase().includes(normalizedFilterSearch))
+      .sort((a, b) => b.itemCount - a.itemCount)
+      .slice(0, normalizedFilterSearch ? 10 : 3),
+    [tagsData, normalizedFilterSearch]
+  );
 
-  const filteredPeople = (peopleData?.people ?? [])
-    .filter(p => !p.isHidden)
-    .filter(p => !filterSearch || (p.name ?? '').toLowerCase().includes(filterSearch.toLowerCase()))
-    .sort((a, b) => b.itemCount - a.itemCount)
-    .slice(0, filterSearch ? 10 : 3);
+  const filteredPeople = useMemo(
+    () => (peopleData?.people ?? [])
+      .filter(p => !p.isHidden)
+      .filter(p => !normalizedFilterSearch || (p.name ?? '').toLowerCase().includes(normalizedFilterSearch))
+      .sort((a, b) => b.itemCount - a.itemCount)
+      .slice(0, normalizedFilterSearch ? 10 : 3),
+    [peopleData, normalizedFilterSearch]
+  );
 
   const handleBulkAddFiltered = async () => {
     if (!activeCollectionId) return;
@@ -273,6 +284,7 @@ export default function ItemsPage() {
                 {getMediaTypeIcon(selectedMediaType)}
                 <span className="ml-1">{MEDIA_TYPE_OPTIONS.find(o => o.type === selectedMediaType)?.label ?? selectedMediaType}</span>
                 <button
+                  type="button"
                   onClick={() => setSelectedMediaType(undefined)}
                   className="ml-1 hover:opacity-70"
                   aria-label="Remove media type filter"
@@ -288,6 +300,7 @@ export default function ItemsPage() {
                   <TagIcon className="h-3 w-3" />
                   <span className="ml-1">{tag.name}</span>
                   <button
+                    type="button"
                     onClick={() => setSelectedTagId(undefined)}
                     className="ml-1 hover:opacity-70"
                     aria-label="Remove tag filter"
@@ -304,6 +317,7 @@ export default function ItemsPage() {
                   <UserIcon className="h-3 w-3" />
                   <span className="ml-1">{person.name}</span>
                   <button
+                    type="button"
                     onClick={() => setSelectedPersonId(undefined)}
                     className="ml-1 hover:opacity-70"
                     aria-label="Remove person filter"
@@ -343,12 +357,13 @@ export default function ItemsPage() {
 
               {/* Suggestions dropdown */}
               {filterDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-popover border rounded-md shadow-md z-50 py-1 text-popover-foreground">
+                <div className="absolute top-full left-0 mt-1 w-64 max-h-80 overflow-y-auto bg-popover border rounded-md shadow-md z-50 py-1 text-popover-foreground">
                   {filteredMediaTypes.length > 0 && (
                     <>
                       <p className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Media Type</p>
                       {filteredMediaTypes.map(opt => (
                         <button
+                          type="button"
                           key={opt.type}
                           className={cn(
                             'w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
@@ -375,6 +390,7 @@ export default function ItemsPage() {
                       <p className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Tags</p>
                       {filteredTags.map(tag => (
                         <button
+                          type="button"
                           key={tag.id}
                           className={cn(
                             'w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
@@ -402,6 +418,7 @@ export default function ItemsPage() {
                       <p className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">People</p>
                       {filteredPeople.map(person => (
                         <button
+                          type="button"
                           key={person.id}
                           className={cn(
                             'w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
@@ -432,6 +449,7 @@ export default function ItemsPage() {
                     <>
                       <div className="border-t my-1" />
                       <button
+                        type="button"
                         className="w-full flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => {

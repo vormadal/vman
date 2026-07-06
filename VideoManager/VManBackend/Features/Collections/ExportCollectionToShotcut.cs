@@ -62,8 +62,10 @@ public static class ExportCollectionToShotcut
                 .Select(i => new { i.ProviderName, i.ProviderItemId, i.Type, i.OriginalFileName })
                 .ToListAsync(cancellationToken);
 
+            var dbItemLookup = dbItems.ToDictionary(i => (i.ProviderName, i.ProviderItemId));
+
             var matchedItems = orderedItems
-                .Select(ci => dbItems.FirstOrDefault(i => i.ProviderName == ci.ProviderName && i.ProviderItemId == ci.ProviderItemId))
+                .Select(ci => dbItemLookup.TryGetValue((ci.ProviderName, ci.ProviderItemId), out var item) ? item : null)
                 .Where(i => i != null)
                 .ToList();
 
@@ -71,7 +73,7 @@ public static class ExportCollectionToShotcut
             var metadataTasks = matchedItems.Select(async item =>
             {
                 string? duration = null;
-                if (item!.ProviderName.ToLower() == "immich" &&
+                if (string.Equals(item!.ProviderName, "immich", StringComparison.OrdinalIgnoreCase) &&
                     (item.Type == MediaType.Video || item.Type == MediaType.Audio))
                 {
                     try

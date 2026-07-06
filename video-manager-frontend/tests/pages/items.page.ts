@@ -5,7 +5,7 @@ export class ItemsPage extends BasePage {
   readonly heading: Locator;
   readonly taggingModeLink: Locator;
   readonly collectionsLink: Locator;
-  readonly newTagButton: Locator;
+  readonly filterInput: Locator;
   readonly itemCountText: Locator;
 
   constructor(page: Page) {
@@ -13,7 +13,7 @@ export class ItemsPage extends BasePage {
     this.heading = page.getByRole('heading', { name: /media items/i });
     this.taggingModeLink = page.getByRole('link', { name: /tagging mode/i });
     this.collectionsLink = page.getByRole('link', { name: /^Collections$/i });
-    this.newTagButton = page.getByRole('button', { name: /new tag/i });
+    this.filterInput = page.getByPlaceholder('Add filter...');
     this.itemCountText = page.getByText(/showing \d+ of \d+/i);
   }
 
@@ -30,8 +30,13 @@ export class ItemsPage extends BasePage {
   }
 
   async filterByMediaType(type: string) {
-    const mediaTypeSection = this.page.getByRole('heading', { name: /media type/i }).locator('../..');
-    await mediaTypeSection.getByText(type, { exact: true }).first().click();
+    await this.filterInput.click();
+    await this.filterInput.fill(type);
+    await this.page.getByRole('button', { name: new RegExp(`^${type}$`, 'i') }).click();
+  }
+
+  async clearMediaTypeFilter() {
+    await this.page.getByRole('button', { name: /remove media type filter/i }).click();
   }
 
   async clickTaggingMode() {
@@ -43,9 +48,10 @@ export class ItemsPage extends BasePage {
   }
 
   async createTag(name: string) {
-    await this.newTagButton.click();
-    await this.page.getByLabel(/tag name/i).fill(name);
-    await this.page.getByRole('button', { name: /create tag/i }).click();
+    await this.filterInput.click();
+    await this.filterInput.fill(name);
+    await this.page.getByRole('button', { name: `Create tag "${name}"` }).click();
+    await this.page.getByRole('button', { name: /^create tag$/i }).click();
     await expect(this.page.getByRole('dialog')).not.toBeVisible({ timeout: 5000 });
   }
 }

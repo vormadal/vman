@@ -64,13 +64,13 @@ export const useAuthStore = create<AuthState>()(
       _hasHydrated: false,
       setAuth: (user, accessToken, refreshToken, isProfileComplete = true) => {
         set({ user, accessToken, refreshToken, isProfileComplete });
-        // Update API client immediately when auth changes
         apiClient.setAuthTokenGetter(() => useAuthStore.getState().accessToken);
+        apiClient.setRefreshTokenGetter(() => useAuthStore.getState().refreshToken);
       },
       clearAuth: () => {
         set({ user: null, accessToken: null, refreshToken: null, isProfileComplete: true });
-        // Update API client immediately when auth is cleared
         apiClient.setAuthTokenGetter(() => null);
+        apiClient.setRefreshTokenGetter(() => null);
       },
       isAuthenticated: () => !!get().accessToken,
       isAdmin: () => get().user?.role === 'Admin',
@@ -80,17 +80,16 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage',
       storage: createJSONStorage(() => cookieStorage),
       onRehydrateStorage: () => {
-        // This is called when the store is being rehydrated from storage
         return (state, error) => {
           if (error) {
             console.error('Failed to rehydrate auth store:', error);
             state?.setHasHydrated(true);
             return;
           }
-          
-          // Set up API client token getter after rehydration completes
+
           if (state) {
             apiClient.setAuthTokenGetter(() => useAuthStore.getState().accessToken);
+            apiClient.setRefreshTokenGetter(() => useAuthStore.getState().refreshToken);
             state.setHasHydrated(true);
           }
         };
@@ -99,6 +98,6 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Initial setup for API client - this ensures the getter function is always set
-// The getter will return the current state value, which may be null until rehydration completes
 apiClient.setAuthTokenGetter(() => useAuthStore.getState().accessToken);
+apiClient.setRefreshTokenGetter(() => useAuthStore.getState().refreshToken);
+apiClient.setOnAuthCleared(() => useAuthStore.getState().clearAuth());

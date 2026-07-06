@@ -73,6 +73,7 @@ if (builder.Environment.IsDevelopment())
 
 // Add Services
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddHttpContextAccessor(); // Required for getting current user in handlers
 
 // Add Mediator and Handlers

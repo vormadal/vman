@@ -53,9 +53,60 @@ class ApiClient {
     this.getAuthToken = getter;
   }
 
+  private refreshPromise: Promise<boolean> | null = null;
+  private getRefreshToken: (() => string | null) | null = null;
+  private onAuthCleared: (() => void) | null = null;
+
+  setRefreshTokenGetter(getter: () => string | null) {
+    this.getRefreshToken = getter;
+  }
+
+  setOnAuthCleared(callback: () => void) {
+    this.onAuthCleared = callback;
+  }
+
+  private async tryRefresh(): Promise<boolean> {
+    if (this.refreshPromise) return this.refreshPromise;
+
+    this.refreshPromise = (async () => {
+      try {
+        const refreshToken = this.getRefreshToken?.();
+        if (!refreshToken) return false;
+
+        const response = await fetch(`${this.baseUrl}/api/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken }),
+        });
+
+        if (!response.ok) {
+          this.onAuthCleared?.();
+          return false;
+        }
+
+        const data = await response.json();
+        // Import dynamically to avoid circular dependency at module load time
+        const { useAuthStore } = await import('@/lib/store/authStore');
+        const state = useAuthStore.getState();
+        if (state.user) {
+          state.setAuth(state.user, data.accessToken, data.refreshToken, state.isProfileComplete);
+        }
+        return true;
+      } catch {
+        this.onAuthCleared?.();
+        return false;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    isRetry = false
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
@@ -64,7 +115,6 @@ class ApiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    // Add auth token if available
     if (this.getAuthToken) {
       const token = this.getAuthToken();
       if (token) {
@@ -77,18 +127,22 @@ class ApiClient {
       headers,
     });
 
+    // Auto-refresh on 401, but not for auth endpoints or retry attempts
+    if (response.status === 401 && !isRetry && !endpoint.startsWith('/api/auth/')) {
+      const refreshed = await this.tryRefresh();
+      if (refreshed) {
+        return this.request<T>(endpoint, options, true);
+      }
+    }
+
     if (!response.ok) {
-      // Try to parse ProblemDetails format first
       const errorData = await response.json().catch(() => null);
 
       if (errorData?.detail) {
-        // RFC 7807 ProblemDetails format
         throw new Error(errorData.detail);
       } else if (errorData?.error) {
-        // Legacy format fallback
         throw new Error(errorData.error);
       } else {
-        // Fallback to status text
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     }
@@ -151,6 +205,15 @@ class ApiClient {
     return this.request<AuthResponse>('/api/auth/complete-profile', {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async logout(refreshToken: string): Promise<void> {
+    await this.request<unknown>('/api/auth/logout', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+    }).catch(() => {
+      // Best-effort: clear local state even if server call fails
     });
   }
 

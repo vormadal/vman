@@ -19,6 +19,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<CollectionItem> CollectionItems => Set<CollectionItem>();
     public DbSet<Person> People => Set<Person>();
     public DbSet<ItemPerson> ItemPeople => Set<ItemPerson>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -221,6 +222,24 @@ public class ApplicationDbContext : DbContext
             // Index for fast lookups by person
             entity.HasIndex(e => e.PersonId)
                 .HasDatabaseName("IX_ItemPeople_PersonId");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TokenHash).HasMaxLength(256).IsRequired();
+            entity.HasIndex(e => e.TokenHash).IsUnique();
+            entity.Property(e => e.UserId).IsRequired();
+            entity.Property(e => e.ExpiresAt).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.UserId)
+                .HasDatabaseName("IX_RefreshTokens_UserId");
         });
     }
 }

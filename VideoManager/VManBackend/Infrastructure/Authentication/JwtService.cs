@@ -24,7 +24,7 @@ public class JwtService : IJwtService
         _secretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured");
         _issuer = configuration["Jwt:Issuer"] ?? "VManBackend";
         _audience = configuration["Jwt:Audience"] ?? "VManBackend";
-        _expirationMinutes = int.TryParse(configuration["Jwt:ExpirationMinutes"], out var minutes) ? minutes : 60;
+        _expirationMinutes = int.TryParse(configuration["Jwt:ExpirationMinutes"], out var minutes) ? minutes : 60; // default 60 min
     }
 
     public string GenerateToken(User user)

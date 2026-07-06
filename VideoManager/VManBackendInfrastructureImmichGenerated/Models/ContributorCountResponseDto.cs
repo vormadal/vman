@@ -17,13 +17,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Number of assets contributed</summary>
         public int? AssetCount { get; set; }
         /// <summary>User ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? UserId { get; set; }
-#nullable restore
-#else
-        public string UserId { get; set; }
-#endif
+        public Guid? UserId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto"/> and sets the default values.
         /// </summary>
@@ -50,7 +44,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "assetCount", n => { AssetCount = n.GetIntValue(); } },
-                { "userId", n => { UserId = n.GetStringValue(); } },
+                { "userId", n => { UserId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -61,7 +55,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("assetCount", AssetCount);
-            writer.WriteStringValue("userId", UserId);
+            writer.WriteGuidValue("userId", UserId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

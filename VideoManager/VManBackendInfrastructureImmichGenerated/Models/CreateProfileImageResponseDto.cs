@@ -25,13 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ProfileImagePath { get; set; }
 #endif
         /// <summary>User ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? UserId { get; set; }
-#nullable restore
-#else
-        public string UserId { get; set; }
-#endif
+        public Guid? UserId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.CreateProfileImageResponseDto"/> and sets the default values.
         /// </summary>
@@ -59,7 +53,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "profileChangedAt", n => { ProfileChangedAt = n.GetDateTimeOffsetValue(); } },
                 { "profileImagePath", n => { ProfileImagePath = n.GetStringValue(); } },
-                { "userId", n => { UserId = n.GetStringValue(); } },
+                { "userId", n => { UserId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -71,7 +65,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteDateTimeOffsetValue("profileChangedAt", ProfileChangedAt);
             writer.WriteStringValue("profileImagePath", ProfileImagePath);
-            writer.WriteStringValue("userId", UserId);
+            writer.WriteGuidValue("userId", UserId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

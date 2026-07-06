@@ -25,13 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>The UTC timestamp when the asset was originally uploaded to Immich.</summary>
         public DateTimeOffset? CreatedAt { get; set; }
         /// <summary>Duplicate group ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DuplicateId { get; set; }
-#nullable restore
-#else
-        public string DuplicateId { get; set; }
-#endif
+        public Guid? DuplicateId { get; set; }
         /// <summary>Video/gif duration in milliseconds (null for static images)</summary>
         public int? Duration { get; set; }
         /// <summary>EXIF response</summary>
@@ -51,13 +45,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Asset height</summary>
         public int? Height { get; set; }
         /// <summary>Asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Is archived</summary>
         public bool? IsArchived { get; set; }
         /// <summary>Is edited</summary>
@@ -113,13 +101,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto Owner { get; set; }
 #endif
         /// <summary>Owner user ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? OwnerId { get; set; }
-#nullable restore
-#else
-        public string OwnerId { get; set; }
-#endif
+        public Guid? OwnerId { get; set; }
         /// <summary>The people property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -189,14 +171,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "checksum", n => { Checksum = n.GetStringValue(); } },
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
-                { "duplicateId", n => { DuplicateId = n.GetStringValue(); } },
+                { "duplicateId", n => { DuplicateId = n.GetGuidValue(); } },
                 { "duration", n => { Duration = n.GetIntValue(); } },
                 { "exifInfo", n => { ExifInfo = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto.CreateFromDiscriminatorValue); } },
                 { "fileCreatedAt", n => { FileCreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "fileModifiedAt", n => { FileModifiedAt = n.GetDateTimeOffsetValue(); } },
                 { "hasMetadata", n => { HasMetadata = n.GetBoolValue(); } },
                 { "height", n => { Height = n.GetIntValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "isArchived", n => { IsArchived = n.GetBoolValue(); } },
                 { "isEdited", n => { IsEdited = n.GetBoolValue(); } },
                 { "isFavorite", n => { IsFavorite = n.GetBoolValue(); } },
@@ -209,7 +191,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "originalMimeType", n => { OriginalMimeType = n.GetStringValue(); } },
                 { "originalPath", n => { OriginalPath = n.GetStringValue(); } },
                 { "owner", n => { Owner = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto.CreateFromDiscriminatorValue); } },
-                { "ownerId", n => { OwnerId = n.GetStringValue(); } },
+                { "ownerId", n => { OwnerId = n.GetGuidValue(); } },
                 { "people", n => { People = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "resized", n => { Resized = n.GetBoolValue(); } },
                 { "stack", n => { Stack = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto.CreateFromDiscriminatorValue); } },
@@ -230,14 +212,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("checksum", Checksum);
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
-            writer.WriteStringValue("duplicateId", DuplicateId);
+            writer.WriteGuidValue("duplicateId", DuplicateId);
             writer.WriteIntValue("duration", Duration);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ExifResponseDto>("exifInfo", ExifInfo);
             writer.WriteDateTimeOffsetValue("fileCreatedAt", FileCreatedAt);
             writer.WriteDateTimeOffsetValue("fileModifiedAt", FileModifiedAt);
             writer.WriteBoolValue("hasMetadata", HasMetadata);
             writer.WriteIntValue("height", Height);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isArchived", IsArchived);
             writer.WriteBoolValue("isEdited", IsEdited);
             writer.WriteBoolValue("isFavorite", IsFavorite);
@@ -250,7 +232,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("originalMimeType", OriginalMimeType);
             writer.WriteStringValue("originalPath", OriginalPath);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.UserResponseDto>("owner", Owner);
-            writer.WriteStringValue("ownerId", OwnerId);
+            writer.WriteGuidValue("ownerId", OwnerId);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PersonResponseDto>("people", People);
             writer.WriteBoolValue("resized", Resized);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto>("stack", Stack);

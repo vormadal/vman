@@ -52,6 +52,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string MapLightStyleUrl { get; set; }
 #endif
+        /// <summary>People min faces server default</summary>
+        public int? MinFaces { get; set; }
         /// <summary>OAuth button text</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -98,6 +100,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "maintenanceMode", n => { MaintenanceMode = n.GetBoolValue(); } },
                 { "mapDarkStyleUrl", n => { MapDarkStyleUrl = n.GetStringValue(); } },
                 { "mapLightStyleUrl", n => { MapLightStyleUrl = n.GetStringValue(); } },
+                { "minFaces", n => { MinFaces = n.GetIntValue(); } },
                 { "oauthButtonText", n => { OauthButtonText = n.GetStringValue(); } },
                 { "publicUsers", n => { PublicUsers = n.GetBoolValue(); } },
                 { "trashDays", n => { TrashDays = n.GetIntValue(); } },
@@ -118,6 +121,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteBoolValue("maintenanceMode", MaintenanceMode);
             writer.WriteStringValue("mapDarkStyleUrl", MapDarkStyleUrl);
             writer.WriteStringValue("mapLightStyleUrl", MapLightStyleUrl);
+            writer.WriteIntValue("minFaces", MinFaces);
             writer.WriteStringValue("oauthButtonText", OauthButtonText);
             writer.WriteBoolValue("publicUsers", PublicUsers);
             writer.WriteIntValue("trashDays", TrashDays);

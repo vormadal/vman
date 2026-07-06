@@ -86,6 +86,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public global::VManBackend.Infrastructure.Immich.Generated.Models.RatingsResponse Ratings { get; set; }
 #endif
+        /// <summary>The recentlyAdded property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.RecentlyAddedResponse? RecentlyAdded { get; set; }
+#nullable restore
+#else
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.RecentlyAddedResponse RecentlyAdded { get; set; }
+#endif
         /// <summary>The sharedLinks property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -136,6 +144,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "people", n => { People = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PeopleResponse>(global::VManBackend.Infrastructure.Immich.Generated.Models.PeopleResponse.CreateFromDiscriminatorValue); } },
                 { "purchase", n => { Purchase = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PurchaseResponse>(global::VManBackend.Infrastructure.Immich.Generated.Models.PurchaseResponse.CreateFromDiscriminatorValue); } },
                 { "ratings", n => { Ratings = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.RatingsResponse>(global::VManBackend.Infrastructure.Immich.Generated.Models.RatingsResponse.CreateFromDiscriminatorValue); } },
+                { "recentlyAdded", n => { RecentlyAdded = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.RecentlyAddedResponse>(global::VManBackend.Infrastructure.Immich.Generated.Models.RecentlyAddedResponse.CreateFromDiscriminatorValue); } },
                 { "sharedLinks", n => { SharedLinks = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinksResponse>(global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinksResponse.CreateFromDiscriminatorValue); } },
                 { "tags", n => { Tags = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.TagsResponse>(global::VManBackend.Infrastructure.Immich.Generated.Models.TagsResponse.CreateFromDiscriminatorValue); } },
             };
@@ -156,6 +165,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PeopleResponse>("people", People);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.PurchaseResponse>("purchase", Purchase);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.RatingsResponse>("ratings", Ratings);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.RecentlyAddedResponse>("recentlyAdded", RecentlyAdded);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinksResponse>("sharedLinks", SharedLinks);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.TagsResponse>("tags", Tags);
             writer.WriteAdditionalData(AdditionalData);

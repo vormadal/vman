@@ -31,13 +31,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Country { get; set; }
 #endif
         /// <summary>Asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Latitude</summary>
         public double? Lat { get; set; }
         /// <summary>Longitude</summary>
@@ -77,7 +71,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "city", n => { City = n.GetStringValue(); } },
                 { "country", n => { Country = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "lat", n => { Lat = n.GetDoubleValue(); } },
                 { "lon", n => { Lon = n.GetDoubleValue(); } },
                 { "state", n => { State = n.GetStringValue(); } },
@@ -92,7 +86,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("city", City);
             writer.WriteStringValue("country", Country);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteDoubleValue("lat", Lat);
             writer.WriteDoubleValue("lon", Lon);
             writer.WriteStringValue("state", State);

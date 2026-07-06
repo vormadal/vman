@@ -11,9 +11,5 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AssetV1,
         #pragma warning restore CS1591
-        [EnumMember(Value = "AssetPersonV1")]
-        #pragma warning disable CS1591
-        AssetPersonV1,
-        #pragma warning restore CS1591
     }
 }

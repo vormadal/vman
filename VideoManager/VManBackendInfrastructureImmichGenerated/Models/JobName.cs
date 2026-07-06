@@ -123,6 +123,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         LibraryScanQueueAll,
         #pragma warning restore CS1591
+        [EnumMember(Value = "HlsSessionCleanup")]
+        #pragma warning disable CS1591
+        HlsSessionCleanup,
+        #pragma warning restore CS1591
         [EnumMember(Value = "MemoryCleanup")]
         #pragma warning disable CS1591
         MemoryCleanup,
@@ -226,6 +230,46 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         [EnumMember(Value = "WorkflowAssetTrigger")]
         #pragma warning disable CS1591
         WorkflowAssetTrigger,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityUntrackedFilesQueueAll")]
+        #pragma warning disable CS1591
+        IntegrityUntrackedFilesQueueAll,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityUntrackedFiles")]
+        #pragma warning disable CS1591
+        IntegrityUntrackedFiles,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityUntrackedRefresh")]
+        #pragma warning disable CS1591
+        IntegrityUntrackedRefresh,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityMissingFilesQueueAll")]
+        #pragma warning disable CS1591
+        IntegrityMissingFilesQueueAll,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityMissingFiles")]
+        #pragma warning disable CS1591
+        IntegrityMissingFiles,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityMissingFilesRefresh")]
+        #pragma warning disable CS1591
+        IntegrityMissingFilesRefresh,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityChecksumFiles")]
+        #pragma warning disable CS1591
+        IntegrityChecksumFiles,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityChecksumFilesRefresh")]
+        #pragma warning disable CS1591
+        IntegrityChecksumFilesRefresh,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityDeleteReportType")]
+        #pragma warning disable CS1591
+        IntegrityDeleteReportType,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "IntegrityDeleteReports")]
+        #pragma warning disable CS1591
+        IntegrityDeleteReports,
         #pragma warning restore CS1591
     }
 }

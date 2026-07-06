@@ -23,13 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto> Assets { get; set; }
 #endif
         /// <summary>Duplicate group ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? DuplicateId { get; set; }
-#nullable restore
-#else
-        public string DuplicateId { get; set; }
-#endif
+        public Guid? DuplicateId { get; set; }
         /// <summary>Suggested asset IDs to keep based on file size and EXIF data</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -64,7 +58,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "assets", n => { Assets = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
-                { "duplicateId", n => { DuplicateId = n.GetStringValue(); } },
+                { "duplicateId", n => { DuplicateId = n.GetGuidValue(); } },
                 { "suggestedKeepAssetIds", n => { SuggestedKeepAssetIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
             };
         }
@@ -76,7 +70,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>("assets", Assets);
-            writer.WriteStringValue("duplicateId", DuplicateId);
+            writer.WriteGuidValue("duplicateId", DuplicateId);
             writer.WriteCollectionOfPrimitiveValues<Guid?>("suggestedKeepAssetIds", SuggestedKeepAssetIds);
             writer.WriteAdditionalData(AdditionalData);
         }

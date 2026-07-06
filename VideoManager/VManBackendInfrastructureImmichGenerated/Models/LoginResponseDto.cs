@@ -53,13 +53,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string UserEmail { get; set; }
 #endif
         /// <summary>User ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? UserId { get; set; }
-#nullable restore
-#else
-        public string UserId { get; set; }
-#endif
+        public Guid? UserId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.LoginResponseDto"/> and sets the default values.
         /// </summary>
@@ -92,7 +86,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "profileImagePath", n => { ProfileImagePath = n.GetStringValue(); } },
                 { "shouldChangePassword", n => { ShouldChangePassword = n.GetBoolValue(); } },
                 { "userEmail", n => { UserEmail = n.GetStringValue(); } },
-                { "userId", n => { UserId = n.GetStringValue(); } },
+                { "userId", n => { UserId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -109,7 +103,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("profileImagePath", ProfileImagePath);
             writer.WriteBoolValue("shouldChangePassword", ShouldChangePassword);
             writer.WriteStringValue("userEmail", UserEmail);
-            writer.WriteStringValue("userId", UserId);
+            writer.WriteGuidValue("userId", UserId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

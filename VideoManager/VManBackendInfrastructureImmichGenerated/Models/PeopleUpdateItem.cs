@@ -28,13 +28,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Asset ID used for feature face thumbnail</summary>
         public Guid? FeatureFaceAssetId { get; set; }
         /// <summary>Person ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Mark as favorite</summary>
         public bool? IsFavorite { get; set; }
         /// <summary>Person visibility (hidden)</summary>
@@ -75,7 +69,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "birthDate", n => { BirthDate = n.GetDateValue(); } },
                 { "color", n => { Color = n.GetStringValue(); } },
                 { "featureFaceAssetId", n => { FeatureFaceAssetId = n.GetGuidValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "isFavorite", n => { IsFavorite = n.GetBoolValue(); } },
                 { "isHidden", n => { IsHidden = n.GetBoolValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
@@ -91,7 +85,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateValue("birthDate", BirthDate);
             writer.WriteStringValue("color", Color);
             writer.WriteGuidValue("featureFaceAssetId", FeatureFaceAssetId);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isFavorite", IsFavorite);
             writer.WriteBoolValue("isHidden", IsHidden);
             writer.WriteStringValue("name", Name);

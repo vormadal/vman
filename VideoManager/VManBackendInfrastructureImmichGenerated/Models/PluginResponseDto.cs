@@ -39,13 +39,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Description { get; set; }
 #endif
         /// <summary>Plugin ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Plugin methods</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -114,7 +108,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "author", n => { Author = n.GetStringValue(); } },
                 { "createdAt", n => { CreatedAt = n.GetStringValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "methods", n => { Methods = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
@@ -132,7 +126,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("author", Author);
             writer.WriteStringValue("createdAt", CreatedAt);
             writer.WriteStringValue("description", Description);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.PluginMethodResponseDto>("methods", Methods);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("title", Title);

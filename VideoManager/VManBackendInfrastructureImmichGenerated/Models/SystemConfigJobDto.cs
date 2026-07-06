@@ -38,6 +38,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto FaceDetection { get; set; }
 #endif
+        /// <summary>The integrityCheck property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto? IntegrityCheck { get; set; }
+#nullable restore
+#else
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto IntegrityCheck { get; set; }
+#endif
         /// <summary>The library property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -154,6 +162,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "backgroundTask", n => { BackgroundTask = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
                 { "editor", n => { Editor = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
                 { "faceDetection", n => { FaceDetection = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
+                { "integrityCheck", n => { IntegrityCheck = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
                 { "library", n => { Library = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
                 { "metadataExtraction", n => { MetadataExtraction = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
                 { "migration", n => { Migration = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto.CreateFromDiscriminatorValue); } },
@@ -177,6 +186,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("backgroundTask", BackgroundTask);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("editor", Editor);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("faceDetection", FaceDetection);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("integrityCheck", IntegrityCheck);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("library", Library);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("metadataExtraction", MetadataExtraction);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.JobSettingsDto>("migration", Migration);

@@ -57,13 +57,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ExpiresAt { get; set; }
 #endif
         /// <summary>Session ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Is pending sync reset</summary>
         public bool? IsPendingSyncReset { get; set; }
         /// <summary>Session token</summary>
@@ -113,7 +107,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "deviceOS", n => { DeviceOS = n.GetStringValue(); } },
                 { "deviceType", n => { DeviceType = n.GetStringValue(); } },
                 { "expiresAt", n => { ExpiresAt = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "isPendingSyncReset", n => { IsPendingSyncReset = n.GetBoolValue(); } },
                 { "token", n => { Token = n.GetStringValue(); } },
                 { "updatedAt", n => { UpdatedAt = n.GetStringValue(); } },
@@ -132,7 +126,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("deviceOS", DeviceOS);
             writer.WriteStringValue("deviceType", DeviceType);
             writer.WriteStringValue("expiresAt", ExpiresAt);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isPendingSyncReset", IsPendingSyncReset);
             writer.WriteStringValue("token", Token);
             writer.WriteStringValue("updatedAt", UpdatedAt);

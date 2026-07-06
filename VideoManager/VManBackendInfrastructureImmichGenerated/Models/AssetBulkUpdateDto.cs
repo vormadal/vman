@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string DateTimeOriginal { get; set; }
 #endif
-        /// <summary>Relative time offset in seconds</summary>
+        /// <summary>Relative time offset in minutes</summary>
         public int? DateTimeRelative { get; set; }
         /// <summary>Asset description</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -54,7 +54,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public double? Latitude { get; set; }
         /// <summary>Longitude coordinate</summary>
         public double? Longitude { get; set; }
-        /// <summary>Rating in range [1-5], or null for unrated</summary>
+        /// <summary>Rating in range [1-5] (starred), -1 (rejected), or null (unrated)</summary>
         public int? Rating { get; set; }
         /// <summary>Time zone (IANA timezone)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

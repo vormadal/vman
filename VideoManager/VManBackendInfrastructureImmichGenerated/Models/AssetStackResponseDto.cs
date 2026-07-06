@@ -17,21 +17,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Number of assets in stack</summary>
         public int? AssetCount { get; set; }
         /// <summary>Stack ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Primary asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? PrimaryAssetId { get; set; }
-#nullable restore
-#else
-        public string PrimaryAssetId { get; set; }
-#endif
+        public Guid? PrimaryAssetId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.AssetStackResponseDto"/> and sets the default values.
         /// </summary>
@@ -58,8 +46,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "assetCount", n => { AssetCount = n.GetIntValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
-                { "primaryAssetId", n => { PrimaryAssetId = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
+                { "primaryAssetId", n => { PrimaryAssetId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -70,8 +58,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("assetCount", AssetCount);
-            writer.WriteStringValue("id", Id);
-            writer.WriteStringValue("primaryAssetId", PrimaryAssetId);
+            writer.WriteGuidValue("id", Id);
+            writer.WriteGuidValue("primaryAssetId", PrimaryAssetId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

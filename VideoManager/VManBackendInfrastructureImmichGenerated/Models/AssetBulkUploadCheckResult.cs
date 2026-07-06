@@ -17,14 +17,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Existing asset ID if duplicate</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? AssetId { get; set; }
-#nullable restore
-#else
-        public string AssetId { get; set; }
-#endif
-        /// <summary>Asset ID</summary>
+        public Guid? AssetId { get; set; }
+        /// <summary>Client-side identifier echoed from the request to match results to inputs</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Id { get; set; }
@@ -62,7 +56,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "action", n => { Action = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetUploadAction>(); } },
-                { "assetId", n => { AssetId = n.GetStringValue(); } },
+                { "assetId", n => { AssetId = n.GetGuidValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "isTrashed", n => { IsTrashed = n.GetBoolValue(); } },
                 { "reason", n => { Reason = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetRejectReason>(); } },
@@ -76,7 +70,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetUploadAction>("action", Action);
-            writer.WriteStringValue("assetId", AssetId);
+            writer.WriteGuidValue("assetId", AssetId);
             writer.WriteStringValue("id", Id);
             writer.WriteBoolValue("isTrashed", IsTrashed);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetRejectReason>("reason", Reason);

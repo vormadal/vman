@@ -75,6 +75,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         Workflow,
         #pragma warning restore CS1591
+        [EnumMember(Value = "integrityCheck")]
+        #pragma warning disable CS1591
+        IntegrityCheck,
+        #pragma warning restore CS1591
         [EnumMember(Value = "editor")]
         #pragma warning disable CS1591
         Editor,

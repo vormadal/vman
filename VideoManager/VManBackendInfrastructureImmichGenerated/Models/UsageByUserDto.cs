@@ -25,13 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Storage usage for videos in bytes</summary>
         public int? UsageVideos { get; set; }
         /// <summary>User ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? UserId { get; set; }
-#nullable restore
-#else
-        public string UserId { get; set; }
-#endif
+        public Guid? UserId { get; set; }
         /// <summary>User name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -72,7 +66,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "usage", n => { Usage = n.GetIntValue(); } },
                 { "usagePhotos", n => { UsagePhotos = n.GetIntValue(); } },
                 { "usageVideos", n => { UsageVideos = n.GetIntValue(); } },
-                { "userId", n => { UserId = n.GetStringValue(); } },
+                { "userId", n => { UserId = n.GetGuidValue(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
                 { "videos", n => { Videos = n.GetIntValue(); } },
             };
@@ -89,7 +83,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteIntValue("usage", Usage);
             writer.WriteIntValue("usagePhotos", UsagePhotos);
             writer.WriteIntValue("usageVideos", UsageVideos);
-            writer.WriteStringValue("userId", UserId);
+            writer.WriteGuidValue("userId", UserId);
             writer.WriteStringValue("userName", UserName);
             writer.WriteIntValue("videos", Videos);
             writer.WriteAdditionalData(AdditionalData);

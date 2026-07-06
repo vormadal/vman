@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Auth;
 using VManBackend.Infrastructure.Immich.Generated.Admin.DatabaseBackups;
+using VManBackend.Infrastructure.Immich.Generated.Admin.Integrity;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Maintenance;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Notifications;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Users;
@@ -28,6 +29,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Admin
         public global::VManBackend.Infrastructure.Immich.Generated.Admin.DatabaseBackups.DatabaseBackupsRequestBuilder DatabaseBackups
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Admin.DatabaseBackups.DatabaseBackupsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The integrity property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Admin.Integrity.IntegrityRequestBuilder Integrity
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Admin.Integrity.IntegrityRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The maintenance property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Admin.Maintenance.MaintenanceRequestBuilder Maintenance

@@ -20,6 +20,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public int? Minor { get; set; }
         /// <summary>Patch version number</summary>
         public int? Patch { get; set; }
+        /// <summary>Pre-release version number</summary>
+        public int? Prerelease { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.ServerVersionResponseDto"/> and sets the default values.
         /// </summary>
@@ -48,6 +50,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "major", n => { Major = n.GetIntValue(); } },
                 { "minor", n => { Minor = n.GetIntValue(); } },
                 { "patch", n => { Patch = n.GetIntValue(); } },
+                { "prerelease", n => { Prerelease = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -60,6 +63,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteIntValue("major", Major);
             writer.WriteIntValue("minor", Minor);
             writer.WriteIntValue("patch", Patch);
+            writer.WriteIntValue("prerelease", Prerelease);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

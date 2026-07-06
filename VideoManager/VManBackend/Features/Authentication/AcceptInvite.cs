@@ -58,54 +58,35 @@ public static class AcceptInvite
         }
     }
 
-    public class Handler(ApplicationDbContext db, IJwtService jwtService) : IRequestHandler<Request, Response?>
+    public class Handler(ApplicationDbContext db, IJwtService jwtService, IRefreshTokenService refreshTokenService) : IRequestHandler<Request, Response?>
     {
         public async Task<Response?> Handle(Request request, CancellationToken cancellationToken)
         {
-            // Find invite by token
             var invite = await db.UserInvites
                 .FirstOrDefaultAsync(i => i.Token == request.Token && i.UsedAt == null, cancellationToken);
 
-            if (invite == null)
-            {
-                return null; // Invalid or already used token
-            }
+            if (invite == null || invite.ExpiresAt < DateTime.UtcNow)
+                return null;
 
-            // Check if invite has expired
-            if (invite.ExpiresAt < DateTime.UtcNow)
-            {
-                return null; // Expired invite
-            }
-
-            // Check if user already exists
             var existingUser = await db.Users
                 .FirstOrDefaultAsync(u => u.Email == invite.Email.ToLower(), cancellationToken);
 
             if (existingUser != null)
-            {
-                return null; // Email already in use
-            }
+                return null;
 
-            // Hash password
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 4);
 
-            // Create user
             var user = new User
             {
                 Id = Guid.NewGuid(),
                 Email = invite.Email.ToLower(),
                 PasswordHash = passwordHash,
-                FirstName = null,
-                LastName = null,
                 Role = UserRole.User,
-                IsBlocked = false,
                 IsProfileComplete = false,
                 CreatedAt = DateTime.UtcNow
             };
 
             db.Users.Add(user);
-
-            // Mark invite as used
             invite.UsedAt = DateTime.UtcNow;
 
             try
@@ -114,18 +95,16 @@ public static class AcceptInvite
             }
             catch (DbUpdateException)
             {
-                // Concurrent request may have already created the user or used the invite
                 return null;
             }
 
-            // Generate JWT token
-            var token = jwtService.GenerateToken(user);
+            var accessToken = jwtService.GenerateToken(user);
+            var refreshToken = await refreshTokenService.CreateRefreshTokenAsync(user.Id, cancellationToken);
 
-            // Return user and token (auto-login)
             return new Response(
                 new UserDto(user.Id, user.Email, user.Role.ToString()),
-                token,
-                token // Using same token as refresh for now
+                accessToken,
+                refreshToken
             );
         }
     }

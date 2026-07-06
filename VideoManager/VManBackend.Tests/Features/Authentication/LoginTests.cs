@@ -30,7 +30,7 @@ public class LoginTests
     public async Task Handle_ReturnsNull_WhenUserNotFound()
     {
         await using var db = InMemoryDbContextFactory.Create();
-        var handler = new Login.Handler(db, NewJwtService());
+        var handler = new Login.Handler(db, NewJwtService(), new StubRefreshTokenService());
 
         var response = await handler.Handle(new Login.Request("missing@example.com", "password"), CancellationToken.None);
 
@@ -43,7 +43,7 @@ public class LoginTests
         await using var db = InMemoryDbContextFactory.Create();
         db.Users.Add(NewUser("blocked@example.com", "password", isBlocked: true));
         await db.SaveChangesAsync();
-        var handler = new Login.Handler(db, NewJwtService());
+        var handler = new Login.Handler(db, NewJwtService(), new StubRefreshTokenService());
 
         var response = await handler.Handle(new Login.Request("blocked@example.com", "password"), CancellationToken.None);
 
@@ -56,7 +56,7 @@ public class LoginTests
         await using var db = InMemoryDbContextFactory.Create();
         db.Users.Add(NewUser("user@example.com", "correct-password"));
         await db.SaveChangesAsync();
-        var handler = new Login.Handler(db, NewJwtService());
+        var handler = new Login.Handler(db, NewJwtService(), new StubRefreshTokenService());
 
         var response = await handler.Handle(new Login.Request("user@example.com", "wrong-password"), CancellationToken.None);
 
@@ -70,12 +70,13 @@ public class LoginTests
         var user = NewUser("user@example.com", "correct-password");
         db.Users.Add(user);
         await db.SaveChangesAsync();
-        var handler = new Login.Handler(db, NewJwtService());
+        var handler = new Login.Handler(db, NewJwtService(), new StubRefreshTokenService());
 
         var response = await handler.Handle(new Login.Request("user@example.com", "correct-password"), CancellationToken.None);
 
         response.Should().NotBeNull();
         response!.AccessToken.Should().NotBeNullOrEmpty();
+        response.RefreshToken.Should().NotBeNullOrEmpty();
         response.User.Email.Should().Be("user@example.com");
         user.LastLoginAt.Should().NotBeNull();
     }

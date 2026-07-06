@@ -48,9 +48,12 @@ export function useRegister() {
 
 export function useLogout() {
   const router = useRouter();
-  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const { clearAuth, refreshToken } = useAuthStore();
 
-  return () => {
+  return async () => {
+    if (refreshToken) {
+      await apiClient.logout(refreshToken);
+    }
     clearAuth();
     router.push('/login');
   };

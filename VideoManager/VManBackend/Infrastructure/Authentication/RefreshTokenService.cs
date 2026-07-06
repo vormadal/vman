@@ -39,18 +39,20 @@ public class RefreshTokenService(ApplicationDbContext db, IConfiguration configu
     public async Task<RefreshToken?> ValidateAndRotateAsync(string token, CancellationToken cancellationToken = default)
     {
         var hash = HashToken(token);
-        var stored = await db.RefreshTokens
-            .Include(t => t.User)
-            .FirstOrDefaultAsync(t => t.TokenHash == hash, cancellationToken);
+        var now = DateTime.UtcNow;
 
-        if (stored == null || !stored.IsActive)
+        // Atomic conditional revoke: only the request that flips RevokedAt from null wins the race.
+        var rowsAffected = await db.RefreshTokens
+            .Where(t => t.TokenHash == hash && t.RevokedAt == null && t.ExpiresAt > now)
+            .ExecuteUpdateAsync(s => s.SetProperty(t => t.RevokedAt, now), cancellationToken);
+
+        if (rowsAffected == 0)
             return null;
 
-        // Revoke the used token (rotation)
-        stored.RevokedAt = DateTime.UtcNow;
-        await db.SaveChangesAsync(cancellationToken);
-
-        return stored;
+        return await db.RefreshTokens
+            .Include(t => t.User)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.TokenHash == hash, cancellationToken);
     }
 
     public async Task RevokeAsync(string token, CancellationToken cancellationToken = default)

@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.Playback;
+using VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.StreamNamespace;
 namespace VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video
 {
     /// <summary>
@@ -19,6 +20,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video
         public global::VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.Playback.PlaybackRequestBuilder Playback
         {
             get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.Playback.PlaybackRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The stream property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.StreamNamespace.StreamRequestBuilder Stream
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.StreamNamespace.StreamRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Assets.Item.Video.VideoRequestBuilder"/> and sets the default values.

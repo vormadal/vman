@@ -74,6 +74,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Preset { get; set; }
 #endif
+        /// <summary>The realtime property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegRealtimeDto? Realtime { get; set; }
+#nullable restore
+#else
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegRealtimeDto Realtime { get; set; }
+#endif
         /// <summary>References</summary>
         public int? Refs { get; set; }
         /// <summary>Target audio codec</summary>
@@ -135,6 +143,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "maxBitrate", n => { MaxBitrate = n.GetStringValue(); } },
                 { "preferredHwDevice", n => { PreferredHwDevice = n.GetStringValue(); } },
                 { "preset", n => { Preset = n.GetStringValue(); } },
+                { "realtime", n => { Realtime = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegRealtimeDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegRealtimeDto.CreateFromDiscriminatorValue); } },
                 { "refs", n => { Refs = n.GetIntValue(); } },
                 { "targetAudioCodec", n => { TargetAudioCodec = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AudioCodec>(); } },
                 { "targetResolution", n => { TargetResolution = n.GetStringValue(); } },
@@ -165,6 +174,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("maxBitrate", MaxBitrate);
             writer.WriteStringValue("preferredHwDevice", PreferredHwDevice);
             writer.WriteStringValue("preset", Preset);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegRealtimeDto>("realtime", Realtime);
             writer.WriteIntValue("refs", Refs);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AudioCodec>("targetAudioCodec", TargetAudioCodec);
             writer.WriteStringValue("targetResolution", TargetResolution);

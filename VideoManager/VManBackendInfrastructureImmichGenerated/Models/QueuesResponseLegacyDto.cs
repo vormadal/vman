@@ -62,6 +62,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto FacialRecognition { get; set; }
 #endif
+        /// <summary>The integrityCheck property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto? IntegrityCheck { get; set; }
+#nullable restore
+#else
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto IntegrityCheck { get; set; }
+#endif
         /// <summary>The library property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -189,6 +197,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "editor", n => { Editor = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
                 { "faceDetection", n => { FaceDetection = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
                 { "facialRecognition", n => { FacialRecognition = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
+                { "integrityCheck", n => { IntegrityCheck = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
                 { "library", n => { Library = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
                 { "metadataExtraction", n => { MetadataExtraction = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
                 { "migration", n => { Migration = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto.CreateFromDiscriminatorValue); } },
@@ -216,6 +225,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("editor", Editor);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("faceDetection", FaceDetection);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("facialRecognition", FacialRecognition);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("integrityCheck", IntegrityCheck);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("library", Library);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("metadataExtraction", MetadataExtraction);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.QueueResponseLegacyDto>("migration", Migration);

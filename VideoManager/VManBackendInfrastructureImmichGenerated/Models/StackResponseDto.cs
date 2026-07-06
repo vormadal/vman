@@ -24,21 +24,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public List<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto> Assets { get; set; }
 #endif
         /// <summary>Stack ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Primary asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? PrimaryAssetId { get; set; }
-#nullable restore
-#else
-        public string PrimaryAssetId { get; set; }
-#endif
+        public Guid? PrimaryAssetId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.StackResponseDto"/> and sets the default values.
         /// </summary>
@@ -65,8 +53,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "assets", n => { Assets = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
-                { "primaryAssetId", n => { PrimaryAssetId = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
+                { "primaryAssetId", n => { PrimaryAssetId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -77,8 +65,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetResponseDto>("assets", Assets);
-            writer.WriteStringValue("id", Id);
-            writer.WriteStringValue("primaryAssetId", PrimaryAssetId);
+            writer.WriteGuidValue("id", Id);
+            writer.WriteGuidValue("primaryAssetId", PrimaryAssetId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

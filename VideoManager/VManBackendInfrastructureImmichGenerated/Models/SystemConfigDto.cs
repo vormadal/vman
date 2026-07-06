@@ -39,6 +39,14 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigImageDto Image { get; set; }
 #endif
+        /// <summary>Integrity checks config</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigIntegrityChecks? IntegrityChecks { get; set; }
+#nullable restore
+#else
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigIntegrityChecks IntegrityChecks { get; set; }
+#endif
         /// <summary>The job property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -211,6 +219,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "backup", n => { Backup = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigBackupsDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigBackupsDto.CreateFromDiscriminatorValue); } },
                 { "ffmpeg", n => { Ffmpeg = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegDto.CreateFromDiscriminatorValue); } },
                 { "image", n => { Image = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigImageDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigImageDto.CreateFromDiscriminatorValue); } },
+                { "integrityChecks", n => { IntegrityChecks = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigIntegrityChecks>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigIntegrityChecks.CreateFromDiscriminatorValue); } },
                 { "job", n => { Job = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigJobDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigJobDto.CreateFromDiscriminatorValue); } },
                 { "library", n => { Library = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLibraryDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLibraryDto.CreateFromDiscriminatorValue); } },
                 { "logging", n => { Logging = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLoggingDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLoggingDto.CreateFromDiscriminatorValue); } },
@@ -241,6 +250,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigBackupsDto>("backup", Backup);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigFFmpegDto>("ffmpeg", Ffmpeg);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigImageDto>("image", Image);
+            writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigIntegrityChecks>("integrityChecks", IntegrityChecks);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigJobDto>("job", Job);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLibraryDto>("library", Library);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SystemConfigLoggingDto>("logging", Logging);

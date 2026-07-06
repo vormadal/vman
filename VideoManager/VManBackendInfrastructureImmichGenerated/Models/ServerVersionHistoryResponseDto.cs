@@ -17,13 +17,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>When this version was first seen</summary>
         public DateTimeOffset? CreatedAt { get; set; }
         /// <summary>Version history entry ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Version string</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -58,7 +52,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "version", n => { Version = n.GetStringValue(); } },
             };
         }
@@ -70,7 +64,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("version", Version);
             writer.WriteAdditionalData(AdditionalData);
         }

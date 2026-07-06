@@ -17,10 +17,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Asset IDs in this archive</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<string>? AssetIds { get; set; }
+        public List<Guid?>? AssetIds { get; set; }
 #nullable restore
 #else
-        public List<string> AssetIds { get; set; }
+        public List<Guid?> AssetIds { get; set; }
 #endif
         /// <summary>Archive size in bytes</summary>
         public int? Size { get; set; }
@@ -49,7 +49,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "assetIds", n => { AssetIds = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "assetIds", n => { AssetIds = n.GetCollectionOfPrimitiveValues<Guid?>()?.AsList(); } },
                 { "size", n => { Size = n.GetIntValue(); } },
             };
         }
@@ -60,7 +60,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfPrimitiveValues<string>("assetIds", AssetIds);
+            writer.WriteCollectionOfPrimitiveValues<Guid?>("assetIds", AssetIds);
             writer.WriteIntValue("size", Size);
             writer.WriteAdditionalData(AdditionalData);
         }

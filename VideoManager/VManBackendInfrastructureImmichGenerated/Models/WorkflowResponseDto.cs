@@ -33,13 +33,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Workflow enabled</summary>
         public bool? Enabled { get; set; }
         /// <summary>Workflow ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Workflow name</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -94,7 +88,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "createdAt", n => { CreatedAt = n.GetStringValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "steps", n => { Steps = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "trigger", n => { Trigger = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>(); } },
@@ -111,7 +105,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("createdAt", CreatedAt);
             writer.WriteStringValue("description", Description);
             writer.WriteBoolValue("enabled", Enabled);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowStepDto>("steps", Steps);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.WorkflowTrigger>("trigger", Trigger);

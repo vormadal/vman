@@ -55,6 +55,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AssetMetadataV1,
         #pragma warning restore CS1591
+        [EnumMember(Value = "AssetOcrV1")]
+        #pragma warning disable CS1591
+        AssetOcrV1,
+        #pragma warning restore CS1591
         [EnumMember(Value = "AuthUsersV1")]
         #pragma warning disable CS1591
         AuthUsersV1,

@@ -17,7 +17,7 @@ test.describe('Items', () => {
     await itemsPage.expectToBeVisible();
 
     // Reset filter
-    await itemsPage.filterByMediaType('All');
+    await itemsPage.clearMediaTypeFilter();
     await page.waitForLoadState('networkidle');
     await itemsPage.expectItemsLoaded();
 

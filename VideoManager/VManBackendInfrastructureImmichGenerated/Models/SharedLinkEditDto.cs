@@ -18,8 +18,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public bool? AllowDownload { get; set; }
         /// <summary>Allow uploads</summary>
         public bool? AllowUpload { get; set; }
-        /// <summary>Whether to change the expiry time. Few clients cannot send null to set the expiryTime to never. Setting this flag and not sending expiryAt is considered as null instead. Clients that can send null values can ignore this.</summary>
-        public bool? ChangeExpiryTime { get; set; }
         /// <summary>Link description</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -75,7 +73,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "allowDownload", n => { AllowDownload = n.GetBoolValue(); } },
                 { "allowUpload", n => { AllowUpload = n.GetBoolValue(); } },
-                { "changeExpiryTime", n => { ChangeExpiryTime = n.GetBoolValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "expiresAt", n => { ExpiresAt = n.GetDateTimeOffsetValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
@@ -92,7 +89,6 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("allowDownload", AllowDownload);
             writer.WriteBoolValue("allowUpload", AllowUpload);
-            writer.WriteBoolValue("changeExpiryTime", ChangeExpiryTime);
             writer.WriteStringValue("description", Description);
             writer.WriteDateTimeOffsetValue("expiresAt", ExpiresAt);
             writer.WriteStringValue("password", Password);

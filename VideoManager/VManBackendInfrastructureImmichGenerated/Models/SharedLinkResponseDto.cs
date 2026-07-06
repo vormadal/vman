@@ -48,13 +48,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Expiration date</summary>
         public DateTimeOffset? ExpiresAt { get; set; }
         /// <summary>Shared link ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Encryption key (base64url)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -84,13 +78,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Shared link type</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkType? Type { get; set; }
         /// <summary>Owner user ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? UserId { get; set; }
-#nullable restore
-#else
-        public string UserId { get; set; }
-#endif
+        public Guid? UserId { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkResponseDto"/> and sets the default values.
         /// </summary>
@@ -123,13 +111,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "expiresAt", n => { ExpiresAt = n.GetDateTimeOffsetValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "key", n => { Key = n.GetStringValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
                 { "showMetadata", n => { ShowMetadata = n.GetBoolValue(); } },
                 { "slug", n => { Slug = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkType>(); } },
-                { "userId", n => { UserId = n.GetStringValue(); } },
+                { "userId", n => { UserId = n.GetGuidValue(); } },
             };
         }
         /// <summary>
@@ -146,13 +134,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteStringValue("description", Description);
             writer.WriteDateTimeOffsetValue("expiresAt", ExpiresAt);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("key", Key);
             writer.WriteStringValue("password", Password);
             writer.WriteBoolValue("showMetadata", ShowMetadata);
             writer.WriteStringValue("slug", Slug);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.SharedLinkType>("type", Type);
-            writer.WriteStringValue("userId", UserId);
+            writer.WriteGuidValue("userId", UserId);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

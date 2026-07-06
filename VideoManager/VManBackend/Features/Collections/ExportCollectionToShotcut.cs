@@ -53,21 +53,27 @@ public static class ExportCollectionToShotcut
                 throw new InvalidOperationException("Collection is empty. Add items before exporting.");
             }
 
-            // Fetch item details from the database and Immich metadata
-            var itemDetailsTasks = orderedItems.Select(async collectionItem =>
+            // Batch fetch all item details in a single DB query to avoid concurrent DbContext access
+            var providerItemIds = orderedItems.Select(ci => ci.ProviderItemId).ToList();
+            var providerNames = orderedItems.Select(ci => ci.ProviderName).Distinct().ToList();
+
+            var dbItems = await db.Items
+                .Where(i => providerNames.Contains(i.ProviderName) && providerItemIds.Contains(i.ProviderItemId))
+                .Select(i => new { i.ProviderName, i.ProviderItemId, i.Type, i.OriginalFileName })
+                .ToListAsync(cancellationToken);
+
+            var dbItemLookup = dbItems.ToDictionary(i => (i.ProviderName, i.ProviderItemId));
+
+            var matchedItems = orderedItems
+                .Select(ci => dbItemLookup.TryGetValue((ci.ProviderName, ci.ProviderItemId), out var item) ? item : null)
+                .Where(i => i != null)
+                .ToList();
+
+            // Fan out Immich HTTP calls in parallel — safe because no DbContext is involved
+            var metadataTasks = matchedItems.Select(async item =>
             {
-                var item = await db.Items
-                    .Where(i => i.ProviderName == collectionItem.ProviderName && 
-                                i.ProviderItemId == collectionItem.ProviderItemId)
-                    .Select(i => new { i.ProviderName, i.ProviderItemId, i.Type, i.OriginalFileName })
-                    .FirstOrDefaultAsync(cancellationToken);
-                    
-                if (item == null)
-                    return null;
-                
-                // Fetch duration from Immich for videos and audio
                 string? duration = null;
-                if (item.ProviderName.ToLower() == "immich" && 
+                if (string.Equals(item!.ProviderName, "immich", StringComparison.OrdinalIgnoreCase) &&
                     (item.Type == MediaType.Video || item.Type == MediaType.Audio))
                 {
                     try
@@ -81,7 +87,7 @@ public static class ExportCollectionToShotcut
                         // If we can't get duration, we'll use placeholder
                     }
                 }
-                    
+
                 return new
                 {
                     item.ProviderName,
@@ -91,11 +97,10 @@ public static class ExportCollectionToShotcut
                     Duration = duration
                 };
             });
-            
-            var itemsWithMetadata = await Task.WhenAll(itemDetailsTasks);
+
+            var itemsWithMetadata = await Task.WhenAll(metadataTasks);
             var itemDetails = itemsWithMetadata
-                .Where(item => item != null)
-                .Select(item => (item!.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName, item.Duration))
+                .Select(item => (item.ProviderName, item.ProviderItemId, item.Type, item.OriginalFileName, item.Duration))
                 .ToList();
 
             // Create a memory stream for the zip file

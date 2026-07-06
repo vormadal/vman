@@ -38,7 +38,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public Guid? LivePhotoVideoId { get; set; }
         /// <summary>Longitude coordinate</summary>
         public double? Longitude { get; set; }
-        /// <summary>Rating in range [1-5], or null for unrated</summary>
+        /// <summary>Rating in range [1-5] (starred), -1 (rejected), or null (unrated)</summary>
         public int? Rating { get; set; }
         /// <summary>Asset visibility</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.AssetVisibility? Visibility { get; set; }

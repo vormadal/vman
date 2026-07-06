@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using VManBackend.Infrastructure.Immich.Generated.Models;
+using VManBackend.Infrastructure.Immich.Generated.Users.Me.CalendarHeatmap;
 using VManBackend.Infrastructure.Immich.Generated.Users.Me.License;
 using VManBackend.Infrastructure.Immich.Generated.Users.Me.Onboarding;
 using VManBackend.Infrastructure.Immich.Generated.Users.Me.Preferences;
@@ -20,6 +21,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Users.Me
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class MeRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The calendarHeatmap property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Users.Me.CalendarHeatmap.CalendarHeatmapRequestBuilder CalendarHeatmap
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Users.Me.CalendarHeatmap.CalendarHeatmapRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The license property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Users.Me.License.LicenseRequestBuilder License
         {
@@ -76,6 +82,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Users.Me
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        [Obsolete("")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminResponseDto?> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.UserUpdateMeDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -114,6 +121,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Users.Me
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        [Obsolete("")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.UserUpdateMeDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)

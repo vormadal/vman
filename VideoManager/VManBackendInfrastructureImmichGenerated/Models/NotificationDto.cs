@@ -33,13 +33,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Description { get; set; }
 #endif
         /// <summary>Notification ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Notification level</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationLevel? Level { get; set; }
         /// <summary>Date when notification was read</summary>
@@ -82,7 +76,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "data", n => { Data = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationDto_data>(global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationDto_data.CreateFromDiscriminatorValue); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "level", n => { Level = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationLevel>(); } },
                 { "readAt", n => { ReadAt = n.GetDateTimeOffsetValue(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
@@ -99,7 +93,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationDto_data>("data", Data);
             writer.WriteStringValue("description", Description);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.NotificationLevel>("level", Level);
             writer.WriteDateTimeOffsetValue("readAt", ReadAt);
             writer.WriteStringValue("title", Title);

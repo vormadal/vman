@@ -11,9 +11,9 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         AssetCreate,
         #pragma warning restore CS1591
-        [EnumMember(Value = "PersonRecognized")]
+        [EnumMember(Value = "AssetMetadataExtraction")]
         #pragma warning disable CS1591
-        PersonRecognized,
+        AssetMetadataExtraction,
         #pragma warning restore CS1591
     }
 }

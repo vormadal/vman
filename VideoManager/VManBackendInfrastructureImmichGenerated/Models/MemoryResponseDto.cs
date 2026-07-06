@@ -37,25 +37,13 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Date when memory should be hidden</summary>
         public DateTimeOffset? HideAt { get; set; }
         /// <summary>Memory ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Is memory saved</summary>
         public bool? IsSaved { get; set; }
         /// <summary>Memory date</summary>
         public DateTimeOffset? MemoryAt { get; set; }
         /// <summary>Owner user ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? OwnerId { get; set; }
-#nullable restore
-#else
-        public string OwnerId { get; set; }
-#endif
+        public Guid? OwnerId { get; set; }
         /// <summary>Date when memory was seen</summary>
         public DateTimeOffset? SeenAt { get; set; }
         /// <summary>Date when memory should be shown</summary>
@@ -94,10 +82,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "data", n => { Data = n.GetObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.OnThisDayDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.OnThisDayDto.CreateFromDiscriminatorValue); } },
                 { "deletedAt", n => { DeletedAt = n.GetDateTimeOffsetValue(); } },
                 { "hideAt", n => { HideAt = n.GetDateTimeOffsetValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "isSaved", n => { IsSaved = n.GetBoolValue(); } },
                 { "memoryAt", n => { MemoryAt = n.GetDateTimeOffsetValue(); } },
-                { "ownerId", n => { OwnerId = n.GetStringValue(); } },
+                { "ownerId", n => { OwnerId = n.GetGuidValue(); } },
                 { "seenAt", n => { SeenAt = n.GetDateTimeOffsetValue(); } },
                 { "showAt", n => { ShowAt = n.GetDateTimeOffsetValue(); } },
                 { "type", n => { Type = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.MemoryType>(); } },
@@ -116,10 +104,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteObjectValue<global::VManBackend.Infrastructure.Immich.Generated.Models.OnThisDayDto>("data", Data);
             writer.WriteDateTimeOffsetValue("deletedAt", DeletedAt);
             writer.WriteDateTimeOffsetValue("hideAt", HideAt);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isSaved", IsSaved);
             writer.WriteDateTimeOffsetValue("memoryAt", MemoryAt);
-            writer.WriteStringValue("ownerId", OwnerId);
+            writer.WriteGuidValue("ownerId", OwnerId);
             writer.WriteDateTimeOffsetValue("seenAt", SeenAt);
             writer.WriteDateTimeOffsetValue("showAt", ShowAt);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.MemoryType>("type", Type);

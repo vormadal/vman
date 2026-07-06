@@ -8,6 +8,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.CalendarHeatmap;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.Preferences;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.Restore;
 using VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.Sessions;
@@ -21,6 +22,11 @@ namespace VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class UsersItemRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The calendarHeatmap property</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.CalendarHeatmap.CalendarHeatmapRequestBuilder CalendarHeatmap
+        {
+            get => new global::VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.CalendarHeatmap.CalendarHeatmapRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The preferences property</summary>
         public global::VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item.Preferences.PreferencesRequestBuilder Preferences
         {
@@ -102,6 +108,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        [Obsolete("")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminResponseDto?> PutAsync(global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminUpdateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -162,6 +169,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Admin.Users.Item
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        [Obsolete("")]
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public RequestInformation ToPutRequestInformation(global::VManBackend.Infrastructure.Immich.Generated.Models.UserAdminUpdateDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)

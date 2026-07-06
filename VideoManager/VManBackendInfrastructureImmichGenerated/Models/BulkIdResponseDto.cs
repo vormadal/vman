@@ -25,13 +25,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string ErrorMessage { get; set; }
 #endif
         /// <summary>ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Whether operation succeeded</summary>
         public bool? Success { get; set; }
         /// <summary>
@@ -61,7 +55,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             {
                 { "error", n => { Error = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdErrorReason>(); } },
                 { "errorMessage", n => { ErrorMessage = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "success", n => { Success = n.GetBoolValue(); } },
             };
         }
@@ -74,7 +68,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.BulkIdErrorReason>("error", Error);
             writer.WriteStringValue("errorMessage", ErrorMessage);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("success", Success);
             writer.WriteAdditionalData(AdditionalData);
         }

@@ -14,6 +14,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>Release channel</summary>
+        public global::VManBackend.Infrastructure.Immich.Generated.Models.ReleaseChannel? Channel { get; set; }
         /// <summary>Enabled</summary>
         public bool? Enabled { get; set; }
         /// <summary>
@@ -41,6 +43,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "channel", n => { Channel = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ReleaseChannel>(); } },
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
             };
         }
@@ -51,6 +54,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.ReleaseChannel>("channel", Channel);
             writer.WriteBoolValue("enabled", Enabled);
             writer.WriteAdditionalData(AdditionalData);
         }

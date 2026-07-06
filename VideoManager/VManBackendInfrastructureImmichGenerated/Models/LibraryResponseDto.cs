@@ -27,13 +27,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public List<string> ExclusionPatterns { get; set; }
 #endif
         /// <summary>Library ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Import paths</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -51,13 +45,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string Name { get; set; }
 #endif
         /// <summary>Owner user ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? OwnerId { get; set; }
-#nullable restore
-#else
-        public string OwnerId { get; set; }
-#endif
+        public Guid? OwnerId { get; set; }
         /// <summary>Last refresh date</summary>
         public DateTimeOffset? RefreshedAt { get; set; }
         /// <summary>Last update date</summary>
@@ -90,10 +78,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "assetCount", n => { AssetCount = n.GetIntValue(); } },
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "exclusionPatterns", n => { ExclusionPatterns = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "importPaths", n => { ImportPaths = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "ownerId", n => { OwnerId = n.GetStringValue(); } },
+                { "ownerId", n => { OwnerId = n.GetGuidValue(); } },
                 { "refreshedAt", n => { RefreshedAt = n.GetDateTimeOffsetValue(); } },
                 { "updatedAt", n => { UpdatedAt = n.GetDateTimeOffsetValue(); } },
             };
@@ -108,10 +96,10 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteIntValue("assetCount", AssetCount);
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteCollectionOfPrimitiveValues<string>("exclusionPatterns", ExclusionPatterns);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteCollectionOfPrimitiveValues<string>("importPaths", ImportPaths);
             writer.WriteStringValue("name", Name);
-            writer.WriteStringValue("ownerId", OwnerId);
+            writer.WriteGuidValue("ownerId", OwnerId);
             writer.WriteDateTimeOffsetValue("refreshedAt", RefreshedAt);
             writer.WriteDateTimeOffsetValue("updatedAt", UpdatedAt);
             writer.WriteAdditionalData(AdditionalData);

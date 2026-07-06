@@ -16,6 +16,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>Whether people are enabled</summary>
         public bool? Enabled { get; set; }
+        /// <summary>People face threshold</summary>
+        public int? MinimumFaces { get; set; }
         /// <summary>Whether people appear in web sidebar</summary>
         public bool? SidebarWeb { get; set; }
         /// <summary>
@@ -44,6 +46,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "enabled", n => { Enabled = n.GetBoolValue(); } },
+                { "minimumFaces", n => { MinimumFaces = n.GetIntValue(); } },
                 { "sidebarWeb", n => { SidebarWeb = n.GetBoolValue(); } },
             };
         }
@@ -55,6 +58,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteBoolValue("enabled", Enabled);
+            writer.WriteIntValue("minimumFaces", MinimumFaces);
             writer.WriteBoolValue("sidebarWeb", SidebarWeb);
             writer.WriteAdditionalData(AdditionalData);
         }

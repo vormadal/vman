@@ -34,6 +34,8 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public bool? Ocr { get; set; }
         /// <summary>Whether password login is enabled</summary>
         public bool? PasswordLogin { get; set; }
+        /// <summary>Whether real-time transcoding is enabled</summary>
+        public bool? RealtimeTranscoding { get; set; }
         /// <summary>Whether reverse geocoding is enabled</summary>
         public bool? ReverseGeocoding { get; set; }
         /// <summary>Whether search is enabled</summary>
@@ -79,6 +81,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "oauthAutoLaunch", n => { OauthAutoLaunch = n.GetBoolValue(); } },
                 { "ocr", n => { Ocr = n.GetBoolValue(); } },
                 { "passwordLogin", n => { PasswordLogin = n.GetBoolValue(); } },
+                { "realtimeTranscoding", n => { RealtimeTranscoding = n.GetBoolValue(); } },
                 { "reverseGeocoding", n => { ReverseGeocoding = n.GetBoolValue(); } },
                 { "search", n => { Search = n.GetBoolValue(); } },
                 { "sidecar", n => { Sidecar = n.GetBoolValue(); } },
@@ -103,6 +106,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteBoolValue("oauthAutoLaunch", OauthAutoLaunch);
             writer.WriteBoolValue("ocr", Ocr);
             writer.WriteBoolValue("passwordLogin", PasswordLogin);
+            writer.WriteBoolValue("realtimeTranscoding", RealtimeTranscoding);
             writer.WriteBoolValue("reverseGeocoding", ReverseGeocoding);
             writer.WriteBoolValue("search", Search);
             writer.WriteBoolValue("sidecar", Sidecar);

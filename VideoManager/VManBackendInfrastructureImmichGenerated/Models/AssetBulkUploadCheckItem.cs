@@ -22,7 +22,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
 #else
         public string Checksum { get; set; }
 #endif
-        /// <summary>Asset ID</summary>
+        /// <summary>Client-side identifier echoed in the response to match results to inputs (e.g. filename)</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public string? Id { get; set; }

@@ -31,5 +31,41 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         #pragma warning disable CS1591
         BackupDatabase,
         #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-missing-files")]
+        #pragma warning disable CS1591
+        IntegrityMissingFiles,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-untracked-files")]
+        #pragma warning disable CS1591
+        IntegrityUntrackedFiles,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-checksum-mismatch")]
+        #pragma warning disable CS1591
+        IntegrityChecksumMismatch,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-missing-files-refresh")]
+        #pragma warning disable CS1591
+        IntegrityMissingFilesRefresh,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-untracked-files-refresh")]
+        #pragma warning disable CS1591
+        IntegrityUntrackedFilesRefresh,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-checksum-mismatch-refresh")]
+        #pragma warning disable CS1591
+        IntegrityChecksumMismatchRefresh,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-missing-files-delete-all")]
+        #pragma warning disable CS1591
+        IntegrityMissingFilesDeleteAll,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-untracked-files-delete-all")]
+        #pragma warning disable CS1591
+        IntegrityUntrackedFilesDeleteAll,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "integrity-checksum-mismatch-delete-all")]
+        #pragma warning disable CS1591
+        IntegrityChecksumMismatchDeleteAll,
+        #pragma warning restore CS1591
     }
 }

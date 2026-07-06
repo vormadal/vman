@@ -23,13 +23,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         public string AlbumName { get; set; }
 #endif
         /// <summary>Thumbnail asset ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? AlbumThumbnailAssetId { get; set; }
-#nullable restore
-#else
-        public string AlbumThumbnailAssetId { get; set; }
-#endif
+        public Guid? AlbumThumbnailAssetId { get; set; }
         /// <summary>First entry is always the album owner. Second entry is the auth user, if it differs from the owner. The rest are ordered alphabetically.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -63,13 +57,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         /// <summary>Has shared link</summary>
         public bool? HasSharedLink { get; set; }
         /// <summary>Album ID</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        public Guid? Id { get; set; }
         /// <summary>Activity feed enabled</summary>
         public bool? IsActivityEnabled { get; set; }
         /// <summary>Last modified asset timestamp</summary>
@@ -108,7 +96,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "albumName", n => { AlbumName = n.GetStringValue(); } },
-                { "albumThumbnailAssetId", n => { AlbumThumbnailAssetId = n.GetStringValue(); } },
+                { "albumThumbnailAssetId", n => { AlbumThumbnailAssetId = n.GetGuidValue(); } },
                 { "albumUsers", n => { AlbumUsers = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "assetCount", n => { AssetCount = n.GetIntValue(); } },
                 { "contributorCounts", n => { ContributorCounts = n.GetCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto>(global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto.CreateFromDiscriminatorValue)?.AsList(); } },
@@ -116,7 +104,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
                 { "description", n => { Description = n.GetStringValue(); } },
                 { "endDate", n => { EndDate = n.GetDateTimeOffsetValue(); } },
                 { "hasSharedLink", n => { HasSharedLink = n.GetBoolValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "id", n => { Id = n.GetGuidValue(); } },
                 { "isActivityEnabled", n => { IsActivityEnabled = n.GetBoolValue(); } },
                 { "lastModifiedAssetTimestamp", n => { LastModifiedAssetTimestamp = n.GetDateTimeOffsetValue(); } },
                 { "order", n => { Order = n.GetEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder>(); } },
@@ -133,7 +121,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("albumName", AlbumName);
-            writer.WriteStringValue("albumThumbnailAssetId", AlbumThumbnailAssetId);
+            writer.WriteGuidValue("albumThumbnailAssetId", AlbumThumbnailAssetId);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.AlbumUserResponseDto>("albumUsers", AlbumUsers);
             writer.WriteIntValue("assetCount", AssetCount);
             writer.WriteCollectionOfObjectValues<global::VManBackend.Infrastructure.Immich.Generated.Models.ContributorCountResponseDto>("contributorCounts", ContributorCounts);
@@ -141,7 +129,7 @@ namespace VManBackend.Infrastructure.Immich.Generated.Models
             writer.WriteStringValue("description", Description);
             writer.WriteDateTimeOffsetValue("endDate", EndDate);
             writer.WriteBoolValue("hasSharedLink", HasSharedLink);
-            writer.WriteStringValue("id", Id);
+            writer.WriteGuidValue("id", Id);
             writer.WriteBoolValue("isActivityEnabled", IsActivityEnabled);
             writer.WriteDateTimeOffsetValue("lastModifiedAssetTimestamp", LastModifiedAssetTimestamp);
             writer.WriteEnumValue<global::VManBackend.Infrastructure.Immich.Generated.Models.AssetOrder>("order", Order);

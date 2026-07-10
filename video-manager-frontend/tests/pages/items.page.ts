@@ -7,6 +7,10 @@ export class ItemsPage extends BasePage {
   readonly collectionsLink: Locator;
   readonly filterInput: Locator;
   readonly itemCountText: Locator;
+  // Collection mode overlay
+  readonly addToCollectionButton: Locator;
+  readonly exitCollectionModeButton: Locator;
+  readonly collectionManageLink: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -15,6 +19,9 @@ export class ItemsPage extends BasePage {
     this.collectionsLink = page.getByRole('link', { name: /^Collections$/i });
     this.filterInput = page.getByPlaceholder('Add filter...');
     this.itemCountText = page.getByText(/showing \d+ of \d+/i);
+    this.addToCollectionButton = page.getByRole('button', { name: 'Add to collection' });
+    this.exitCollectionModeButton = page.getByRole('button', { name: /exit collection mode/i });
+    this.collectionManageLink = page.getByRole('link', { name: /manage/i });
   }
 
   async goto() {
@@ -37,6 +44,39 @@ export class ItemsPage extends BasePage {
 
   async clearMediaTypeFilter() {
     await this.page.getByRole('button', { name: /remove media type filter/i }).click();
+  }
+
+  async expectActiveMediaTypeFilter() {
+    await expect(this.page.getByRole('button', { name: /remove media type filter/i })).toBeVisible();
+  }
+
+  async expectNoActiveMediaTypeFilter() {
+    await expect(this.page.getByRole('button', { name: /remove media type filter/i })).not.toBeVisible();
+  }
+
+  async expectCollectionOverlayActive(collectionName: string) {
+    await expect(this.page.getByText(collectionName)).toBeVisible();
+  }
+
+  async expectFilterSuggestion(label: string) {
+    await expect(this.page.getByRole('button', { name: new RegExp(`^${label}$`, 'i') })).toBeVisible({ timeout: 3000 });
+  }
+
+  async expectNoFilterSuggestion(label: string) {
+    await expect(this.page.getByRole('button', { name: new RegExp(`^${label}$`, 'i') })).not.toBeVisible();
+  }
+
+  async addFirstItemToCollection() {
+    await expect(this.addToCollectionButton.first()).toBeVisible({ timeout: 10000 });
+    await this.addToCollectionButton.first().click();
+  }
+
+  async expectCollectionOverlayItemCount(count: number) {
+    await expect(this.page.getByText(`${count} items`, { exact: true })).toBeVisible({ timeout: 8000 });
+  }
+
+  async navigateToManageCollection() {
+    await this.collectionManageLink.click();
   }
 
   async clickTaggingMode() {

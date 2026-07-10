@@ -32,6 +32,7 @@ export class CollectionDetailPage extends BasePage {
   }
 
   async expectItemCount(count: number) {
-    await expect(this.page.getByText(`${count} items in collection`)).toBeVisible();
+    // The detail page renders "1 item" (singular) or "N items" (plural)
+    await expect(this.page.getByText(new RegExp(`^${count} items?$`))).toBeVisible({ timeout: 5000 });
   }
 }
